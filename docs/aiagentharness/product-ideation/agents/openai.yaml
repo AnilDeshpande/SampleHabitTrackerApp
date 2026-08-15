@@ -1,4 +1,4 @@
 interface:
   display_name: "Product Ideation"
-  short_description: "Discover product intent before building"
-  default_prompt: "Use $product-ideation to turn my fuzzy app idea into an Idea Brief."
+  short_description: "Discover intent with durable session notes"
+  default_prompt: "Use $product-ideation to turn my fuzzy app idea into an Idea Brief with dated session notes."
