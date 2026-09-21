@@ -5,7 +5,7 @@
 | Field | Value |
 | --- | --- |
 | Status | Proposed technical architecture |
-| Date | 2026-08-26 |
+| Date | 2026-09-21 |
 | Product source | [`docs/prds/habit-tracker-v1-prd.md`](../prds/habit-tracker-v1-prd.md) |
 | Platform | Single-user Android app; minimum API 24 |
 | Persistence boundary | On-device only |
@@ -36,21 +36,16 @@ are not changed by this document.
 
 ## System shape
 
-```text
-Compose screens
-    │ user events / rendered UiState
-    ▼
-ViewModels ───────────────► navigation and transient UI effects
-    │ calls
-    ▼
-Use cases / domain rule services
-    │ transactions and queries
-    ▼
-Repository ───────────────► Room database
-    │                              │
-    ├────────► Notification gateway │ durable product truth
-    └────────► WorkManager ◄────────┘
-                  reconciliation trigger
+```mermaid
+flowchart TD
+    Compose[Compose screens] -->|user events and rendered UiState| ViewModels
+    ViewModels -->|calls| Domain[Use cases and domain rule services]
+    ViewModels -->|navigation and transient effects| Navigation[Navigation]
+    Domain -->|transactions and queries| Repository
+    Repository -->|durable product truth| Room[Room database]
+    Repository -->|external delivery| Notifications[Notification gateway]
+    Repository -->|enqueue best-effort work| WorkManager
+    WorkManager -->|reconciliation trigger| Domain
 ```
 
 Dependency direction is always inward: UI depends on presentation and domain
@@ -77,8 +72,8 @@ app/
     HabitFormScreen.kt, HabitFormViewModel.kt, HabitFormUiState.kt
   feature/review/
     HabitReviewScreen.kt, HabitReviewViewModel.kt, HabitReviewUiState.kt
-  feature/deletion/
-    DeleteHabitViewModel.kt
+  feature/retirement/
+    RetireHabitViewModel.kt, RetiredHabitsViewModel.kt
   domain/
     model/
     repository/HabitRepository.kt
@@ -107,53 +102,95 @@ architectural requirement for V1.
   target edit can therefore never rewrite completed history.
 - Finalization, result, points effect, and continuity values are committed in
   one database transaction. This is the exactly-once boundary.
+- Every progress save and target change captures one `Clock` time snapshot and
+  runs in a Room transaction that reconciles its affected habit before it
+  reads or changes an occurrence. Commands therefore cannot write across a
+  period boundary that elapsed while the app was already open.
 - The app-wide points balance is a stored aggregate updated in that same
   transaction. `pointsEffect` in occurrence history provides an audit trail.
-- Decimal quantities use a canonical string/decimal representation or scaled
-  integer, never binary `Double`. Target and progress values must compare
-  exactly.
+- Exact decimal values use normalized `BigDecimal` text in Room, never binary
+  `Double`. Target and progress values must compare exactly.
 
 ### Tables
 
-| Table | Key fields | Purpose |
-| --- | --- | --- |
-| `habits` | `habitId`, name, unit, frequency, selectedWeekdays, creationLocalDate, status | Current editable habit configuration and active/pending-deletion state. Unit and schedule are immutable after creation. |
-| `occurrences` | `occurrenceId`, `habitId`, startLocalDate, endLocalDate, effectiveTarget, progress, status, finalizedAt, result, pointsEffect | One scheduled period. An open row accepts replacement progress; a finalized row is immutable. Unique `(habitId, startLocalDate)` prevents duplicate outcomes. |
-| `target_changes` | `changeId`, `habitId`, requestedTarget, effectiveStartLocalDate, changedAt | Chronological review of target changes. The occurrence snapshot is the authoritative historical target. |
-| `app_state` | singleton ID, pointsBalance | The durable app-wide balance, initialized to zero. |
-| `badges` | `badgeId`, `habitId`, type, awardedForLocalDate, awardedAt | One award record; unique `(habitId, type)` enforces the one-time Daily badge. |
-| `deletion_tombstones` | `habitId`, expiresAtInstant | Recoverable deletion state until its 10-second expiry. Associated history remains present until final deletion. |
-| `notification_events` | `occurrenceId`, attemptedAt, deliveryState | Records the single notification attempt for a missed occurrence and supports the in-app fallback state. |
+Room entities use the following exact SQLite schema. IDs are Kotlin `Long` /
+SQLite `INTEGER`; enum names, names, unit labels, zone IDs, and ISO-8601 local
+dates are Kotlin `String` / SQLite `TEXT`; weekday selections are an `Int` /
+`INTEGER` bit mask; and exact moments are `Long` / `INTEGER` epoch
+milliseconds. `BigDecimal` Room converters serialize every decimal as its
+normalized plain-string `TEXT` form (no exponent or redundant trailing zeros)
+and reject non-normalized database values. `unit` is only a fixed display label
+such as `kilometres`, `pages`, or `glasses`; V1 performs no unit conversion.
 
-Store local calendar dates as ISO-8601 `LocalDate` values and boundary moments
-as instants only where elapsed time matters (for example, undo expiry). Avoid
-persisting a zone as the source of truth for an occurrence: future scheduling
-uses the device's current zone, while finalized rows already contain their
-immutable outcome.
+| Table | Exact non-null columns | Nullable columns, keys, and indexes |
+| --- | --- | --- |
+| `habits` | `habitId INTEGER PRIMARY KEY`, `name TEXT`, `unit TEXT`, `frequency TEXT`, `selectedWeekdays INTEGER`, `creationLocalDate TEXT`, `currentTarget TEXT`, `status TEXT` | `retirementDeadlineEpochMillis INTEGER NULL`, `retiredAtEpochMillis INTEGER NULL`; `CHECK status IN ('ACTIVE','PENDING_RETIREMENT','RETIRED')`; index `(status, habitId)`. `currentTarget` is normalized decimal text. Unit and frequency are immutable after creation. |
+| `occurrences` | `occurrenceId INTEGER PRIMARY KEY`, `habitId INTEGER`, `startLocalDate TEXT`, `endLocalDate TEXT`, `boundaryZoneId TEXT`, `endExclusiveEpochMillis INTEGER`, `effectiveTarget TEXT`, `progress TEXT`, `status TEXT`, `pointsEffect INTEGER` | `result TEXT NULL`, `resolvedAtEpochMillis INTEGER NULL`; foreign key `habitId → habits(habitId) ON DELETE RESTRICT`; unique `(habitId, startLocalDate)`; indexes `(habitId, startLocalDate)` and `(status, endExclusiveEpochMillis, habitId, occurrenceId)`. `effectiveTarget` and `progress` are normalized decimal text; `progress` is initialized to normalized zero. |
+| `target_changes` | `changeId INTEGER PRIMARY KEY`, `habitId INTEGER`, `requestedTarget TEXT`, `effectiveStartLocalDate TEXT`, `changedAtEpochMillis INTEGER` | Foreign key `habitId → habits(habitId) ON DELETE RESTRICT`; index `(habitId, effectiveStartLocalDate, changeId)`. `requestedTarget` is normalized decimal text. |
+| `app_state` | `appStateId INTEGER PRIMARY KEY CHECK (appStateId = 1)`, `pointsBalance INTEGER` | Exactly one row, initialized with zero. |
+| `badges` | `badgeId INTEGER PRIMARY KEY`, `habitId INTEGER`, `type TEXT`, `awardedForLocalDate TEXT`, `awardedAtEpochMillis INTEGER` | Foreign key `habitId → habits(habitId) ON DELETE RESTRICT`; unique `(habitId, type)`; index `(habitId, awardedForLocalDate)`. |
+| `notification_events` | `eventId INTEGER PRIMARY KEY`, `occurrenceId INTEGER`, `notificationId INTEGER`, `deliveryState TEXT`, `attemptCount INTEGER` | `lastAttemptedAtEpochMillis INTEGER NULL`; foreign key `occurrenceId → occurrences(occurrenceId) ON DELETE RESTRICT`; unique `occurrenceId`; indexes `(deliveryState, eventId)` and `(notificationId)`. `notificationId` is the stable Android `Int` derived from `occurrenceId`; state is `PENDING`, `POSTED`, `UNAVAILABLE`, or `RETRYABLE`. |
+| `reconciliation_lock` | `lockId INTEGER PRIMARY KEY CHECK (lockId = 1)`, `version INTEGER` | Exactly one row. Updating it at the start of the transaction is the database-resident serialization gate. |
+
+All listed non-null columns are `NOT NULL` in the Room migration SQL.
+`habits.frequency` is checked against `DAILY`, `WEEKLY`, `FORTNIGHTLY`,
+`MONTHLY`, and `CUSTOM`; `badges.type` is checked as `CONSISTENCY_21_DAY`; and
+`notification_events.deliveryState` is checked against `PENDING`, `POSTED`,
+`UNAVAILABLE`, and `RETRYABLE`. The occurrence `CHECK` allows only these
+combinations: `OPEN` has a null result, null resolved-at moment, and zero
+points effect; `FINALIZED` has result `SUCCESS` or `MISS` and a non-null
+resolved-at moment; `CANCELLED` has result `CANCELLED`, a non-null resolved-at
+moment, and zero points effect. No other status/result or retirement-field
+combination is valid. Specifically, `ACTIVE` has both retirement moments null,
+`PENDING_RETIREMENT` has a non-null deadline and null retired-at moment, and
+`RETIRED` retains the non-null deadline with a non-null retired-at moment.
+These `CHECK` constraints belong in the generated migration SQL as well as
+being enforced by repository commands.
+
+An occurrence stores its immutable `startLocalDate`, `endLocalDate`,
+`boundaryZoneId`, and `endExclusiveEpochMillis` when the planner creates it.
+Changing the device timezone never changes one of these stored values; the
+new timezone is used only to plan later occurrences.
 
 ### Entity states
 
-```text
-Habit: ACTIVE ──confirm delete──► PENDING_DELETION ──undo──► ACTIVE
-                                      │
-                                      └─expiry──► removed with related history
-
-Occurrence: OPEN ──local period has elapsed──► FINALIZED_SUCCESS | FINALIZED_MISS
+```mermaid
+stateDiagram-v2
+    [*] --> ACTIVE
+    ACTIVE --> PENDING_RETIREMENT: confirm retirement
+    PENDING_RETIREMENT --> ACTIVE: undo when now is before deadline
+    PENDING_RETIREMENT --> RETIRED: final retirement when now is at or after deadline
 ```
 
-`PENDING_DELETION` habits are excluded from the active overview and new
-progress actions, but are not physically removed until expiry. A transaction
-that finalizes deletion removes the habit, occurrences, target changes, badge,
-tombstone, and notification-event records. It deliberately does not alter
-`app_state.pointsBalance`.
+```mermaid
+stateDiagram-v2
+    state "FINALIZED / SUCCESS" as FINALIZED_SUCCESS
+    state "FINALIZED / MISS" as FINALIZED_MISS
+    state "CANCELLED / CANCELLED" as CANCELLED
+
+    [*] --> OPEN
+    OPEN --> FINALIZED_SUCCESS: period elapsed and target met
+    OPEN --> FINALIZED_MISS: period elapsed and target missed
+    OPEN --> CANCELLED: final retirement with zero points
+```
+
+`PENDING_RETIREMENT` and `RETIRED` habits are excluded from the active overview
+and reject progress, target changes, new occurrence creation, and notification
+posting. The retired-habits view exposes the `RETIRED` habit's retained
+occurrences, target changes, badges, and point effects. Final retirement never
+deletes audit records or changes `app_state.pointsBalance`; it changes every
+still-open occurrence to `CANCELLED` with zero points and excludes cancellation
+from streak and badge evaluation.
 
 ## Scheduling and finalization
 
 ### Occurrence planner
 
-`OccurrencePlanner` is a pure service. It receives a habit, the device's
-current local date, and the current zone only to determine the local date. It
-produces applicable occurrences using these rules:
+`OccurrencePlanner` is a pure service. It receives an `ACTIVE` habit, the
+device's current local date, and current zone. When it creates an occurrence,
+it stores the resulting start/end local dates, the zone ID, and the exclusive
+end instant derived in that zone; it never recalculates an existing row's
+boundary. It produces applicable occurrences using these rules:
 
 | Frequency | First occurrence | Subsequent occurrence |
 | --- | --- | --- |
@@ -165,33 +202,83 @@ produces applicable occurrences using these rules:
 
 No row is created for an unselected Custom weekday. This ensures it cannot
 silently generate a progress request, miss, points change, or streak event.
-The planner creates needed open occurrences idempotently before the overview
-or a habit review is queried.
+The planner creates needed open occurrences idempotently only for `ACTIVE`
+habits before the overview or a habit review is queried. A timezone change
+therefore applies to rows created after the change, not rows already present.
 
 ### Reconciliation sequence
 
 Run the same `ReconcileTracking` use case when the application enters the
 foreground, when the overview is opened, and from a periodic/best-effort
 WorkManager worker. Foreground execution owns PRD correctness; worker timing
-only improves timeliness.
+only improves timeliness. These are triggers, not the sole correctness
+boundary: period-sensitive writes reconcile synchronously as described below.
 
-1. Read the current device local date and load active habits in a transaction.
-2. Create any applicable occurrence rows through today, subject to first-period
+```mermaid
+sequenceDiagram
+    participant Trigger as Foreground, overview, or worker
+    participant Tracking as ReconcileTracking
+    participant Room as Room database
+    participant Outbox as Notification outbox
+
+    Trigger->>Tracking: Start reconciliation
+    Tracking->>Tracking: Capture one time snapshot
+    Tracking->>Room: Begin transaction and acquire reconciliation lock
+    Tracking->>Room: Create needed ACTIVE-habit occurrences
+    Tracking->>Room: Load OPEN rows ordered by end boundary, habit ID, occurrence ID
+    loop Each elapsed occurrence
+        Tracking->>Room: Finalize once and update points, continuity, and badge
+        alt Result is a miss
+            Tracking->>Outbox: Insert unique PENDING event in the transaction
+        end
+    end
+    Tracking->>Room: Commit transaction
+    Tracking-->>Outbox: Request pending-event dispatch after commit
+```
+
+1. Capture one time snapshot for the transaction. Acquire the
+   database-resident singleton reconciliation lock inside the Room transaction
+   before reading or changing reconciled rows. The lock is held through commit
+   or rollback; it is not an in-memory mutex, so foreground and WorkManager
+   invocations cannot both apply results.
+2. Read the current device local date from that snapshot and load only `ACTIVE`
+   habits in the transaction.
+3. Create any applicable occurrence rows through today, subject to first-period
    rules.
-3. Find open rows with `endLocalDate < today`; their local period has elapsed.
-4. Finalize each eligible row deterministically, ordered by end date then
-   habit ID. Progress at least equal to the effective target succeeds;
+4. Find open rows whose stored `endExclusiveEpochMillis` is at or before the
+   time snapshot; their period has elapsed.
+5. Finalize each eligible row deterministically, ordered by
+   `endExclusiveEpochMillis` (end boundary), then `habitId`, then
+   `occurrenceId`. Progress at least equal to the effective target succeeds;
    otherwise it misses.
-5. For each row, calculate exactly one points effect, update its result and
+6. For each row, calculate exactly one points effect, update its result and
    finalization timestamp, update `app_state`, calculate continuity data, and
-   evaluate the badge in the same transaction.
-6. After commit, attempt one notification for every newly finalized miss. Save
-   the attempt result. The committed missed row itself is the in-app fallback.
+   evaluate the badge in the same transaction. When the result is a miss,
+   insert its unique `PENDING` notification-outbox event in this same
+   transaction.
+7. After commit, request dispatch of pending notification-outbox events. The
+   committed missed row itself remains the in-app fallback.
 
-The `OPEN → FINALIZED_*` update must predicate on `status = OPEN`; if it
+The `OPEN → FINALIZED` update must predicate on `status = OPEN`; if it
 updates zero rows, another invocation already finalized it. Combined with the
-unique occurrence key and single transaction, this makes repeated starts,
-worker retries, and process death safe.
+unique occurrence key, singleton transaction lock, and single transaction,
+this makes repeated starts, worker retries, concurrent triggers, and process
+death safe.
+
+### Period-sensitive commands
+
+`SaveProgress` and `ChangeTarget` use the same transaction gate and one time
+snapshot as reconciliation. Each command first reconciles the affected habit
+under that gate, confirming `ACTIVE` as part of the reconciliation and
+processing eligible occurrences in `endExclusiveEpochMillis` (end boundary),
+`habitId`, `occurrenceId` order; only then does it locate the occurrence to
+change. If that occurrence has passed its stored
+`endExclusiveEpochMillis`, the transaction finalizes it before rejecting the
+attempted progress or target change; it never reopens or modifies the finalized
+row. A command can change an occurrence only when the habit remains `ACTIVE`
+and the occurrence remains `OPEN` after reconciliation. This applies even when
+the app never left the foreground and makes the balance used by a miss
+calculation deterministic.
 
 ### Rule services
 
@@ -200,13 +287,13 @@ worker retries, and process death safe.
 | `ProgressValidator` | submitted decimal | Non-negative canonical value; invalid input is not persisted. |
 | `TargetPolicy` | frequency, current date, requested target | Daily/Custom apply to current open occurrence; Weekly/Fortnightly/Monthly begin next occurrence. Never changes finalized rows. |
 | `ScoringEngine` | result, points balance before result | Success: `+10`; miss: `-ceil(balance × 0.01)`, minimum `-1` when balance is positive, never below zero. |
-| `ContinuityCalculator` | ordered finalized occurrences | Active run is scheduled periods since creation while active; success streak is consecutive successful finalized periods and resets on miss. |
-| `BadgeEvaluator` | Daily finalized history | Award once if any 21 consecutive local dates contain at least 18 successful daily occurrences; absent/non-qualifying days count as misses. |
+| `ContinuityCalculator` | ordered finalized occurrences | Active run is scheduled periods since creation while active; success streak is consecutive successful finalized periods and resets on miss. Cancelled occurrences have no continuity effect. |
+| `BadgeEvaluator` | Daily finalized history | Award once if any 21 consecutive local dates contain at least 18 successful daily occurrences; absent/non-qualifying days count as misses. Cancelled occurrences have no badge effect. |
 
 Calculate Active run from schedule/lifecycle rather than treating it as a
 mutable counter. This avoids drift when reconciliation catches up multiple
 periods. The overview can derive it from the planner/current date; it is not
-shown for pending or finally deleted habits. Success streak may be stored as a
+shown for pending-retirement or retired habits. Success streak may be stored as a
 denormalized field for query speed only if it is recalculable from immutable
 history.
 
@@ -214,11 +301,19 @@ history.
 
 The minimum destination graph is:
 
-```text
-Overview ──create──► Create habit
-    │                    │ save
-    ├──select habit──► Habit review
-    └──edit/delete──► Edit habit / delete confirmation
+```mermaid
+flowchart LR
+    Overview -->|create| CreateHabit[Create habit]
+    CreateHabit -->|save| Overview
+    Overview -->|select active habit| HabitReview[Habit review]
+    Overview -->|edit| EditHabit[Edit habit]
+    EditHabit -->|save| Overview
+    Overview -->|retire| RetirementConfirmation[Retirement confirmation]
+    RetirementConfirmation -->|confirm| PendingRetirement[PENDING_RETIREMENT]
+    RetirementConfirmation -->|cancel| Overview
+    PendingRetirement -->|undo before deadline| Overview
+    Overview -->|open retired habits| RetiredHabits[Retired-habits view]
+    RetiredHabits -->|select habit| HabitReview
 ```
 
 `OverviewUiState` contains the points balance, no-habits state, active habit
@@ -227,27 +322,71 @@ all valid field values while displaying field-specific validation errors.
 `HabitReviewUiState` contains chronological finalized occurrences, target
 changes, and the badge state. UI effects such as “progress saved,” navigation,
 and the visible undo countdown are emitted separately from durable UI state.
+`RetiredHabitsUiState` lists retired habits and routes to their immutable
+history; it never exposes active tracking controls.
 
 Composables render state and send events only; they do not calculate schedule,
 points, or finalization rules. Give every actionable control and outcome a
 semantic label/state description, show textual/iconic success/miss status in
 addition to color, and allow layouts to reflow under system font scaling.
 
-## Notifications and deletion recovery
+## Notifications and retirement recovery
 
-After a committed missed finalization, `MissedTargetNotifier` creates one
-notification keyed by occurrence ID. The pending intent navigates to that
-habit's review route. On Android versions requiring runtime notification
-permission, a denied or unavailable notification is recorded as unavailable;
-the overview/review surfaces the same missed result, satisfying the fallback.
+Missed notifications use the transactional outbox rather than an after-commit
+best-effort call. Finalizing a miss inserts the unique `PENDING`
+`notification_events` row for that occurrence in the same Room transaction as
+the occurrence result and points effect. After commit, an outbox dispatcher is
+requested; it also runs on app foreground and through best-effort WorkManager
+so pending work survives a process crash between commit and dispatch.
 
-Deletion is not delegated solely to an in-memory snackbar timer. On confirmed
-delete, persist the tombstone and `PENDING_DELETION` state with an expiry
-instant, then show the 10-second undo affordance. On app foreground, worker
-run, or expiry callback, `FinalizeExpiredDeletions` removes expired tombstones
-and related habit data atomically. Undo before expiry atomically restores
-`ACTIVE` and deletes the tombstone. This remains correct through process death
-or restart.
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING: missed occurrence commits
+    PENDING --> POSTED: post succeeds with stable occurrence-derived ID
+    PENDING --> RETRYABLE: transient posting failure
+    RETRYABLE --> POSTED: retry succeeds with the same ID
+    PENDING --> UNAVAILABLE: permission denied or retirement begins
+    RETRYABLE --> UNAVAILABLE: retirement begins
+    PENDING --> PENDING: crash after post before state update, retry updates existing notification
+```
+
+The dispatcher claims pending or retryable events only after confirming the
+parent habit is `ACTIVE`, posts with the stable Android notification ID derived
+from `occurrenceId`, and records `POSTED`, `UNAVAILABLE`, or `RETRYABLE` in the
+event row. `UNAVAILABLE` is terminal for conditions such as denied notification
+permission; transient posting failures remain `RETRYABLE`. If the process
+crashes after Android accepts the post but before the event is marked `POSTED`,
+a later retry uses the same notification ID and therefore updates the existing
+visible notification instead of creating a duplicate. When retirement begins,
+the same transaction marks the habit's unposted `PENDING` or `RETRYABLE` events
+`UNAVAILABLE`; the missed result remains visible in history. The pending intent
+navigates to that habit's review route.
+
+Retirement is not delegated solely to an in-memory snackbar timer. On confirmed
+retirement, one transaction captures `now`, changes `ACTIVE` to
+`PENDING_RETIREMENT`, and persists `retirementDeadlineEpochMillis = now + 10`
+seconds. `UndoRetirement` succeeds only with the conditional update
+`status = PENDING_RETIREMENT AND now < retirementDeadlineEpochMillis`; it
+returns the habit to `ACTIVE` and clears its deadline. On app foreground,
+worker run, or expiry callback, `FinalizeExpiredRetirements` succeeds only with
+the complementary condition `status = PENDING_RETIREMENT AND now >=
+retirementDeadlineEpochMillis`. In the same transaction it changes the habit
+to `RETIRED`, records `retiredAtEpochMillis`, cancels any `OPEN` occurrence
+with zero points/no continuity or badge effect, and suppresses unposted
+notification events. These conditional transactions and the reconciliation
+lock mean undo and expiry cannot both win, including after process death or
+restart; neither deletes the habit or its audit trail.
+
+```mermaid
+flowchart TD
+    Confirm[Confirm retirement] --> Begin[Transaction sets PENDING_RETIREMENT and persists deadline]
+    Begin --> Pending[PENDING_RETIREMENT: active tracking blocked]
+    Pending --> Condition{Conditional transaction matches persisted deadline}
+    Condition -->|Undo and now is before deadline| Active[ACTIVE: clear deadline]
+    Condition -->|Finalizer and now is at or after deadline| Retired[RETIRED: retain habit and audit history]
+    Retired --> Cancel[Cancel every OPEN occurrence with zero points]
+    Retired --> Suppress[Suppress unposted notification events]
+```
 
 ## Error handling, privacy, and operational limits
 
@@ -258,6 +397,10 @@ or restart.
 - There are no network clients, accounts, analytics requirements, cloud sync,
   exports, or remote APIs in V1. No permission is needed other than notification
   permission where Android requires it.
+- The manifest sets `android:allowBackup="false"` and supplies Android data
+  extraction rules that exclude the `database`, `sharedpref`, `file`, `external`,
+  and `root` domains from both cloud backup and device-to-device transfer. This
+  covers Room, DataStore, preferences, and every other V1 user-data file.
 - Database migrations must be versioned and tested before a schema change ships.
   Never migrate by discarding user history.
 - The app makes no promise that the OS will run work at the exact calendar
@@ -272,7 +415,7 @@ or restart.
 | FR-006, FR-007 | Overview/review ViewModels and read models sourced from Room |
 | FR-008 | `ScoringEngine`, `ContinuityCalculator`, `BadgeEvaluator`, `app_state`, `badges` |
 | FR-009 | `MissedTargetNotifier`, `notification_events`, overview/review fallback indicators |
-| FR-010 | Deletion ViewModel, `deletion_tombstones`, `FinalizeExpiredDeletions` |
+| FR-010 | Retirement ViewModels, `habits.retirementDeadlineEpochMillis`, `FinalizeExpiredRetirements`, retired-habits view |
 
 ## Verification strategy
 
@@ -280,10 +423,12 @@ Prioritize unit tests for pure rules: every cadence's first and subsequent
 period, Custom non-occurrence days, target effective dates, exact decimal
 comparisons, scoring rounding/floor behavior, streak/run transitions, and all
 21-day windows. Add repository integration tests for transaction idempotency,
-restart persistence, finalized-row immutability, and deletion/undo expiry.
+restart persistence, finalized-row immutability, retirement/undo race handling,
+timezone-boundary immutability, and retained retired-history auditability.
 Compose UI tests should cover validation retention, accessible states, saved
 feedback, empty overview, and navigation to review. Device/emulator tests
-should cover notification-permission denial and deep-link behavior.
+should cover notification-permission denial, deep-link behavior, and disabled
+backup/device-transfer configuration.
 
 ## Explicitly deferred implementation choices
 
