@@ -78,6 +78,31 @@ static questionnaire.
 9. Requirement-level acceptance criteria and traceability to source decisions.
 10. Explicit exclusions, technical deferrals, and conditional future questions.
 
+### Risk-triggered exceptional-path audit
+
+Apply the following prompts only when the approved product behavior makes them
+relevant. They resolve user-visible outcomes; they do not select a database,
+transaction pattern, background scheduler, or other technical mechanism.
+
+- **Time-sensitive behavior:** What outcome applies at a period or deadline
+  boundary, after a timezone change where relevant, and when an action arrives
+  late?
+- **Competing actions:** When undo, expiry, edits, or other opposite actions
+  contend, which observable outcome wins and what recovery is available?
+- **Retained outcomes:** When the product retains a balance, score, badge,
+  entitlement, or history, what explanatory history must remain available?
+- **External effects:** If a notification, reminder, export, or similar effect
+  cannot happen immediately or the app restarts, what durable product outcome
+  and later user-visible fallback apply?
+- **Local-data promises:** If data is local or private, does that promise
+  include cloud backup, export, and device-to-device transfer?
+
+Record the creator-approved answers as requirements, domain boundaries,
+state/recovery behavior, lifecycle rules, or non-functional expectations. The
+later architecture step decides whether a conditional update, immutable time
+boundary, transactional outbox, or platform configuration is needed to honor
+that answer.
+
 Ask only the next one to three related questions that are meaningful now. For
 every **Needs clarification** item, provide:
 
@@ -122,7 +147,8 @@ yet. Present a **PRD Decision Lock** containing:
 3. Every deliberately deferred item, why it is deferred, its later owner, and
    its exact reopening event.
 4. Every out-of-scope item.
-5. A coverage audit across all ten areas.
+5. A coverage audit across all ten areas, including each applicable
+   exceptional-path prompt.
 6. An explicit `Unclassified product questions` result.
 
 The lock passes only when `Unclassified product questions: None`. Technical

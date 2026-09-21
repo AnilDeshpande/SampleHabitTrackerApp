@@ -87,6 +87,16 @@
 
 *To resolve when applicable.*
 
+## Critical boundaries and recovery — when applicable
+
+> Include this table only when the product has time boundaries, competing
+> actions, retained outcomes, external effects, or a local-data promise. State
+> product-visible behavior here, not technical mechanisms.
+
+| Product condition | Boundary, failure, or competing action | Observable outcome and recovery | Source decision |
+| --- | --- | --- | --- |
+| *To resolve, or remove this section when not applicable* | *To resolve* | *To resolve* | *To resolve* |
+
 ## Local data lifecycle and historical integrity
 
 *To resolve from approved sources or explicit creator decisions.*

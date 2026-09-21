@@ -103,6 +103,54 @@ snapshot boundary, one serialization strategy, one exact storage
 representation, and an idempotency/retry strategy where an external effect is
 involved.
 
+## Architecture-refinement observations and learnings
+
+The PRD amendments established the required outcomes; the architecture work
+made their enforcement decision-complete. The following lessons apply to the
+architecture itself, not only to the product requirements.
+
+| Architecture area | Observation | Architecture learning and resulting direction |
+| --- | --- | --- |
+| Trigger versus correctness boundary | Foreground, overview, and WorkManager are useful places to start reconciliation, but none is a reliable boundary for a command that arrives while the process remains open. | Treat triggers as timeliness optimizations. Put correctness in the command/reconciliation transaction itself, using one captured clock snapshot. |
+| Transaction ownership | A Room transaction alone does not explain how separately started reconciliation paths are ordered before balance-dependent scoring. | Make ownership explicit with a database-resident singleton reconciliation lock. All reconciliation and period-sensitive commands acquire it before changing rows, so the transaction—not a process-local mutex—serializes finalization. |
+| Deterministic aggregate updates | A miss deduction depends on the current app-wide balance. Processing equivalent occurrences in a different order can produce different point effects. | Store and query a total ordering: `endExclusiveEpochMillis`, `habitId`, then `occurrenceId`. State that the same order applies to every reconciliation and command-triggered catch-up. |
+| Time modeling | `LocalDate` explains calendar intent but cannot alone decide whether a command crossed a real instant boundary, especially after a timezone change. | Persist both calendar fields and an immutable execution boundary: `startLocalDate`, `endLocalDate`, `boundaryZoneId`, and `endExclusiveEpochMillis`. Future planning reads the current zone; existing rows never do. |
+| Command contract | A save or target change that reads first and reconciles later can mutate a closed occurrence. | Define `SaveProgress` and `ChangeTarget` as period-sensitive commands: reconcile the affected habit first in the same transaction, then allow a change only if the habit is `ACTIVE` and the occurrence is still `OPEN`. |
+| Schema as a contract | Conceptual tables left storage formats, nullability, state combinations, and query performance to individual implementers. | Specify Room/SQLite types, normalized decimal conversion, foreign keys, unique keys, indexes, and `CHECK` constraints. The schema is a cross-layer contract, not a data-layer detail. |
+| Exact quantities | Allowing either decimal text or scaled integers permits incompatible choices and binary floating-point can undermine target comparisons. | Select one representation—normalized decimal `TEXT` exposed as `BigDecimal`—and apply it uniformly to current target, effective target, progress, and target-change requests. |
+| Lifecycle closure | A retirement transition is not complete until it defines open work, history visibility, and pending side effects. | Give lifecycle state a single owner (`habits.status`) and resolve dependent records in the same final-retirement transaction: cancel open occurrences, preserve history, and suppress unposted notification events. |
+| External-effect reliability | A notification is outside Room's transaction, so a committed domain result and a visible notification cannot be one atomic operation. | Use the transactional outbox pattern: atomically record intent, dispatch only after commit, make delivery state explicit, and use a stable platform ID for idempotent retries. |
+| Platform privacy enforcement | Declaring a local-only persistence boundary does not configure Android to keep the data local. | Record the manifest and data-extraction-rule obligations alongside the persistence design, covering Room, DataStore, preferences, and all user-data domains. |
+| Presentation architecture | Retired data must be reviewable without accidentally re-enabling active controls. | Model active and retired read models separately: the active overview exposes tracking controls, while the retired-habits view exposes retained immutable history only. |
+| Documentation as an architecture tool | ASCII diagrams were compact but obscured state, transaction, and delivery relationships. | Use Mermaid diagrams where a relationship is easier to validate visually than in prose: component flow, independent state machines, navigation, reconciliation sequence, outbox lifecycle, and retirement resolution. Keep package layout and schema as text/table where they are more precise. |
+
+### Architecture review sequence
+
+The following sequence produced a more reliable technical design and should be
+reused for future feature deltas:
+
+1. Map each approved requirement to the UI, domain, persistence, platform, and
+   verification responsibilities that own it.
+2. Mark all values that affect money-like balances, history, or outcomes as
+   exact representations with one source of truth.
+3. For every time-sensitive operation, identify its snapshot, immutable stored
+   boundary, transaction owner, ordering, and late-command behavior.
+4. For every external effect, identify the committed event, idempotency key,
+   dispatcher, retry states, terminal unavailable state, and in-app fallback.
+5. For every lifecycle transition, identify its conditional guard, dependent
+   records, retained audit evidence, and UI visibility rules.
+6. Translate the final contract into constraints, indexes, state diagrams,
+   traceability, and focused repository/device tests before implementation.
+
+### Deferred architecture practice
+
+The initial documentation pass began without an ADR directory or template.
+The repository now uses [ADR 0001](../adr/0001-deterministic-on-device-tracking.md)
+for the baseline durable tracking contract and includes a reusable ADR template.
+If that contract later changes, or implementation introduces a materially
+different concurrency, persistence, notification, or privacy pattern, create a
+focused successor ADR rather than overwriting the accepted rationale.
+
 ## Ongoing verification expectations
 
 The architecture's verification strategy should remain tied to these findings:

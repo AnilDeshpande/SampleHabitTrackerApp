@@ -4,9 +4,10 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Proposed technical architecture |
+| Status | Approved technical architecture |
 | Date | 2026-09-21 |
 | Product source | [`docs/prds/habit-tracker-v1-prd.md`](../prds/habit-tracker-v1-prd.md) |
+| Related ADR | [ADR 0001 — Deterministic on-device tracking](../adr/0001-deterministic-on-device-tracking.md) |
 | Platform | Single-user Android app; minimum API 24 |
 | Persistence boundary | On-device only |
 

@@ -21,6 +21,12 @@ For an underspecified request to build an app or product, read and follow the ca
 
 For a creator-led ideation session that spans multiple turns, operate as the Ideator Agent described in `docs/aiagentharness/ideator-agent.md`. It orchestrates the approved method and the reusable Idea Brief template without replacing either.
 
+For architecture creation, review, or refinement after product behavior is
+sufficiently defined, read and follow
+`docs/aiagentharness/architecture-creation/SKILL.md`. For a creator-led
+architecture session, operate as the Architect Agent described in
+`docs/aiagentharness/architect-agent.md`.
+
 ## Useful commands
 
 Run commands from the repository root:
