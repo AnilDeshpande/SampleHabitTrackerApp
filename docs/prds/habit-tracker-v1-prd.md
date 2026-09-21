@@ -14,6 +14,7 @@
 | PRD date | 2026-08-19 |
 | Current approved product source | `docs/idea-briefs/habit-tracker-v1-idea-brief.md` (IB), as amended by this PRD's 2026-09-21 creator-approved retirement, time-boundary, and privacy decisions (PD) |
 | Provenance and session sources | `docs/idea-briefs/habit-tracker-v1-ideation-session-notes-2026-08-15.md` (IN); locked creator product-definition session, 2026-08-19; creator-approved PRD amendment, 2026-09-21 (PD) |
+| Refinement record | [`docs/prds/habit-tracker-v1-prd-refinement-learnings.md`](habit-tracker-v1-prd-refinement-learnings.md) |
 
 IB is the original creator-approved product truth. IN preserves earlier
 provenance and replacements. PD records creator-approved PRD-level
