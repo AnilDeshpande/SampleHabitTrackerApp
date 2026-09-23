@@ -4,12 +4,12 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Accepted |
+| Status | Superseded |
 | Date | 2026-09-21 |
 | Decision owner | Habit Tracker V1 architecture owner |
 | Related architecture document | [Habit Tracker V1 Architecture](../architecture/habit-tracker-v1-architecture.md) |
 | Product source | [Habit Tracker V1 PRD](../prds/habit-tracker-v1-prd.md) |
-| Supersedes / superseded by | None |
+| Supersedes / superseded by | Superseded by [ADR 0002](0002-global-catch-up-and-occurrence-continuity.md) on 2026-09-23 |
 
 ## Context and decision drivers
 
