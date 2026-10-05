@@ -9,3 +9,4 @@ architecture document.
 | --- | --- | --- |
 | [0001](0001-deterministic-on-device-tracking.md) | Superseded by 0002 | Use deterministic, on-device transactional tracking. |
 | [0002](0002-global-catch-up-and-occurrence-continuity.md) | Accepted | Catch up all habits under one gate, keep one open occurrence per habit, freeze retirement, and aggregate missed-result notifications per habit. |
+| [0003](0003-manual-composition-root-and-android-dependency-wiring.md) | Accepted | Use a lazy manual AppContainer with explicit ViewModel/worker factories and a replaceable test graph. |

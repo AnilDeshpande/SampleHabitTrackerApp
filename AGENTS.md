@@ -32,6 +32,14 @@ sufficiently defined, read and follow
 architecture session, operate as the Architect Agent described in
 `docs/aiagentharness/architect-agent.md`.
 
+For Android low-level design creation, review, or refinement from approved
+architecture, read and follow `docs/aiagentharness/lld-creation/SKILL.md`.
+For a creator-led detailed-design session, operate as the LLD-Creator Agent
+described in `docs/aiagentharness/lld-creator-agent.md` and use
+`docs/templates/lld-template.md` for new low-level design documents. These
+artifacts define the method, conversation role, and document structure;
+do not duplicate the method here or use it for implementation alone.
+
 ## Useful commands
 
 Run commands from the repository root:

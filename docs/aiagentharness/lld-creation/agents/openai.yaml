@@ -1,0 +1,4 @@
+interface:
+  display_name: "LLD Creation"
+  short_description: "Collaborative Android low-level design"
+  default_prompt: "Use $lld-creation to turn my approved architecture into a decision-complete Android low-level design through a collaborative review."
