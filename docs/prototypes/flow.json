@@ -1,0 +1,4651 @@
+{
+  "app": "Habit Tracker V1",
+  "platforms": [
+    "android"
+  ],
+  "appScreens": {
+    "overview": {
+      "name": "Overview",
+      "purpose": "Track active habits, global points and pending retirements.",
+      "location": "Start destination"
+    },
+    "create": {
+      "name": "Create habit",
+      "purpose": "Choose a measurable habit and schedule.",
+      "location": "Overview → Create habit"
+    },
+    "progress": {
+      "name": "Record progress",
+      "purpose": "Replace the current occurrence total.",
+      "location": "Sheet destination from Overview or Habit review; save returns Overview"
+    },
+    "edit": {
+      "name": "Edit habit",
+      "purpose": "Change name or target with its effective period.",
+      "location": "Overview → Edit habit"
+    },
+    "review": {
+      "name": "Habit review",
+      "purpose": "Review results, points, target changes and badges; acknowledge misses.",
+      "location": "Overview / Retired habits → Habit review; notification parent is Overview"
+    },
+    "retirement": {
+      "name": "Retire habit",
+      "purpose": "Confirm retirement before the 10-second Undo window.",
+      "location": "Dialog destination over Overview"
+    },
+    "retired": {
+      "name": "Retired habits",
+      "purpose": "Find retained read-only habit history.",
+      "location": "Overview → Retired habits"
+    }
+  },
+  "tabs": [],
+  "journeys": [
+    {
+      "id": "core",
+      "title": "Create, record and review",
+      "screens": [
+        {
+          "id": "core-empty",
+          "screen": "overview",
+          "state": "core-empty",
+          "stateName": "No active habits",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "empty",
+              "title": "Start your first habit",
+              "text": "Create a habit with a measurable target.",
+              "action": {
+                "text": "Create habit",
+                "key": "create"
+              }
+            },
+            {
+              "type": "button",
+              "text": "Retired habits",
+              "key": "retired",
+              "variant": "text"
+            }
+          ],
+          "note": "Personal on-device data; no sign-in. Back leaves app. Text scale / screen readers supported.",
+          "entry": "First launch"
+        },
+        {
+          "id": "core-form",
+          "screen": "create",
+          "state": "core-form",
+          "stateName": "Daily draft",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Meditation",
+              "helper": "1–50 characters; unique active name"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "minutes",
+              "helper": "1–20 characters; fixed after save"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "10",
+              "helper": "Positive; up to 9 + 3 digits"
+            },
+            {
+              "type": "card",
+              "text": "Frequency: Daily\nStarts today"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "key": "cancel",
+              "variant": "text"
+            }
+          ],
+          "note": "Other frequencies are shown on the schedule pages. Clean Cancel returns Overview.",
+          "parent": "overview"
+        },
+        {
+          "id": "core-created",
+          "screen": "overview",
+          "state": "core-created",
+          "stateName": "Daily habit created",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0\nBadge: not earned\nUnacknowledged misses: 0"
+            },
+            {
+              "type": "button",
+              "text": "Record progress",
+              "key": "record",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Review habit",
+              "key": "review",
+              "variant": "text"
+            },
+            {
+              "type": "snackbar",
+              "text": "Habit saved"
+            }
+          ],
+          "note": "Permission after first creation: see notification journey."
+        },
+        {
+          "id": "core-total",
+          "screen": "progress",
+          "state": "core-total",
+          "stateName": "Open period total",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 11 Oct · ends 12 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "12",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "text"
+            }
+          ],
+          "note": "Separate destination rendered as a sheet. Save / Close returns Overview.",
+          "parent": "overview"
+        },
+        {
+          "id": "core-saved",
+          "screen": "overview",
+          "state": "core-saved",
+          "stateName": "Total saved",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 12 / 10 minutes\nTarget met · period still open\nActive run 1 · Streak 0"
+            },
+            {
+              "type": "snackbar",
+              "text": "Total saved"
+            }
+          ]
+        },
+        {
+          "id": "core-final",
+          "screen": "overview",
+          "state": "core-final",
+          "stateName": "Next day, success finalized",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 10"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 0 / 10 minutes\nLast result: Success · +10\nActive run 2 · Streak 1"
+            },
+            {
+              "type": "button",
+              "text": "Review habit",
+              "key": "review",
+              "variant": "primary"
+            }
+          ],
+          "note": "Finalize at boundary / next app use; no exact background timing promise."
+        },
+        {
+          "id": "core-history",
+          "screen": "review",
+          "state": "core-history",
+          "stateName": "Saved result history",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Habit review",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · Daily · minutes"
+            },
+            {
+              "type": "text",
+              "text": "Active run 2 · Success streak 1"
+            },
+            {
+              "type": "card",
+              "text": "11 Oct · target 10 · total 12\nSuccess · +10 points"
+            },
+            {
+              "type": "button",
+              "text": "Back to Overview",
+              "key": "back",
+              "variant": "text"
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "core-return",
+          "screen": "overview",
+          "state": "core-return",
+          "stateName": "Returned from review",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 10"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 0 / 10 minutes\nLast result: Success\nActive run 2 · Streak 1"
+            }
+          ]
+        }
+      ],
+      "flows": [
+        {
+          "from": "core-empty",
+          "to": "core-form",
+          "label": "Create habit",
+          "key": "create"
+        },
+        {
+          "from": "core-form",
+          "to": "core-created",
+          "label": "Save habit",
+          "key": "save"
+        },
+        {
+          "from": "core-created",
+          "to": "core-total",
+          "label": "Record progress",
+          "key": "record"
+        },
+        {
+          "from": "core-total",
+          "to": "core-saved",
+          "label": "Save total",
+          "key": "save"
+        },
+        {
+          "from": "core-saved",
+          "to": "core-final",
+          "label": "Next day / reopen"
+        },
+        {
+          "from": "core-final",
+          "to": "core-history",
+          "label": "Review habit",
+          "key": "review"
+        },
+        {
+          "from": "core-history",
+          "to": "core-return",
+          "label": "Back",
+          "key": "back"
+        }
+      ]
+    },
+    {
+      "id": "schedules",
+      "title": "Choose a schedule and first period",
+      "screens": [
+        {
+          "id": "schedules-choice",
+          "screen": "create",
+          "state": "schedules-choice",
+          "stateName": "Choose frequency",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Read"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "pages"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "20"
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "text": "Daily",
+                  "key": "daily"
+                },
+                {
+                  "text": "Weekly",
+                  "key": "weekly"
+                },
+                {
+                  "text": "Fortnightly",
+                  "key": "fortnight"
+                },
+                {
+                  "text": "Monthly",
+                  "key": "monthly"
+                },
+                {
+                  "text": "Custom weekdays",
+                  "key": "custom"
+                }
+              ]
+            }
+          ],
+          "note": "The five rows are frequency choices, not app destinations.",
+          "entry": "Creation on Sun 11 Oct 2026",
+          "parent": "overview"
+        },
+        {
+          "id": "schedules-daily-draft",
+          "screen": "create",
+          "state": "schedules-daily-draft",
+          "stateName": "Daily selected",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Read"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "pages"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "20"
+            },
+            {
+              "type": "card",
+              "text": "Daily\n11 Oct → 12 Oct 00:00"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "below": "schedules-choice",
+          "note": "Daily starts on creation date.",
+          "parent": "overview"
+        },
+        {
+          "id": "schedules-daily-saved",
+          "screen": "overview",
+          "state": "schedules-daily-saved",
+          "stateName": "Open today",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Read · Daily\n20 pages target\n11 Oct → 12 Oct 00:00\n0 / 20 pages · Active run 1\nStreak 0"
+            }
+          ],
+          "below": "schedules-daily-draft",
+          "note": "One current occurrence."
+        },
+        {
+          "id": "schedules-weekly-draft",
+          "screen": "create",
+          "state": "schedules-weekly-draft",
+          "stateName": "Weekly selected",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Read"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "pages"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "20"
+            },
+            {
+              "type": "card",
+              "text": "Weekly\nMon 12 Oct → Mon 19 Oct"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "below": "schedules-choice",
+          "note": "Weekly starts today if Monday; Monthly if day 1.",
+          "parent": "overview"
+        },
+        {
+          "id": "schedules-weekly-saved",
+          "screen": "overview",
+          "state": "schedules-weekly-saved",
+          "stateName": "Waiting for first period",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Read · Weekly\n20 pages target\nMon 12 Oct → Mon 19 Oct\nNext start shown · Active run 0\nStreak 0"
+            }
+          ],
+          "below": "schedules-weekly-draft",
+          "note": "No Record progress action until an occurrence opens."
+        },
+        {
+          "id": "schedules-fortnight-draft",
+          "screen": "create",
+          "state": "schedules-fortnight-draft",
+          "stateName": "Fortnightly selected",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Read"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "pages"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "20"
+            },
+            {
+              "type": "card",
+              "text": "Fortnightly\n11 Oct → 25 Oct 00:00"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "below": "schedules-choice",
+          "note": "Fortnightly is creation-anchored, not calendar halves.",
+          "parent": "overview"
+        },
+        {
+          "id": "schedules-fortnight-saved",
+          "screen": "overview",
+          "state": "schedules-fortnight-saved",
+          "stateName": "Open 14-day period",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Read · Fortnightly\n20 pages target\n11 Oct → 25 Oct 00:00\n0 / 20 pages · Active run 1\nStreak 0"
+            }
+          ],
+          "below": "schedules-fortnight-draft",
+          "note": "One current occurrence."
+        },
+        {
+          "id": "schedules-monthly-draft",
+          "screen": "create",
+          "state": "schedules-monthly-draft",
+          "stateName": "Monthly selected",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Read"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "pages"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "20"
+            },
+            {
+              "type": "card",
+              "text": "Monthly\n1 Nov → 1 Dec 00:00"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "below": "schedules-choice",
+          "note": "Weekly starts today if Monday; Monthly if day 1.",
+          "parent": "overview"
+        },
+        {
+          "id": "schedules-monthly-saved",
+          "screen": "overview",
+          "state": "schedules-monthly-saved",
+          "stateName": "Waiting until 1 Nov",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Read · Monthly\n20 pages target\n1 Nov → 1 Dec 00:00\nNext start shown · Active run 0\nStreak 0"
+            }
+          ],
+          "below": "schedules-monthly-draft",
+          "note": "No Record progress action until an occurrence opens."
+        },
+        {
+          "id": "schedules-custom-draft",
+          "screen": "create",
+          "state": "schedules-custom-draft",
+          "stateName": "Custom weekdays selected",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Read"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "pages"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "20"
+            },
+            {
+              "type": "card",
+              "text": "Custom weekdays\nMon / Wed / Fri; first Mon 12 Oct"
+            },
+            {
+              "type": "chips",
+              "items": [
+                "Mon ✓",
+                "Wed ✓",
+                "Fri ✓"
+              ]
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "below": "schedules-choice",
+          "note": "Custom needs ≥1 weekday; only selected dates have an occurrence.",
+          "parent": "overview"
+        },
+        {
+          "id": "schedules-custom-saved",
+          "screen": "overview",
+          "state": "schedules-custom-saved",
+          "stateName": "Waiting for selected weekday",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Read · Custom weekdays\n20 pages target\nMon / Wed / Fri; first Mon 12 Oct\nNext start shown · Active run 0\nStreak 0"
+            }
+          ],
+          "below": "schedules-custom-draft",
+          "note": "No Record progress action until an occurrence opens."
+        }
+      ],
+      "flows": [
+        {
+          "from": "schedules-choice",
+          "to": "schedules-daily-draft",
+          "label": "Choose Daily",
+          "key": "daily"
+        },
+        {
+          "from": "schedules-daily-draft",
+          "to": "schedules-daily-saved",
+          "label": "Save habit",
+          "key": "save"
+        },
+        {
+          "from": "schedules-choice",
+          "to": "schedules-weekly-draft",
+          "label": "Choose Weekly",
+          "key": "weekly"
+        },
+        {
+          "from": "schedules-weekly-draft",
+          "to": "schedules-weekly-saved",
+          "label": "Save habit",
+          "key": "save"
+        },
+        {
+          "from": "schedules-choice",
+          "to": "schedules-fortnight-draft",
+          "label": "Choose Fortnightly",
+          "key": "fortnight"
+        },
+        {
+          "from": "schedules-fortnight-draft",
+          "to": "schedules-fortnight-saved",
+          "label": "Save habit",
+          "key": "save"
+        },
+        {
+          "from": "schedules-choice",
+          "to": "schedules-monthly-draft",
+          "label": "Choose Monthly",
+          "key": "monthly"
+        },
+        {
+          "from": "schedules-monthly-draft",
+          "to": "schedules-monthly-saved",
+          "label": "Save habit",
+          "key": "save"
+        },
+        {
+          "from": "schedules-choice",
+          "to": "schedules-custom-draft",
+          "label": "Choose Custom weekdays",
+          "key": "custom"
+        },
+        {
+          "from": "schedules-custom-draft",
+          "to": "schedules-custom-saved",
+          "label": "Save habit",
+          "key": "save"
+        }
+      ]
+    },
+    {
+      "id": "validation",
+      "title": "Correct invalid habit inputs",
+      "screens": [
+        {
+          "id": "validation-draft",
+          "screen": "create",
+          "state": "validation-draft",
+          "stateName": "Invalid draft",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": " Meditation ",
+              "helper": "1–50 characters; unique active name"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "minutes",
+              "helper": "1–20 characters; fixed after save"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "-10",
+              "helper": "Positive; up to 9 + 3 digits"
+            },
+            {
+              "type": "card",
+              "text": "Frequency: Custom; no weekdays\nStarts today"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "key": "cancel",
+              "variant": "text"
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "validation-errors",
+          "screen": "create",
+          "state": "validation-errors",
+          "stateName": "Validation errors",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": " Meditation ",
+              "error": "An active Meditation already exists"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "minutes"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "-10",
+              "error": "Enter a positive number without a sign"
+            },
+            {
+              "type": "card",
+              "text": "Custom weekdays\nSelect at least one day"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save"
+            }
+          ],
+          "below": "validation-draft",
+          "note": "Retain raw fields. Also reject empty/overlong text, grouping/exponents and excess digits.",
+          "parent": "overview"
+        },
+        {
+          "id": "validation-corrected",
+          "screen": "create",
+          "state": "validation-corrected",
+          "stateName": "Valid Custom draft",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Reading",
+              "helper": "1–50 characters; unique active name"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "pages",
+              "helper": "1–20 characters; fixed after save"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "20",
+              "helper": "Positive; up to 9 + 3 digits"
+            },
+            {
+              "type": "card",
+              "text": "Frequency: Custom: Mon / Wed / Fri\nStarts today"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "key": "cancel",
+              "variant": "text"
+            }
+          ],
+          "below": "validation-errors",
+          "note": "Example decimal uses device locale. Retired names can be reused.",
+          "parent": "overview"
+        },
+        {
+          "id": "validation-saved",
+          "screen": "overview",
+          "state": "validation-saved",
+          "stateName": "Valid Custom habit saved",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Reading · Custom: Mon / Wed / Fri\nTarget: 20 pages\nNext start: Mon 12 Oct\nActive run 0 · Streak 0"
+            }
+          ],
+          "below": "validation-corrected"
+        }
+      ],
+      "flows": [
+        {
+          "from": "validation-draft",
+          "to": "validation-errors",
+          "label": "Save invalid draft",
+          "key": "save"
+        },
+        {
+          "from": "validation-errors",
+          "to": "validation-corrected",
+          "label": "Edit fields"
+        },
+        {
+          "from": "validation-corrected",
+          "to": "validation-saved",
+          "label": "Save habit",
+          "key": "save"
+        }
+      ]
+    },
+    {
+      "id": "correction",
+      "title": "Correct the current total",
+      "screens": [
+        {
+          "id": "correction-current",
+          "screen": "overview",
+          "state": "correction-current",
+          "stateName": "Existing total",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 12 / 10 minutes\nActive run 1 · Streak 0"
+            },
+            {
+              "type": "button",
+              "text": "Record progress",
+              "key": "record",
+              "variant": "primary"
+            }
+          ]
+        },
+        {
+          "id": "correction-lower",
+          "screen": "progress",
+          "state": "correction-lower",
+          "stateName": "Replace with lower total",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 11 Oct · ends 12 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "8",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "text"
+            }
+          ],
+          "note": "Correction may lower total; a zero total is valid.",
+          "parent": "overview"
+        },
+        {
+          "id": "correction-saved",
+          "screen": "overview",
+          "state": "correction-saved",
+          "stateName": "Corrected total",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 8 / 10 minutes\nTarget not yet met\nActive run 1 · Streak 0"
+            }
+          ]
+        },
+        {
+          "id": "correction-invalid",
+          "screen": "progress",
+          "state": "correction-invalid",
+          "stateName": "Invalid progress total",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · Current period\nTarget: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "1e3",
+              "error": "Use a nonnegative decimal"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save"
+            }
+          ],
+          "below": "correction-lower",
+          "note": "Invalid save keeps entered text; no saved total changes.",
+          "parent": "overview"
+        },
+        {
+          "id": "correction-zero",
+          "screen": "progress",
+          "state": "correction-zero",
+          "stateName": "Zero is valid",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 11 Oct · ends 12 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "0",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "text"
+            }
+          ],
+          "below": "correction-invalid",
+          "parent": "overview"
+        },
+        {
+          "id": "correction-zero-saved",
+          "screen": "overview",
+          "state": "correction-zero-saved",
+          "stateName": "Zero total saved",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 0 / 10 minutes\nActive run 1 · Streak 0"
+            }
+          ],
+          "below": "correction-zero"
+        }
+      ],
+      "flows": [
+        {
+          "from": "correction-current",
+          "to": "correction-lower",
+          "label": "Record progress",
+          "key": "record"
+        },
+        {
+          "from": "correction-lower",
+          "to": "correction-saved",
+          "label": "Save 8 minutes",
+          "key": "save"
+        },
+        {
+          "from": "correction-lower",
+          "to": "correction-invalid",
+          "label": "Enter 1e3 / Save"
+        },
+        {
+          "from": "correction-invalid",
+          "to": "correction-zero",
+          "label": "Edit total to zero"
+        },
+        {
+          "from": "correction-zero",
+          "to": "correction-zero-saved",
+          "label": "Save total",
+          "key": "save"
+        }
+      ]
+    },
+    {
+      "id": "waiting",
+      "title": "Understand when tracking is due",
+      "screens": [
+        {
+          "id": "waiting-first",
+          "screen": "overview",
+          "state": "waiting-first",
+          "stateName": "Waiting for first period",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Reading · Weekly\nTarget: 20 pages\nNext start: Mon 12 Oct\nWaiting for first period\nActive run 0 · Streak 0"
+            }
+          ],
+          "note": "No progress action; other habits may still be due.",
+          "entry": "Created Sunday"
+        },
+        {
+          "id": "waiting-open",
+          "screen": "overview",
+          "state": "waiting-open",
+          "stateName": "First period starts",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Reading · Weekly\n12–18 Oct: 0 / 20 pages\nEnds Mon 19 Oct 00:00\nActive run 1 · Streak 0"
+            }
+          ]
+        },
+        {
+          "id": "waiting-custom-off",
+          "screen": "overview",
+          "state": "waiting-custom-off",
+          "stateName": "No occurrence today",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Stretch · Custom Mon/Wed/Fri\nTarget: 5 minutes\nSunday: no occurrence today\nNext start: Mon 12 Oct\nActive run 3 · Streak 3"
+            }
+          ],
+          "entry": "Selected-day habit on Sunday"
+        },
+        {
+          "id": "waiting-gap",
+          "screen": "overview",
+          "state": "waiting-gap",
+          "stateName": "Between periods",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nNo current occurrence\nNext start: 12 Oct 00:00\nActive run 10 · Streak 3"
+            }
+          ],
+          "note": "Existing boundaries stay fixed. Future periods use current timezone; none overlap.",
+          "entry": "Timezone change creates a gap"
+        }
+      ],
+      "flows": [
+        {
+          "from": "waiting-first",
+          "to": "waiting-open",
+          "label": "Next Monday"
+        },
+        {
+          "from": "waiting-open",
+          "to": "waiting-custom-off",
+          "label": "View off-day habit"
+        },
+        {
+          "from": "waiting-custom-off",
+          "to": "waiting-gap",
+          "label": "Zone-change gap"
+        }
+      ]
+    },
+    {
+      "id": "edit-daily",
+      "title": "Edit name and a current target",
+      "screens": [
+        {
+          "id": "edit-daily-overview",
+          "screen": "overview",
+          "state": "edit-daily-overview",
+          "stateName": "Daily habit selected",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0"
+            },
+            {
+              "type": "button",
+              "text": "Edit habit",
+              "key": "edit",
+              "variant": "primary"
+            }
+          ]
+        },
+        {
+          "id": "edit-daily-draft",
+          "screen": "edit",
+          "state": "edit-daily-draft",
+          "stateName": "Daily target change",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Edit habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Morning meditation",
+              "helper": "Unique among active / pending"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "15"
+            },
+            {
+              "type": "card",
+              "text": "Daily · minutes\nUnit and frequency are fixed"
+            },
+            {
+              "type": "text",
+              "text": "Applies to today’s open period"
+            },
+            {
+              "type": "button",
+              "text": "Save changes",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "key": "cancel",
+              "variant": "text"
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "edit-daily-saved",
+          "screen": "overview",
+          "state": "edit-daily-saved",
+          "stateName": "New target effective today",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Morning meditation · Daily\nToday: 0 / 15 minutes\nActive run 1 · Streak 0"
+            },
+            {
+              "type": "button",
+              "text": "Review habit",
+              "key": "review",
+              "variant": "primary"
+            },
+            {
+              "type": "snackbar",
+              "text": "Target 15 applies to 11 Oct"
+            }
+          ]
+        },
+        {
+          "id": "edit-daily-history",
+          "screen": "review",
+          "state": "edit-daily-history",
+          "stateName": "Target change history",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Habit review",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Morning meditation · Daily · minutes"
+            },
+            {
+              "type": "empty",
+              "title": "No finalized periods",
+              "text": "Today’s occurrence is still open."
+            },
+            {
+              "type": "card",
+              "text": "Target 10 → 15\nEffective: 11 Oct\nSaved today"
+            }
+          ],
+          "note": "Daily / Custom: open period changes now. No open period: next occurrence.",
+          "parent": "overview"
+        }
+      ],
+      "flows": [
+        {
+          "from": "edit-daily-overview",
+          "to": "edit-daily-draft",
+          "label": "Edit habit",
+          "key": "edit"
+        },
+        {
+          "from": "edit-daily-draft",
+          "to": "edit-daily-saved",
+          "label": "Save changes",
+          "key": "save"
+        },
+        {
+          "from": "edit-daily-saved",
+          "to": "edit-daily-history",
+          "label": "Review habit",
+          "key": "review"
+        }
+      ]
+    },
+    {
+      "id": "edit-long",
+      "title": "Schedule targets for a later period",
+      "screens": [
+        {
+          "id": "edit-long-draft",
+          "screen": "edit",
+          "state": "edit-long-draft",
+          "stateName": "Weekly target change",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Edit habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Reading"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "30"
+            },
+            {
+              "type": "card",
+              "text": "Weekly · pages (fixed)\nCurrent period: 20 pages\nNext period: 19–25 Oct"
+            },
+            {
+              "type": "button",
+              "text": "Save changes",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "entry": "Open week of 12–18 Oct",
+          "parent": "overview"
+        },
+        {
+          "id": "edit-long-saved",
+          "screen": "overview",
+          "state": "edit-long-saved",
+          "stateName": "Future target saved",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Reading · Weekly\nCurrent target: 20 pages\nProgress: 12 / 20\nNext target: 30 from 19 Oct"
+            },
+            {
+              "type": "button",
+              "text": "Edit target again",
+              "key": "edit",
+              "variant": "primary"
+            },
+            {
+              "type": "snackbar",
+              "text": "Target 30 starts 19 Oct"
+            }
+          ],
+          "note": "Same deferred rule for Weekly, Fortnightly and Monthly."
+        },
+        {
+          "id": "edit-long-again",
+          "screen": "edit",
+          "state": "edit-long-again",
+          "stateName": "Revise pending target",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Edit habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Reading"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "40"
+            },
+            {
+              "type": "text",
+              "text": "Effective next period: 19 Oct"
+            },
+            {
+              "type": "button",
+              "text": "Save changes",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "edit-long-revision",
+          "screen": "overview",
+          "state": "edit-long-revision",
+          "stateName": "Latest pending target saved",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Reading · Weekly\nCurrent: 12 / 20 pages\nNext target: 40 from 19 Oct"
+            },
+            {
+              "type": "button",
+              "text": "Review habit",
+              "key": "review",
+              "variant": "primary"
+            }
+          ]
+        },
+        {
+          "id": "edit-long-history",
+          "screen": "review",
+          "state": "edit-long-history",
+          "stateName": "Superseded target retained",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Habit review",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Reading · Weekly · pages"
+            },
+            {
+              "type": "card",
+              "text": "Target changes\n30 from 19 Oct · Superseded\n40 from 19 Oct · Applies"
+            },
+            {
+              "type": "text",
+              "text": "Historical results keep original targets"
+            }
+          ],
+          "parent": "overview"
+        }
+      ],
+      "flows": [
+        {
+          "from": "edit-long-draft",
+          "to": "edit-long-saved",
+          "label": "Save changes",
+          "key": "save"
+        },
+        {
+          "from": "edit-long-saved",
+          "to": "edit-long-again",
+          "label": "Edit target again",
+          "key": "edit"
+        },
+        {
+          "from": "edit-long-again",
+          "to": "edit-long-revision",
+          "label": "Save changes",
+          "key": "save"
+        },
+        {
+          "from": "edit-long-revision",
+          "to": "edit-long-history",
+          "label": "Review habit",
+          "key": "review"
+        }
+      ]
+    },
+    {
+      "id": "discard-create",
+      "title": "Leave create habit with changes",
+      "screens": [
+        {
+          "id": "discard-create-dirty",
+          "screen": "create",
+          "state": "discard-create-dirty",
+          "stateName": "Unsaved changes",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Meditation",
+              "helper": "1–50 characters; unique active name"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "minutes",
+              "helper": "1–20 characters; fixed after save"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "10",
+              "helper": "Positive; up to 9 + 3 digits"
+            },
+            {
+              "type": "card",
+              "text": "Frequency: Daily\nStarts today"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "key": "cancel",
+              "variant": "text"
+            }
+          ],
+          "note": "Untouched forms close directly. Back and explicit Cancel / Close use this check.",
+          "parent": "overview"
+        },
+        {
+          "id": "discard-create-confirm",
+          "screen": "create",
+          "state": "discard-create-confirm",
+          "stateName": "Discard changes?",
+          "elements": [
+            {
+              "type": "dialog",
+              "title": "Discard changes?",
+              "text": "Your unsaved changes will be lost.",
+              "actions": [
+                {
+                  "text": "Keep editing",
+                  "key": "keep"
+                },
+                {
+                  "text": "Discard",
+                  "key": "discard",
+                  "variant": "danger"
+                }
+              ]
+            }
+          ],
+          "below": "discard-create-dirty",
+          "parent": "overview"
+        },
+        {
+          "id": "discard-create-kept",
+          "screen": "create",
+          "state": "discard-create-kept",
+          "stateName": "Editing continued",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Meditation",
+              "helper": "1–50 characters; unique active name"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "minutes",
+              "helper": "1–20 characters; fixed after save"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "10",
+              "helper": "Positive; up to 9 + 3 digits"
+            },
+            {
+              "type": "card",
+              "text": "Frequency: Daily\nStarts today"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "key": "cancel",
+              "variant": "text"
+            }
+          ],
+          "below": "discard-create-confirm",
+          "note": "All raw values remain. Resume editing and save normally.",
+          "parent": "overview"
+        },
+        {
+          "id": "discard-create-left",
+          "screen": "overview",
+          "state": "discard-create-left",
+          "stateName": "Draft discarded",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0"
+            }
+          ],
+          "note": "Intentional departure drops unsaved input; committed data remains."
+        }
+      ],
+      "flows": [
+        {
+          "from": "discard-create-dirty",
+          "to": "discard-create-confirm",
+          "label": "Back with changes",
+          "key": "back"
+        },
+        {
+          "from": "discard-create-confirm",
+          "to": "discard-create-kept",
+          "label": "Keep editing",
+          "key": "keep"
+        },
+        {
+          "from": "discard-create-confirm",
+          "to": "discard-create-left",
+          "label": "Discard",
+          "key": "discard"
+        }
+      ]
+    },
+    {
+      "id": "discard-edit",
+      "title": "Leave edit habit with changes",
+      "screens": [
+        {
+          "id": "discard-edit-dirty",
+          "screen": "edit",
+          "state": "discard-edit-dirty",
+          "stateName": "Unsaved changes",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Edit habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Morning meditation"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "15"
+            },
+            {
+              "type": "button",
+              "text": "Save changes",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "note": "Untouched forms close directly. Back and explicit Cancel / Close use this check.",
+          "parent": "overview"
+        },
+        {
+          "id": "discard-edit-confirm",
+          "screen": "edit",
+          "state": "discard-edit-confirm",
+          "stateName": "Discard changes?",
+          "elements": [
+            {
+              "type": "dialog",
+              "title": "Discard changes?",
+              "text": "Your unsaved changes will be lost.",
+              "actions": [
+                {
+                  "text": "Keep editing",
+                  "key": "keep"
+                },
+                {
+                  "text": "Discard",
+                  "key": "discard",
+                  "variant": "danger"
+                }
+              ]
+            }
+          ],
+          "below": "discard-edit-dirty",
+          "parent": "overview"
+        },
+        {
+          "id": "discard-edit-kept",
+          "screen": "edit",
+          "state": "discard-edit-kept",
+          "stateName": "Editing continued",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Edit habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Morning meditation"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "15"
+            },
+            {
+              "type": "button",
+              "text": "Save changes",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "below": "discard-edit-confirm",
+          "note": "All raw values remain. Resume editing and save normally.",
+          "parent": "overview"
+        },
+        {
+          "id": "discard-edit-left",
+          "screen": "overview",
+          "state": "discard-edit-left",
+          "stateName": "Draft discarded",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0"
+            }
+          ],
+          "note": "Intentional departure drops unsaved input; committed data remains."
+        }
+      ],
+      "flows": [
+        {
+          "from": "discard-edit-dirty",
+          "to": "discard-edit-confirm",
+          "label": "Back with changes",
+          "key": "back"
+        },
+        {
+          "from": "discard-edit-confirm",
+          "to": "discard-edit-kept",
+          "label": "Keep editing",
+          "key": "keep"
+        },
+        {
+          "from": "discard-edit-confirm",
+          "to": "discard-edit-left",
+          "label": "Discard",
+          "key": "discard"
+        }
+      ]
+    },
+    {
+      "id": "discard-progress",
+      "title": "Leave record progress with changes",
+      "screens": [
+        {
+          "id": "discard-progress-dirty",
+          "screen": "progress",
+          "state": "discard-progress-dirty",
+          "stateName": "Unsaved changes",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 11 Oct · ends 12 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "8",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "text"
+            }
+          ],
+          "note": "Untouched forms close directly. Back and explicit Cancel / Close use this check.",
+          "parent": "overview"
+        },
+        {
+          "id": "discard-progress-confirm",
+          "screen": "progress",
+          "state": "discard-progress-confirm",
+          "stateName": "Discard changes?",
+          "elements": [
+            {
+              "type": "dialog",
+              "title": "Discard changes?",
+              "text": "Your unsaved changes will be lost.",
+              "actions": [
+                {
+                  "text": "Keep editing",
+                  "key": "keep"
+                },
+                {
+                  "text": "Discard",
+                  "key": "discard",
+                  "variant": "danger"
+                }
+              ]
+            }
+          ],
+          "below": "discard-progress-dirty",
+          "parent": "overview"
+        },
+        {
+          "id": "discard-progress-kept",
+          "screen": "progress",
+          "state": "discard-progress-kept",
+          "stateName": "Editing continued",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 11 Oct · ends 12 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "8",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "text"
+            }
+          ],
+          "below": "discard-progress-confirm",
+          "note": "All raw values remain. Resume editing and save normally.",
+          "parent": "overview"
+        },
+        {
+          "id": "discard-progress-left",
+          "screen": "overview",
+          "state": "discard-progress-left",
+          "stateName": "Draft discarded",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0"
+            }
+          ],
+          "note": "Intentional departure drops unsaved input; committed data remains."
+        }
+      ],
+      "flows": [
+        {
+          "from": "discard-progress-dirty",
+          "to": "discard-progress-confirm",
+          "label": "Back with changes",
+          "key": "back"
+        },
+        {
+          "from": "discard-progress-confirm",
+          "to": "discard-progress-kept",
+          "label": "Keep editing",
+          "key": "keep"
+        },
+        {
+          "from": "discard-progress-confirm",
+          "to": "discard-progress-left",
+          "label": "Discard",
+          "key": "discard"
+        }
+      ]
+    },
+    {
+      "id": "late",
+      "title": "Handle a period ending before Save",
+      "screens": [
+        {
+          "id": "late-draft",
+          "screen": "progress",
+          "state": "late-draft",
+          "stateName": "Previous period draft",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 11 Oct · ends 12 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "12",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "text"
+            }
+          ],
+          "entry": "Draft open across midnight",
+          "parent": "overview"
+        },
+        {
+          "id": "late-late",
+          "screen": "progress",
+          "state": "late-late",
+          "stateName": "Closed period; text retained",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "banner",
+              "text": "That period has ended"
+            },
+            {
+              "type": "card",
+              "text": "11 Oct · final total 8 / 10\nMissed · −1 point\nFinal result cannot change"
+            },
+            {
+              "type": "field",
+              "label": "Unsaved total",
+              "value": "12",
+              "helper": "Still bound to 11 Oct"
+            },
+            {
+              "type": "button",
+              "text": "Record for current period",
+              "key": "current",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "text"
+            }
+          ],
+          "below": "late-draft",
+          "note": "Late Save rejected. Never silently bind old total to a new occurrence.",
+          "parent": "overview"
+        },
+        {
+          "id": "late-new",
+          "screen": "progress",
+          "state": "late-new",
+          "stateName": "Current period chosen",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 12 Oct · ends 13 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "12",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "text"
+            }
+          ],
+          "below": "late-late",
+          "note": "Explicit choice rebinds retained text; review it, then tap Save. No automatic submission.",
+          "parent": "overview"
+        },
+        {
+          "id": "late-saved",
+          "screen": "overview",
+          "state": "late-saved",
+          "stateName": "Current period saved",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 99"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n12 Oct: 12 / 10 minutes\n11 Oct: Missed (unchanged)\nActive run 2 · Streak 0"
+            }
+          ],
+          "below": "late-new"
+        },
+        {
+          "id": "late-closed",
+          "screen": "overview",
+          "state": "late-closed",
+          "stateName": "Closed without new entry",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 99"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n12 Oct: 0 / 10 minutes\n11 Oct: Missed · −1\n1 unacknowledged miss"
+            }
+          ]
+        }
+      ],
+      "flows": [
+        {
+          "from": "late-draft",
+          "to": "late-late",
+          "label": "Save after midnight",
+          "key": "save"
+        },
+        {
+          "from": "late-late",
+          "to": "late-new",
+          "label": "Choose current period",
+          "key": "current"
+        },
+        {
+          "from": "late-new",
+          "to": "late-saved",
+          "label": "Save total",
+          "key": "save"
+        },
+        {
+          "from": "late-late",
+          "to": "late-closed",
+          "label": "Close",
+          "key": "close"
+        }
+      ]
+    },
+    {
+      "id": "late-wait",
+      "title": "Close a late draft when nothing is due",
+      "screens": [
+        {
+          "id": "late-wait-draft",
+          "screen": "progress",
+          "state": "late-wait-draft",
+          "stateName": "Selected-day draft",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Stretch · Fri 9 Oct"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "5"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "entry": "Restored on Saturday",
+          "parent": "overview"
+        },
+        {
+          "id": "late-wait-ended",
+          "screen": "progress",
+          "state": "late-wait-ended",
+          "stateName": "Closed; no current period",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "banner",
+              "text": "Friday’s period has ended"
+            },
+            {
+              "type": "card",
+              "text": "9 Oct · 0 / 5 minutes\nMissed · final"
+            },
+            {
+              "type": "field",
+              "label": "Unsaved total",
+              "value": "5",
+              "helper": "Retained; Friday cannot be changed"
+            },
+            {
+              "type": "text",
+              "text": "No occurrence today\nNext start: Mon 12 Oct"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "primary"
+            }
+          ],
+          "below": "late-wait-draft",
+          "parent": "overview"
+        },
+        {
+          "id": "late-wait-closed",
+          "screen": "overview",
+          "state": "late-wait-closed",
+          "stateName": "Next selected day shown",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Stretch · Mon/Wed/Fri\nTarget: 5 minutes\nNext start: Mon 12 Oct\n1 unacknowledged miss"
+            }
+          ],
+          "below": "late-wait-ended"
+        }
+      ],
+      "flows": [
+        {
+          "from": "late-wait-draft",
+          "to": "late-wait-ended",
+          "label": "Late Save",
+          "key": "save"
+        },
+        {
+          "from": "late-wait-ended",
+          "to": "late-wait-closed",
+          "label": "Close",
+          "key": "close"
+        }
+      ]
+    },
+    {
+      "id": "permission",
+      "title": "Allow or decline notifications",
+      "screens": [
+        {
+          "id": "permission-created",
+          "screen": "overview",
+          "state": "permission-created",
+          "stateName": "First habit committed",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0"
+            },
+            {
+              "type": "snackbar",
+              "text": "Habit saved"
+            }
+          ],
+          "note": "API 24–32 skips runtime prompt. No permission before commit.",
+          "entry": "First successful creation on API 33+"
+        },
+        {
+          "id": "permission-prompt",
+          "screen": "overview",
+          "state": "permission-prompt",
+          "stateName": "Android permission prompt",
+          "elements": [
+            {
+              "type": "dialog",
+              "title": "Allow notifications?",
+              "text": "Allow Habit Tracker to send notifications about missed habit periods?",
+              "system": true,
+              "actions": [
+                {
+                  "text": "Don’t allow",
+                  "key": "deny"
+                },
+                {
+                  "text": "Allow",
+                  "key": "allow"
+                }
+              ]
+            }
+          ],
+          "below": "permission-created",
+          "note": "Request once. Does not replay after restoration; no automatic re-request."
+        },
+        {
+          "id": "permission-allowed",
+          "screen": "overview",
+          "state": "permission-allowed",
+          "stateName": "Notifications allowed",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0"
+            },
+            {
+              "type": "text",
+              "text": "Tracking continues normally"
+            }
+          ],
+          "below": "permission-prompt"
+        },
+        {
+          "id": "permission-denied",
+          "screen": "overview",
+          "state": "permission-denied",
+          "stateName": "Notifications unavailable",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0"
+            },
+            {
+              "type": "text",
+              "text": "Misses remain visible in the app"
+            }
+          ],
+          "note": "Denied permission / blocked channel never prevents tracking."
+        }
+      ],
+      "flows": [
+        {
+          "from": "permission-created",
+          "to": "permission-prompt",
+          "label": "Request once"
+        },
+        {
+          "from": "permission-prompt",
+          "to": "permission-allowed",
+          "label": "Allow",
+          "key": "allow"
+        },
+        {
+          "from": "permission-prompt",
+          "to": "permission-denied",
+          "label": "Don’t allow",
+          "key": "deny"
+        }
+      ]
+    },
+    {
+      "id": "misses",
+      "title": "Review and acknowledge missed periods",
+      "screens": [
+        {
+          "id": "misses-miss",
+          "screen": "overview",
+          "state": "misses-miss",
+          "stateName": "Misses awaiting review",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 98"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 0 / 10 minutes\nLast: Missed · −1 point\nActive run 11 · Streak 0\n2 unacknowledged misses"
+            },
+            {
+              "type": "button",
+              "text": "Review habit",
+              "key": "review",
+              "variant": "primary"
+            }
+          ],
+          "note": "Each miss: ceil(1% of current global points), floor 0. Run continues; streak resets.",
+          "entry": "Two catch-up misses from balance 100"
+        },
+        {
+          "id": "misses-history",
+          "screen": "review",
+          "state": "misses-history",
+          "stateName": "Misses acknowledged",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Habit review",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · Daily\nActive run 11 · Streak 0"
+            },
+            {
+              "type": "card",
+              "text": "9 Oct · 0 / 10 · Missed · −1\n10 Oct · 8 / 10 · Missed · −1"
+            },
+            {
+              "type": "text",
+              "text": "No unacknowledged misses"
+            },
+            {
+              "type": "button",
+              "text": "Back to Overview",
+              "key": "back",
+              "variant": "text"
+            }
+          ],
+          "note": "Opening review acknowledges; history and points do not change.",
+          "parent": "overview"
+        },
+        {
+          "id": "misses-clear",
+          "screen": "overview",
+          "state": "misses-clear",
+          "stateName": "Miss indicator cleared",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 98"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 0 / 10 minutes\nLast: Missed\nActive run 11 · Streak 0"
+            }
+          ]
+        },
+        {
+          "id": "misses-notification",
+          "screen": "overview",
+          "state": "misses-notification",
+          "stateName": "Android miss notification",
+          "elements": [
+            {
+              "type": "card",
+              "text": "Android notification\nMeditation: 2 missed periods",
+              "key": "open"
+            },
+            {
+              "type": "text",
+              "text": "Tap to review results"
+            }
+          ],
+          "below": "misses-miss",
+          "note": "One notification per active habit; new miss re-alerts. Closed-app delivery best effort.",
+          "entry": "Android notification shade"
+        },
+        {
+          "id": "misses-deep-review",
+          "screen": "review",
+          "state": "misses-deep-review",
+          "stateName": "Opened from notification",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Habit review",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · Daily"
+            },
+            {
+              "type": "card",
+              "text": "9 Oct · Missed · −1\n10 Oct · Missed · −1"
+            },
+            {
+              "type": "text",
+              "text": "Miss count and notification cleared"
+            },
+            {
+              "type": "button",
+              "text": "Back to Overview",
+              "key": "back",
+              "variant": "text"
+            }
+          ],
+          "below": "misses-notification",
+          "note": "Explicit Android stack: Overview → Review. Back returns Overview.",
+          "parent": "overview"
+        },
+        {
+          "id": "misses-deep-return",
+          "screen": "overview",
+          "state": "misses-deep-return",
+          "stateName": "Returned from notification review",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 98"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 0 / 10 minutes\nMisses acknowledged"
+            }
+          ],
+          "below": "misses-deep-review"
+        }
+      ],
+      "flows": [
+        {
+          "from": "misses-miss",
+          "to": "misses-history",
+          "label": "Review habit",
+          "key": "review"
+        },
+        {
+          "from": "misses-history",
+          "to": "misses-clear",
+          "label": "Back",
+          "key": "back"
+        },
+        {
+          "from": "misses-miss",
+          "to": "misses-notification",
+          "label": "Notification delivered"
+        },
+        {
+          "from": "misses-notification",
+          "to": "misses-deep-review",
+          "label": "Tap notification",
+          "key": "open"
+        },
+        {
+          "from": "misses-deep-review",
+          "to": "misses-deep-return",
+          "label": "Back",
+          "key": "back"
+        }
+      ]
+    },
+    {
+      "id": "rewards",
+      "title": "See a success and consistency badge",
+      "screens": [
+        {
+          "id": "rewards-before",
+          "screen": "overview",
+          "state": "rewards-before",
+          "stateName": "Daily consistency nearly met",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 170"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 10 / 10 minutes\n21-date window: 17 successes\nActive run 21 · Streak 4"
+            }
+          ],
+          "note": "Target met while open does not finalize points or badge."
+        },
+        {
+          "id": "rewards-awarded",
+          "screen": "overview",
+          "state": "rewards-awarded",
+          "stateName": "Success and badge awarded",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 180"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nLast: Success · +10\nActive run 22 · Streak 5\n21-Day Consistency earned"
+            },
+            {
+              "type": "button",
+              "text": "Review habit",
+              "key": "review",
+              "variant": "primary"
+            }
+          ],
+          "note": "Daily only: ≥18 successes in 21 consecutive dates; badge once, never revoked."
+        },
+        {
+          "id": "rewards-review",
+          "screen": "review",
+          "state": "rewards-review",
+          "stateName": "Badge in history",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Habit review",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · Daily"
+            },
+            {
+              "type": "card",
+              "text": "11 Oct · 10 / 10\nSuccess · +10 points"
+            },
+            {
+              "type": "card",
+              "text": "21-Day Consistency\nEarned: 12 Oct"
+            },
+            {
+              "type": "text",
+              "text": "18 successes across 21 dates"
+            }
+          ],
+          "parent": "overview"
+        }
+      ],
+      "flows": [
+        {
+          "from": "rewards-before",
+          "to": "rewards-awarded",
+          "label": "Next day / reopen"
+        },
+        {
+          "from": "rewards-awarded",
+          "to": "rewards-review",
+          "label": "Review habit",
+          "key": "review"
+        }
+      ]
+    },
+    {
+      "id": "retire",
+      "title": "Retire, undo or keep history",
+      "screens": [
+        {
+          "id": "retire-active",
+          "screen": "overview",
+          "state": "retire-active",
+          "stateName": "Active habit",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 10"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 0 / 15 minutes\nLast: Success · +10\nActive run 2 · Streak 1"
+            },
+            {
+              "type": "button",
+              "text": "Retire habit",
+              "key": "retire",
+              "variant": "danger"
+            }
+          ],
+          "entry": "After 10 Oct success; 11 Oct target change"
+        },
+        {
+          "id": "retire-confirm",
+          "screen": "retirement",
+          "state": "retire-confirm",
+          "stateName": "Confirm retirement",
+          "elements": [
+            {
+              "type": "dialog",
+              "title": "Retire Meditation?",
+              "text": "Tracking stops. You have 10 seconds to undo; history and points remain.",
+              "actions": [
+                {
+                  "text": "Cancel",
+                  "key": "cancel"
+                },
+                {
+                  "text": "Retire",
+                  "key": "retire",
+                  "variant": "danger"
+                }
+              ]
+            }
+          ],
+          "below": "retire-active",
+          "parent": "overview"
+        },
+        {
+          "id": "retire-pending",
+          "screen": "overview",
+          "state": "retire-pending",
+          "stateName": "Pending retirement",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 10"
+            },
+            {
+              "type": "card",
+              "text": "No active Meditation\nGlobal points retained"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Retirement pending\nUndo available: 8 seconds"
+            },
+            {
+              "type": "button",
+              "text": "Undo retirement",
+              "key": "undo",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Retired habits",
+              "key": "retired",
+              "variant": "text"
+            }
+          ],
+          "below": "retire-confirm",
+          "note": "Durable row, not snackbar; open period frozen. Multiple pending rows have own countdowns."
+        },
+        {
+          "id": "retire-undone",
+          "screen": "overview",
+          "state": "retire-undone",
+          "stateName": "Timely Undo restored",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 10"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 0 / 15 minutes\nLast: Success · +10\nActive run 2 · Streak 1"
+            }
+          ],
+          "below": "retire-pending",
+          "note": "Undo before deadline resumes frozen period/run, then catches up if its boundary elapsed."
+        },
+        {
+          "id": "retire-expired",
+          "screen": "overview",
+          "state": "retire-expired",
+          "stateName": "Retirement complete",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 10"
+            },
+            {
+              "type": "empty",
+              "title": "No active habits",
+              "text": "Retired history is still available.",
+              "action": {
+                "text": "Create habit",
+                "key": "create"
+              }
+            },
+            {
+              "type": "button",
+              "text": "Retired habits",
+              "key": "retired",
+              "variant": "text"
+            }
+          ],
+          "note": "At/after deadline: frozen occurrence cancelled; no points, streak or badge effects."
+        },
+        {
+          "id": "retire-list",
+          "screen": "retired",
+          "state": "retire-list",
+          "stateName": "Retained habits",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Retired habits",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "list",
+              "items": [
+                {
+                  "text": "Meditation",
+                  "detail": "Retired 11 Oct · History retained",
+                  "key": "review"
+                }
+              ]
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "retire-history",
+          "screen": "review",
+          "state": "retire-history",
+          "stateName": "Read-only retired history",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Habit review",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · Retired · Daily"
+            },
+            {
+              "type": "card",
+              "text": "10 Oct · 10 / 10 minutes\nSuccess · +10 points"
+            },
+            {
+              "type": "card",
+              "text": "Target 10 → 15\nEffective 11 Oct"
+            },
+            {
+              "type": "card",
+              "text": "11 Oct · Cancelled\nFrozen total: 0 / 15 · 0 points"
+            },
+            {
+              "type": "text",
+              "text": "No progress, edit or reactivate"
+            },
+            {
+              "type": "button",
+              "text": "Back to retired list",
+              "key": "back",
+              "variant": "text"
+            }
+          ],
+          "note": "Same history as before retirement: balance 10 retained; no reactivation.",
+          "parent": "retired"
+        },
+        {
+          "id": "retire-list-return",
+          "screen": "retired",
+          "state": "retire-list-return",
+          "stateName": "Back from retired review",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Retired habits",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Retired"
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "retire-cancelled",
+          "screen": "overview",
+          "state": "retire-cancelled",
+          "stateName": "Retirement cancelled",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 10"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 0 / 15 minutes\nLast: Success · +10\nActive run 2 · Streak 1"
+            }
+          ],
+          "below": "retire-active",
+          "note": "Cancel / Android Back sends no retirement command."
+        }
+      ],
+      "flows": [
+        {
+          "from": "retire-active",
+          "to": "retire-confirm",
+          "label": "Retire habit",
+          "key": "retire"
+        },
+        {
+          "from": "retire-confirm",
+          "to": "retire-pending",
+          "label": "Confirm Retire",
+          "key": "retire"
+        },
+        {
+          "from": "retire-pending",
+          "to": "retire-undone",
+          "label": "Undo in time",
+          "key": "undo"
+        },
+        {
+          "from": "retire-pending",
+          "to": "retire-expired",
+          "label": "10 seconds expire"
+        },
+        {
+          "from": "retire-expired",
+          "to": "retire-list",
+          "label": "Retired habits",
+          "key": "retired"
+        },
+        {
+          "from": "retire-list",
+          "to": "retire-history",
+          "label": "Review Meditation",
+          "key": "review"
+        },
+        {
+          "from": "retire-history",
+          "to": "retire-list-return",
+          "label": "Back",
+          "key": "back"
+        },
+        {
+          "from": "retire-confirm",
+          "to": "retire-cancelled",
+          "label": "Cancel",
+          "key": "cancel"
+        }
+      ]
+    },
+    {
+      "id": "late-undo",
+      "title": "Recover an expired Undo action",
+      "screens": [
+        {
+          "id": "late-undo-pending",
+          "screen": "overview",
+          "state": "late-undo-pending",
+          "stateName": "Pending row at deadline",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 99"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Retirement pending\nUndo: less than 1 second"
+            },
+            {
+              "type": "button",
+              "text": "Undo retirement",
+              "key": "undo",
+              "variant": "primary"
+            }
+          ],
+          "entry": "Restored countdown or delayed tap"
+        },
+        {
+          "id": "late-undo-expired",
+          "screen": "overview",
+          "state": "late-undo-expired",
+          "stateName": "Undo too late",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "banner",
+              "text": "Undo window ended; habit retired"
+            },
+            {
+              "type": "button",
+              "text": "View retired habits",
+              "key": "retired",
+              "variant": "primary"
+            }
+          ],
+          "below": "late-undo-pending",
+          "note": "Wall-clock deadline survives restart. Never restart the 10-second timer."
+        },
+        {
+          "id": "late-undo-retired",
+          "screen": "retired",
+          "state": "late-undo-retired",
+          "stateName": "Expired habit retained",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Retired habits",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Retired\nHistory preserved"
+            }
+          ],
+          "below": "late-undo-expired",
+          "parent": "overview"
+        }
+      ],
+      "flows": [
+        {
+          "from": "late-undo-pending",
+          "to": "late-undo-expired",
+          "label": "Undo at deadline",
+          "key": "undo"
+        },
+        {
+          "from": "late-undo-expired",
+          "to": "late-undo-retired",
+          "label": "View retired habits",
+          "key": "retired"
+        }
+      ]
+    },
+    {
+      "id": "read-error",
+      "title": "Recover a local read failure",
+      "screens": [
+        {
+          "id": "read-error-load",
+          "screen": "overview",
+          "state": "read-error-load",
+          "stateName": "Loading local data",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "loading",
+              "text": "Loading habits…"
+            }
+          ],
+          "note": "App works offline; no network / sync banner.",
+          "entry": "App launch; noticeable wait"
+        },
+        {
+          "id": "read-error-failed",
+          "screen": "overview",
+          "state": "read-error-failed",
+          "stateName": "Read failed",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "error",
+              "title": "Could not load habits",
+              "text": "Try again to load your saved habits.",
+              "action": {
+                "text": "Retry",
+                "key": "retry"
+              }
+            }
+          ],
+          "below": "read-error-load",
+          "note": "No Create / Record / Edit until dependent data loads; never show false empty state."
+        },
+        {
+          "id": "read-error-recovered",
+          "screen": "overview",
+          "state": "read-error-recovered",
+          "stateName": "Read recovered",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0"
+            }
+          ],
+          "below": "read-error-failed"
+        }
+      ],
+      "flows": [
+        {
+          "from": "read-error-load",
+          "to": "read-error-failed",
+          "label": "Local read fails"
+        },
+        {
+          "from": "read-error-failed",
+          "to": "read-error-recovered",
+          "label": "Retry",
+          "key": "retry"
+        }
+      ]
+    },
+    {
+      "id": "save-error-create",
+      "title": "Retry saving habit",
+      "screens": [
+        {
+          "id": "save-error-create-draft",
+          "screen": "create",
+          "state": "save-error-create-draft",
+          "stateName": "Ready to save",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Meditation",
+              "helper": "1–50 characters; unique active name"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "minutes",
+              "helper": "1–20 characters; fixed after save"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "10",
+              "helper": "Positive; up to 9 + 3 digits"
+            },
+            {
+              "type": "card",
+              "text": "Frequency: Daily\nStarts today"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "key": "cancel",
+              "variant": "text"
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "save-error-create-saving",
+          "screen": "create",
+          "state": "save-error-create-saving",
+          "stateName": "Saving",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Meditation",
+              "helper": "1–50 characters; unique active name"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "minutes",
+              "helper": "1–20 characters; fixed after save"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "10",
+              "helper": "Positive; up to 9 + 3 digits"
+            },
+            {
+              "type": "card",
+              "text": "Frequency: Daily\nStarts today"
+            },
+            {
+              "type": "loading",
+              "text": "Saving…"
+            }
+          ],
+          "note": "Relevant Save disabled until commit/failure; no duplicate submissions. Show wait after 300 ms.",
+          "parent": "overview"
+        },
+        {
+          "id": "save-error-create-error",
+          "screen": "create",
+          "state": "save-error-create-error",
+          "stateName": "Save failed; draft retained",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Meditation",
+              "helper": "1–50 characters; unique active name"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "minutes",
+              "helper": "1–20 characters; fixed after save"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "10",
+              "helper": "Positive; up to 9 + 3 digits"
+            },
+            {
+              "type": "card",
+              "text": "Frequency: Daily\nStarts today"
+            },
+            {
+              "type": "error",
+              "title": "Could not save habit",
+              "text": "Your input is retained. Nothing was saved.",
+              "action": {
+                "text": "Retry",
+                "key": "retry"
+              }
+            }
+          ],
+          "below": "save-error-create-saving",
+          "parent": "overview"
+        },
+        {
+          "id": "save-error-create-saved",
+          "screen": "overview",
+          "state": "save-error-create-saved",
+          "stateName": "Retry committed",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0"
+            },
+            {
+              "type": "snackbar",
+              "text": "Saved"
+            }
+          ],
+          "below": "save-error-create-error",
+          "note": "Accepted command survives leaving screen. After-commit notification failure is not a save error."
+        }
+      ],
+      "flows": [
+        {
+          "from": "save-error-create-draft",
+          "to": "save-error-create-saving",
+          "label": "Save",
+          "key": "save"
+        },
+        {
+          "from": "save-error-create-saving",
+          "to": "save-error-create-error",
+          "label": "Local save fails"
+        },
+        {
+          "from": "save-error-create-error",
+          "to": "save-error-create-saved",
+          "label": "Retry",
+          "key": "retry"
+        }
+      ]
+    },
+    {
+      "id": "save-error-edit",
+      "title": "Retry saving changes",
+      "screens": [
+        {
+          "id": "save-error-edit-draft",
+          "screen": "edit",
+          "state": "save-error-edit-draft",
+          "stateName": "Ready to save",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Edit habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Morning meditation"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "15"
+            },
+            {
+              "type": "button",
+              "text": "Save changes",
+              "key": "save",
+              "variant": "primary"
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "save-error-edit-saving",
+          "screen": "edit",
+          "state": "save-error-edit-saving",
+          "stateName": "Saving",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Edit habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Morning meditation"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "15",
+              "helper": "Applies to today’s open period"
+            },
+            {
+              "type": "loading",
+              "text": "Saving…"
+            }
+          ],
+          "note": "Relevant Save disabled until commit/failure; no duplicate submissions. Show wait after 300 ms.",
+          "parent": "overview"
+        },
+        {
+          "id": "save-error-edit-error",
+          "screen": "edit",
+          "state": "save-error-edit-error",
+          "stateName": "Save failed; draft retained",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Edit habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Morning meditation"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "15",
+              "helper": "Applies to today’s open period"
+            },
+            {
+              "type": "error",
+              "title": "Could not save changes",
+              "text": "Your input is retained. Nothing was saved.",
+              "action": {
+                "text": "Retry",
+                "key": "retry"
+              }
+            }
+          ],
+          "below": "save-error-edit-saving",
+          "parent": "overview"
+        },
+        {
+          "id": "save-error-edit-saved",
+          "screen": "overview",
+          "state": "save-error-edit-saved",
+          "stateName": "Retry committed",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Morning meditation · Daily\nToday: 0 / 15 minutes\nActive run 1 · Streak 0"
+            },
+            {
+              "type": "snackbar",
+              "text": "Target 15 applies to 11 Oct"
+            }
+          ],
+          "below": "save-error-edit-error",
+          "note": "Accepted command survives leaving screen. After-commit notification failure is not a save error."
+        }
+      ],
+      "flows": [
+        {
+          "from": "save-error-edit-draft",
+          "to": "save-error-edit-saving",
+          "label": "Save",
+          "key": "save"
+        },
+        {
+          "from": "save-error-edit-saving",
+          "to": "save-error-edit-error",
+          "label": "Local save fails"
+        },
+        {
+          "from": "save-error-edit-error",
+          "to": "save-error-edit-saved",
+          "label": "Retry",
+          "key": "retry"
+        }
+      ]
+    },
+    {
+      "id": "save-error-progress",
+      "title": "Retry saving total",
+      "screens": [
+        {
+          "id": "save-error-progress-draft",
+          "screen": "progress",
+          "state": "save-error-progress-draft",
+          "stateName": "Ready to save",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 11 Oct · ends 12 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "12",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "text"
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "save-error-progress-saving",
+          "screen": "progress",
+          "state": "save-error-progress-saving",
+          "stateName": "Saving",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 11 Oct · ends 12 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "12",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "loading",
+              "text": "Saving…"
+            }
+          ],
+          "note": "Relevant Save disabled until commit/failure; no duplicate submissions. Show wait after 300 ms.",
+          "parent": "overview"
+        },
+        {
+          "id": "save-error-progress-error",
+          "screen": "progress",
+          "state": "save-error-progress-error",
+          "stateName": "Save failed; draft retained",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 11 Oct · ends 12 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "12",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "error",
+              "title": "Could not save total",
+              "text": "Your input is retained. Nothing was saved.",
+              "action": {
+                "text": "Retry",
+                "key": "retry"
+              }
+            }
+          ],
+          "below": "save-error-progress-saving",
+          "parent": "overview"
+        },
+        {
+          "id": "save-error-progress-saved",
+          "screen": "overview",
+          "state": "save-error-progress-saved",
+          "stateName": "Retry committed",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 12 / 10 minutes\nActive run 1 · Streak 0"
+            },
+            {
+              "type": "snackbar",
+              "text": "Total saved"
+            }
+          ],
+          "below": "save-error-progress-error",
+          "note": "Accepted command survives leaving screen. After-commit notification failure is not a save error."
+        }
+      ],
+      "flows": [
+        {
+          "from": "save-error-progress-draft",
+          "to": "save-error-progress-saving",
+          "label": "Save",
+          "key": "save"
+        },
+        {
+          "from": "save-error-progress-saving",
+          "to": "save-error-progress-error",
+          "label": "Local save fails"
+        },
+        {
+          "from": "save-error-progress-error",
+          "to": "save-error-progress-saved",
+          "label": "Retry",
+          "key": "retry"
+        }
+      ]
+    },
+    {
+      "id": "restoration",
+      "title": "Resume drafts without replaying actions",
+      "screens": [
+        {
+          "id": "restoration-draft",
+          "screen": "create",
+          "state": "restoration-draft",
+          "stateName": "Draft before process death",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Reading",
+              "helper": "1–50 characters; unique active name"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "pages",
+              "helper": "1–20 characters; fixed after save"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "20",
+              "helper": "Positive; up to 9 + 3 digits"
+            },
+            {
+              "type": "card",
+              "text": "Frequency: Weekly\nStarts today"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "key": "cancel",
+              "variant": "text"
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "restoration-restored",
+          "screen": "create",
+          "state": "restoration-restored",
+          "stateName": "Retained-task draft restored",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Reading",
+              "helper": "1–50 characters; unique active name"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "pages",
+              "helper": "1–20 characters; fixed after save"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "20",
+              "helper": "Positive; up to 9 + 3 digits"
+            },
+            {
+              "type": "card",
+              "text": "Frequency: Weekly\nStarts today"
+            },
+            {
+              "type": "button",
+              "text": "Save habit",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Cancel",
+              "key": "cancel",
+              "variant": "text"
+            }
+          ],
+          "note": "Rotation / retained-task process death restores raw fields. No save, snackbar or permission replay.",
+          "parent": "overview"
+        },
+        {
+          "id": "restoration-duplicate",
+          "screen": "create",
+          "state": "restoration-duplicate",
+          "stateName": "Prior commit found on resubmit",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Create habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Reading",
+              "error": "An active Reading already exists"
+            },
+            {
+              "type": "field",
+              "label": "Unit",
+              "value": "pages"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "20"
+            },
+            {
+              "type": "text",
+              "text": "Weekly · next start 12 Oct"
+            },
+            {
+              "type": "button",
+              "text": "Back",
+              "key": "back",
+              "variant": "text"
+            }
+          ],
+          "below": "restoration-restored",
+          "note": "Only if earlier accepted save committed: deliberate unchanged resubmit gets duplicate error.",
+          "parent": "overview"
+        },
+        {
+          "id": "restoration-existing",
+          "screen": "overview",
+          "state": "restoration-existing",
+          "stateName": "Committed habit preserved",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Reading · Weekly\nNext start: Mon 12 Oct\n20 pages · Active run 0"
+            }
+          ],
+          "below": "restoration-duplicate"
+        },
+        {
+          "id": "restoration-removed",
+          "screen": "overview",
+          "state": "restoration-removed",
+          "stateName": "Reopened after task removal",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Saved habits remain\nUnsaved drafts were discarded"
+            }
+          ],
+          "note": "Swiping task away removes drafts; committed commands/data remain saved."
+        }
+      ],
+      "flows": [
+        {
+          "from": "restoration-draft",
+          "to": "restoration-restored",
+          "label": "System restores task"
+        },
+        {
+          "from": "restoration-restored",
+          "to": "restoration-duplicate",
+          "label": "Save unchanged draft",
+          "key": "save"
+        },
+        {
+          "from": "restoration-duplicate",
+          "to": "restoration-existing",
+          "label": "Back",
+          "key": "back"
+        },
+        {
+          "from": "restoration-restored",
+          "to": "restoration-removed",
+          "label": "Remove task / reopen"
+        }
+      ]
+    },
+    {
+      "id": "pending-restore",
+      "title": "Resume multiple pending retirements",
+      "screens": [
+        {
+          "id": "pending-restore-pending",
+          "screen": "overview",
+          "state": "pending-restore-pending",
+          "stateName": "Two pending rows",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 99"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Pending\nUndo: 7 seconds"
+            },
+            {
+              "type": "card",
+              "text": "Reading · Pending\nUndo: 9 seconds"
+            }
+          ],
+          "entry": "Two retirements confirmed independently"
+        },
+        {
+          "id": "pending-restore-restored",
+          "screen": "overview",
+          "state": "pending-restore-restored",
+          "stateName": "Pending rows after restart",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 99"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Pending\nUndo: 2 seconds"
+            },
+            {
+              "type": "button",
+              "text": "Undo Meditation",
+              "key": "undo",
+              "variant": "primary"
+            },
+            {
+              "type": "card",
+              "text": "Reading · Pending\nUndo: 4 seconds"
+            }
+          ],
+          "note": "Countdowns use saved deadlines; tracking and notifications suppressed for each pending habit."
+        },
+        {
+          "id": "pending-restore-undo",
+          "screen": "overview",
+          "state": "pending-restore-undo",
+          "stateName": "One restored; one pending",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 99"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nFrozen occurrence resumed\nActive run restored"
+            },
+            {
+              "type": "card",
+              "text": "Reading · Pending\nUndo: 3 seconds"
+            }
+          ]
+        },
+        {
+          "id": "pending-restore-settled",
+          "screen": "overview",
+          "state": "pending-restore-settled",
+          "stateName": "Other retirement settled",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 99"
+            },
+            {
+              "type": "card",
+              "text": "Meditation active\nReading retired; history retained"
+            }
+          ],
+          "note": "Expired pending rows settle before normal tracking. Only the undone habit resumes."
+        }
+      ],
+      "flows": [
+        {
+          "from": "pending-restore-pending",
+          "to": "pending-restore-restored",
+          "label": "Restart before deadlines"
+        },
+        {
+          "from": "pending-restore-restored",
+          "to": "pending-restore-undo",
+          "label": "Undo Meditation",
+          "key": "undo"
+        },
+        {
+          "from": "pending-restore-undo",
+          "to": "pending-restore-settled",
+          "label": "Reading deadline expires"
+        }
+      ]
+    },
+    {
+      "id": "review-record",
+      "title": "Record from review and return to Overview",
+      "screens": [
+        {
+          "id": "review-record-review",
+          "screen": "review",
+          "state": "review-record-review",
+          "stateName": "No finalized results yet",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Habit review",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · Daily"
+            },
+            {
+              "type": "empty",
+              "title": "No finalized periods",
+              "text": "Results appear after a period ends."
+            },
+            {
+              "type": "text",
+              "text": "Today: 0 / 10 minutes"
+            },
+            {
+              "type": "button",
+              "text": "Record progress",
+              "key": "record",
+              "variant": "primary"
+            }
+          ],
+          "note": "Review acknowledges misses on any entry. Period history cannot be edited.",
+          "parent": "overview"
+        },
+        {
+          "id": "review-record-total",
+          "screen": "progress",
+          "state": "review-record-total",
+          "stateName": "Entered from review",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Record progress",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "text",
+              "text": "Meditation · 11 Oct · ends 12 Oct 00:00"
+            },
+            {
+              "type": "text",
+              "text": "Target: 10 minutes"
+            },
+            {
+              "type": "field",
+              "label": "Period total",
+              "value": "12",
+              "helper": "Replaces total; does not add to it"
+            },
+            {
+              "type": "button",
+              "text": "Save total",
+              "key": "save",
+              "variant": "primary"
+            },
+            {
+              "type": "button",
+              "text": "Close",
+              "key": "close",
+              "variant": "text"
+            }
+          ],
+          "note": "Save / Close returns Overview, even when opened from Review.",
+          "parent": "overview"
+        },
+        {
+          "id": "review-record-saved",
+          "screen": "overview",
+          "state": "review-record-saved",
+          "stateName": "Review entry saved",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\nToday: 12 / 10 minutes"
+            }
+          ]
+        },
+        {
+          "id": "review-record-close",
+          "screen": "overview",
+          "state": "review-record-close",
+          "stateName": "Closed without changes",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "text",
+              "text": "Global points: 0"
+            },
+            {
+              "type": "card",
+              "text": "Meditation · Daily\n10 minutes target\nToday: 0 / 10 minutes\nEnds tonight at 00:00\nActive run 1 · Streak 0"
+            }
+          ],
+          "below": "review-record-total"
+        }
+      ],
+      "flows": [
+        {
+          "from": "review-record-review",
+          "to": "review-record-total",
+          "label": "Record progress",
+          "key": "record"
+        },
+        {
+          "from": "review-record-total",
+          "to": "review-record-saved",
+          "label": "Save total",
+          "key": "save"
+        },
+        {
+          "from": "review-record-total",
+          "to": "review-record-close",
+          "label": "Close unchanged",
+          "key": "close"
+        }
+      ]
+    },
+    {
+      "id": "retired-empty",
+      "title": "Find retired history when the list is empty",
+      "screens": [
+        {
+          "id": "retired-empty-overview",
+          "screen": "overview",
+          "state": "retired-empty-overview",
+          "stateName": "No active habits",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "empty",
+              "title": "No active habits",
+              "text": "Create a habit or browse retired history.",
+              "action": {
+                "text": "Create habit",
+                "key": "create"
+              }
+            },
+            {
+              "type": "button",
+              "text": "Retired habits",
+              "key": "retired",
+              "variant": "text"
+            }
+          ]
+        },
+        {
+          "id": "retired-empty-empty",
+          "screen": "retired",
+          "state": "retired-empty-empty",
+          "stateName": "No retired habits",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Retired habits",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "empty",
+              "title": "No retired habits",
+              "text": "Retired habits will remain here for review."
+            },
+            {
+              "type": "button",
+              "text": "Back to Overview",
+              "key": "back",
+              "variant": "text"
+            }
+          ],
+          "parent": "overview"
+        },
+        {
+          "id": "retired-empty-back",
+          "screen": "overview",
+          "state": "retired-empty-back",
+          "stateName": "Returned to empty Overview",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false,
+              "key": null
+            },
+            {
+              "type": "empty",
+              "title": "Start a habit",
+              "text": "Choose your target and schedule.",
+              "action": {
+                "text": "Create habit",
+                "key": "create"
+              }
+            }
+          ]
+        }
+      ],
+      "flows": [
+        {
+          "from": "retired-empty-overview",
+          "to": "retired-empty-empty",
+          "label": "Retired habits",
+          "key": "retired"
+        },
+        {
+          "from": "retired-empty-empty",
+          "to": "retired-empty-back",
+          "label": "Back",
+          "key": "back"
+        }
+      ]
+    },
+    {
+      "id": "edit-waiting",
+      "title": "Change a target before the next occurrence",
+      "screens": [
+        {
+          "id": "edit-waiting-overview",
+          "screen": "overview",
+          "state": "edit-waiting-overview",
+          "stateName": "No occurrence today",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false
+            },
+            {
+              "type": "card",
+              "text": "Stretch · Custom Mon/Wed/Fri\nTarget: 5 minutes\nNext start: Mon 12 Oct"
+            },
+            {
+              "type": "button",
+              "text": "Edit habit",
+              "key": "edit"
+            }
+          ]
+        },
+        {
+          "id": "edit-waiting-draft",
+          "screen": "edit",
+          "state": "edit-waiting-draft",
+          "stateName": "Target for next occurrence",
+          "parent": "overview",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Edit habit",
+              "back": true,
+              "key": "back"
+            },
+            {
+              "type": "field",
+              "label": "Name",
+              "value": "Stretch"
+            },
+            {
+              "type": "field",
+              "label": "Target",
+              "value": "10"
+            },
+            {
+              "type": "text",
+              "text": "Custom · minutes (fixed)\nEffective: Mon 12 Oct"
+            },
+            {
+              "type": "button",
+              "text": "Save changes",
+              "key": "save"
+            }
+          ],
+          "note": "With no open occurrence, even Daily / Custom changes start at the next occurrence."
+        },
+        {
+          "id": "edit-waiting-saved",
+          "screen": "overview",
+          "state": "edit-waiting-saved",
+          "stateName": "Next occurrence target saved",
+          "elements": [
+            {
+              "type": "bar",
+              "text": "Overview",
+              "back": false
+            },
+            {
+              "type": "card",
+              "text": "Stretch · Custom Mon/Wed/Fri\nNext target: 10 minutes\nNext start: Mon 12 Oct"
+            },
+            {
+              "type": "snackbar",
+              "text": "Target 10 applies from 12 Oct"
+            }
+          ]
+        }
+      ],
+      "flows": [
+        {
+          "from": "edit-waiting-overview",
+          "to": "edit-waiting-draft",
+          "key": "edit",
+          "label": "Edit habit"
+        },
+        {
+          "from": "edit-waiting-draft",
+          "to": "edit-waiting-saved",
+          "key": "save",
+          "label": "Save changes"
+        }
+      ]
+    }
+  ]
+}
