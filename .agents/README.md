@@ -3,8 +3,43 @@
 Shared starting point for Claude and Codex. Select the workflow below and read its
 canonical skill, applicable conversation role, and templates. This index provides
 navigation; the linked instructions own behavior, decision gates, and authorization.
-Use the project-local files linked here. Paths in invocation examples are relative
-to the repository root; examples work without a registered skill shortcut.
+Use the project-local files linked here. The four `ht-` names distinguish this
+repository's harness from personal/global skills. Paths in file-based invocation
+examples are relative to the repository root.
+
+## Direct invocation
+
+| Workflow | Codex | Claude Code |
+| --- | --- | --- |
+| Product ideation | `$ht-product-ideation` | `/ht-product-ideation` |
+| PRD creation | `$ht-prd-creation` | `/ht-prd-creation` |
+| Architecture | `$ht-architecture-creation` | `/ht-architecture-creation` |
+| Android LLD | `$ht-lld-creation` | `/ht-lld-creation` |
+| Mobile prototype | `$mobile-prototype` | `/mobile-prototype` |
+
+Append your request or source documents, for example:
+
+- Codex: `$ht-prd-creation Create a PRD from docs/idea-briefs/habit-tracker-v1-idea-brief.md`.
+- Claude Code: `/ht-prd-creation Create a PRD from docs/idea-briefs/habit-tracker-v1-idea-brief.md`.
+
+Codex reads the canonical bundles in `.agents/skills/`. Claude Code reads the
+[project entry points](../.claude/skills/ht-product-ideation/SKILL.md) under
+`.claude/skills/`, which load the same canonical bundles and conversation roles.
+The role guides the current agent; it does not start a separate subagent.
+
+If a command is missing, open a fresh session in this repository and check the
+skill selector (`$` in Codex, `/` in Claude Code). Confirm the corresponding
+`SKILL.md` exists in the tool's project skill directory and that skills are enabled.
+The four renamed harness skills have no unprefixed project aliases. The file-based
+examples below remain available as fallbacks.
+
+`mobile-prototype` intentionally keeps its unprefixed name. Claude Code may select
+`~/.claude/skills/mobile-prototype/` ahead of this repository's entry point. That
+personal bundle matched the project bundle when this setup was introduced. The
+read-only invocation check on 2026-10-18 loaded that personal copy; future changes
+can diverge. Use the canonical file-based invocation below when
+repository-local resolution is required. Personal/global installations are not
+modified by this setup.
 
 ## Product ideation
 
@@ -13,7 +48,7 @@ before product definition or implementation.
 
 - **Inputs:** Creator's idea and any existing creator decisions or session records.
 - **Deliverables:** Current Idea Brief and dated session notes in `docs/idea-briefs/`.
-- **Instructions:** [Product Ideation](skills/product-ideation/SKILL.md) · [Ideator Agent](roles/ideator-agent.md).
+- **Instructions:** [Product Ideation](skills/ht-product-ideation/SKILL.md) · [Ideator Agent](roles/ideator-agent.md).
 - **Templates:** [Idea Brief](templates/idea-brief-template.md) · [Session notes](templates/ideation-session-notes-template.md).
 - **Invoke:** “Read `.agents/roles/ideator-agent.md` and run ideation for my app idea.”
 
@@ -24,7 +59,7 @@ approved product-intent source; use for creator-led product definition.
 
 - **Inputs:** Approved product-intent source, decision provenance, and any existing PRD.
 - **Deliverable:** PRD after the method's decision lock and drafting authorization.
-- **Instructions:** [PRD Creation](skills/prd-creation/SKILL.md) · [PRD-Creator Agent](roles/prd-creator-agent.md).
+- **Instructions:** [PRD Creation](skills/ht-prd-creation/SKILL.md) · [PRD-Creator Agent](roles/prd-creator-agent.md).
 - **Template:** [PRD](templates/prd-template.md).
 - **Invoke:** “Read `.agents/roles/prd-creator-agent.md` and create a PRD from my approved Idea Brief.”
 
@@ -35,7 +70,7 @@ defined, or review/refine an existing architecture.
 
 - **Inputs:** Approved PRD/product source, applicable architecture and ADRs, and material implementation constraints.
 - **Deliverables:** Architecture under `docs/architecture/` and applicable durable decision records under `docs/adr/`.
-- **Instructions:** [Architecture Creation](skills/architecture-creation/SKILL.md) · [Architect Agent](roles/architect-agent.md).
+- **Instructions:** [Architecture Creation](skills/ht-architecture-creation/SKILL.md) · [Architect Agent](roles/architect-agent.md).
 - **Templates:** [Architecture](templates/architecture-template.md) · [ADR](templates/adr-template.md), when applicable.
 - **Invoke:** “Read `.agents/roles/architect-agent.md` and review the architecture against my approved PRD.”
 
@@ -46,7 +81,7 @@ resolving concrete state, work lifetime, wiring, and test contracts.
 
 - **Inputs:** Approved product source, architecture, applicable ADRs, existing LLD/history, and relevant Android/tooling constraints.
 - **Deliverables:** LLD under `docs/design/` and applicable ADRs; review findings for review-only work.
-- **Instructions:** [LLD Creation](skills/lld-creation/SKILL.md) · [LLD-Creator Agent](roles/lld-creator-agent.md) · [Android review guide](skills/lld-creation/references/android-design-review.md).
+- **Instructions:** [LLD Creation](skills/ht-lld-creation/SKILL.md) · [LLD-Creator Agent](roles/lld-creator-agent.md) · [Android review guide](skills/ht-lld-creation/references/android-design-review.md).
 - **Templates:** [LLD](templates/lld-template.md) · [ADR](templates/adr-template.md), when applicable.
 - **Invoke:** “Read `.agents/roles/lld-creator-agent.md` and refine my LLD from the approved architecture.”
 

@@ -1,5 +1,5 @@
 ---
-name: architecture-creation
+name: ht-architecture-creation
 description: "Create or refine an implementation-ready architecture from approved product behavior, using a risk-triggered integrity review and durable decision records."
 ---
 
@@ -10,6 +10,9 @@ technical design. Use this skill for a new architecture baseline, an
 architecture refinement, or a review that may change the design. Do not use it
 to implement an approved architecture, to write a PRD, or to decide product
 behavior that has not been approved.
+
+For creator-led sessions, operate as the [Architect Agent](../../roles/architect-agent.md)
+while following this canonical method.
 
 ## Authority and preparation
 

@@ -1,7 +1,7 @@
 # Low-Level Design — *Product or feature*
 
 > Use after a passing LLD Decision Lock and scoped drafting authorization under
-> [LLD Creation](../skills/lld-creation/SKILL.md). Italic text is guidance
+> [LLD Creation](../skills/ht-lld-creation/SKILL.md). Italic text is guidance
 > to replace, not an accepted decision. Keep the four core sections; for a
 > genuinely inapplicable area, state why and omit its empty sub-registers.
 > New formal LLDs must not hand implementation-critical choices to the coding

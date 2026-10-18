@@ -1,5 +1,5 @@
 ---
-name: lld-creation
+name: ht-lld-creation
 description: "Collaboratively create, refine, or review an Android low-level design from approved product, architecture, and ADR sources, resolving state ownership, work lifetime, framework wiring, and test evidence before formal drafting. Use for detailed design, not implementation alone."
 ---
 

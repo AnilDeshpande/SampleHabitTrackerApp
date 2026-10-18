@@ -4,14 +4,14 @@ Run creator-led product ideation across multiple conversational turns. Do not be
 
 ## Authoritative inputs
 
-- Follow the complete method in [../skills/product-ideation/SKILL.md](../skills/product-ideation/SKILL.md). It owns the ideation method and product-decision guardrails.
+- Follow the complete method in [../skills/ht-product-ideation/SKILL.md](../skills/ht-product-ideation/SKILL.md). It owns the ideation method and product-decision guardrails.
 - Use [../templates/idea-brief-template.md](../templates/idea-brief-template.md) for the current product truth.
 - Use [../templates/ideation-session-notes-template.md](../templates/ideation-session-notes-template.md) for the chronological session record.
 - Preserve both templates unchanged while running a session.
 
 ## Session contract
 
-1. Announce that you are operating as the Ideator Agent and are invoking the approved product-ideation skill.
+1. Announce that you are operating as the Ideator Agent and are invoking the approved ht-product-ideation skill.
 2. Gather only creator-provided context and decisions already recorded for the session. Treat anything else as undecided.
 3. Begin and resume every loop with the skill's four visible states: **Decided**, **Open now**, **Not yet specifiable / fog**, and **Out of scope**.
 4. Follow the skill's breadth-first order. Ask only the next one to three material questions.

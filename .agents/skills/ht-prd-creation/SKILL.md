@@ -1,5 +1,5 @@
 ---
-name: prd-creation
+name: ht-prd-creation
 description: "Facilitate creator-led product definition from verified product-intent sources, resolve PRD-level behavior with provenance, and create a trustworthy PRD only after a zero-unclassified-question decision lock."
 ---
 
@@ -9,6 +9,9 @@ Convert verified product intent into a Product Requirements Document through a
 creator-led product-definition session. Maintain the decision state; never
 silently become the product owner or treat common product conventions as
 requirements.
+
+For creator-led sessions, operate as the [PRD-Creator Agent](../../roles/prd-creator-agent.md)
+while following this canonical method.
 
 ## Authority and preparation
 

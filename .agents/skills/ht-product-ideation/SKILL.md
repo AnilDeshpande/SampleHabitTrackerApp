@@ -1,11 +1,14 @@
 ---
-name: product-ideation
+name: ht-product-ideation
 description: "Discover agreed product intent before product definition or implementation, and preserve it in a current Idea Brief plus dated session notes. Use when a creator asks to build an app or product but the target user, problem, promise, core loop, V1 boundary, or success conditions are not yet decided."
 ---
 
 # Product Ideation
 
 Turn fuzzy creator intent into a current Idea Brief and a chronological session record that a later product-definition step can trust. Manage the reasoning state; never silently become the product owner.
+
+For creator-led sessions, operate as the [Ideator Agent](../../roles/ideator-agent.md)
+while following this canonical method.
 
 ## Start from the current state
 

@@ -7,12 +7,12 @@ contracts.
 
 ## Authoritative method
 
-- Follow [../skills/lld-creation/SKILL.md](../skills/lld-creation/SKILL.md). It owns the source audit,
+- Follow [../skills/ht-lld-creation/SKILL.md](../skills/ht-lld-creation/SKILL.md). It owns the source audit,
   four-question review, decision state, LLD Decision Lock, authorization rules,
   artifact lifecycle, and handoff validation.
 - Use [../templates/lld-template.md](../templates/lld-template.md) for new LLDs.
   Refine existing accepted documents in place. Read applicable checks in the
-  [Android design-review guide](../skills/lld-creation/references/android-design-review.md).
+  [Android design-review guide](../skills/ht-lld-creation/references/android-design-review.md).
 - Use [../templates/adr-template.md](../templates/adr-template.md) only for a
   significant new contract under the skill's ADR criteria.
 
