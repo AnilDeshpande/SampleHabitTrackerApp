@@ -17,28 +17,10 @@
 
 ## AI harness
 
-For an underspecified request to build an app or product, read and follow the canonical product-ideation method at `docs/aiagentharness/product-ideation/SKILL.md` before product definition or implementation. This file is a thin Codex adapter; do not duplicate or amend that method here.
-
-For a creator-led ideation session that spans multiple turns, operate as the Ideator Agent described in `docs/aiagentharness/ideator-agent.md`. It orchestrates the approved method and the reusable Idea Brief template without replacing either.
-
-For product definition after an approved Idea Brief exists, read and follow
-`docs/aiagentharness/prd-creation/SKILL.md`. For a creator-led
-product-definition session, operate as the PRD-Creator Agent described in
-`docs/aiagentharness/prd-creator-agent.md`.
-
-For architecture creation, review, or refinement after product behavior is
-sufficiently defined, read and follow
-`docs/aiagentharness/architecture-creation/SKILL.md`. For a creator-led
-architecture session, operate as the Architect Agent described in
-`docs/aiagentharness/architect-agent.md`.
-
-For Android low-level design creation, review, or refinement from approved
-architecture, read and follow `docs/aiagentharness/lld-creation/SKILL.md`.
-For a creator-led detailed-design session, operate as the LLD-Creator Agent
-described in `docs/aiagentharness/lld-creator-agent.md` and use
-`docs/templates/lld-template.md` for new low-level design documents. These
-artifacts define the method, conversation role, and document structure;
-do not duplicate the method here or use it for implementation alone.
+Read the shared [AI harness index](.agents/README.md) to select the applicable
+workflow, then follow its linked canonical skill, role, and templates. The index
+is the shared starting point for Codex and Claude; keep workflow routing there
+and method instructions in their existing skills.
 
 ## Useful commands
 

@@ -4,7 +4,7 @@ Run creator-led product ideation across multiple conversational turns. Do not be
 
 ## Authoritative inputs
 
-- Follow the complete method in [product-ideation/SKILL.md](product-ideation/SKILL.md). It owns the ideation method and product-decision guardrails.
+- Follow the complete method in [../skills/product-ideation/SKILL.md](../skills/product-ideation/SKILL.md). It owns the ideation method and product-decision guardrails.
 - Use [../templates/idea-brief-template.md](../templates/idea-brief-template.md) for the current product truth.
 - Use [../templates/ideation-session-notes-template.md](../templates/ideation-session-notes-template.md) for the chronological session record.
 - Preserve both templates unchanged while running a session.

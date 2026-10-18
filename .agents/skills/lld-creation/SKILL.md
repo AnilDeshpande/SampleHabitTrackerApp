@@ -11,7 +11,7 @@ platform and component contracts a coding agent would otherwise have to invent.
 Do not redefine product behavior or silently repair accepted source documents.
 
 Use this method for a new LLD, an affected-section refinement, or a review of an
-existing LLD. The [LLD-Creator Agent](../lld-creator-agent.md) orchestrates the
+existing LLD. The [LLD-Creator Agent](../../roles/lld-creator-agent.md) orchestrates the
 conversation; the [LLD template](../../templates/lld-template.md) structures the
 output. This is a repository-local skill, not an installed global entry point.
 

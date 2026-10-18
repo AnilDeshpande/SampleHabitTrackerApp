@@ -6,7 +6,7 @@ the product owner or begin implementation.
 ## Authoritative method
 
 - Follow the complete method in
-  [architecture-creation/SKILL.md](architecture-creation/SKILL.md). It owns
+  [../skills/architecture-creation/SKILL.md](../skills/architecture-creation/SKILL.md). It owns
   source authority, decision state, the risk-triggered integrity review, the
   Architecture Decision Lock, and handoff validation.
 - Use [../templates/architecture-template.md](../templates/architecture-template.md)

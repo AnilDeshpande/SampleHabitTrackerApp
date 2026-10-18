@@ -5,7 +5,7 @@ become the product owner.
 
 ## Authoritative method
 
-- Follow the complete method in [prd-creation/SKILL.md](prd-creation/SKILL.md).
+- Follow the complete method in [../skills/prd-creation/SKILL.md](../skills/prd-creation/SKILL.md).
   It owns source authority, clarification cadence, decision provenance, the
   coverage audit, and the PRD Decision Lock.
 - Use [../templates/prd-template.md](../templates/prd-template.md) only after

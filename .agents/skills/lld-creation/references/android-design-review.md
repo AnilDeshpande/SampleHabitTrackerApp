@@ -356,8 +356,8 @@ is a design exercise, not a device/test pass.
 
 ## Learning coverage
 
-Provenance: [62 session learnings](../../../design/habit-tracker-v1-lld-refinement-learnings.md).
-The [accepted Habit Tracker LLD](../../../design/habit-tracker-v1-low-level-design.md)
+Provenance: [62 session learnings](../../../../docs/design/habit-tracker-v1-lld-refinement-learnings.md).
+The [accepted Habit Tracker LLD](../../../../docs/design/habit-tracker-v1-low-level-design.md)
 is a worked example, not mandatory reading for every task. Its values are not
 universal defaults. This table maps each correction to an actionable check above
 and a template/verification destination; it preserves the learning without
