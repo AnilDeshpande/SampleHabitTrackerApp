@@ -7,6 +7,14 @@ Use the project-local files linked here. The four `ht-` names distinguish this
 repository's harness from personal/global skills. Paths in file-based invocation
 examples are relative to the repository root.
 
+## Creating or changing the harness
+
+Before creating, editing, moving, or renaming skills, roles, templates, supporting
+resources, or entry points, read the [shared authoring standard](authoring.md) and
+complete its validation and evidence checklist before handoff. It applies to both
+tools. Run the [offline checker](scripts/check_harness.py) for every harness change;
+use its explicit runtime mode for affected discovery/invocation paths.
+
 ## Direct invocation
 
 | Workflow | Codex | Claude Code |
