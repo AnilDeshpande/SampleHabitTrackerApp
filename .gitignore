@@ -5,6 +5,9 @@ build/
 # Local configuration file (sdk path, etc)
 local.properties
 
+# Local Graphify knowledge-graph artifacts (reproducible, not source of record)
+graphify-out/
+
 # Log/OS Files
 *.log
 

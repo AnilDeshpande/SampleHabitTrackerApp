@@ -23,6 +23,7 @@ use its explicit runtime mode for affected discovery/invocation paths.
 | PRD creation | `$ht-prd-creation` | `/ht-prd-creation` |
 | Architecture | `$ht-architecture-creation` | `/ht-architecture-creation` |
 | Android LLD | `$ht-lld-creation` | `/ht-lld-creation` |
+| Repository knowledge graph | `$ht-graphify` | `/ht-graphify` |
 | Mobile prototype | `$mobile-prototype` | `/mobile-prototype` |
 
 Append your request or source documents, for example:
@@ -48,6 +49,30 @@ read-only invocation check on 2026-10-18 loaded that personal copy; future chang
 can diverge. Use the canonical file-based invocation below when
 repository-local resolution is required. Personal/global installations are not
 modified by this setup.
+
+## Repository knowledge graph
+
+Build, refresh, or query the repository knowledge graph for cross-file
+orientation, planning, implementation impact, debugging, reviews, test
+discovery, documentation, architecture, or handoffs. Use it to locate evidence,
+then verify material claims against current source. Approved project documents
+remain authoritative.
+
+- **Inputs:** A concrete question, affected file/symbol/document/workflow, the
+  current checkout, and an existing graph when querying.
+- **Outputs:** A source-verified evidence map or impact trace; an explicit build
+  produces local ignored graph artifacts.
+- **Instructions:** [Repository knowledge graph](skills/ht-graphify/SKILL.md) ·
+  [Operations runbook](skills/ht-graphify/references/operations.md).
+- **Invoke:** Codex: `$ht-graphify Trace the Habit feature from PRD through
+  implementation and tests.` Claude Code: `/ht-graphify What is affected by a
+  change to MainActivity?`
+- **File fallback:** “Read `.agents/skills/ht-graphify/SKILL.md` and use it to
+  answer this repository question.”
+
+When the graph is unavailable or stale, explain the limitation and use focused
+direct source inspection. The workflow does not install hooks, watchers,
+services, global configuration, or automatic model calls.
 
 ## Product ideation
 
