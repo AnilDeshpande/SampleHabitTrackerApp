@@ -9,7 +9,7 @@
 | Product source | [Habit Tracker V1 PRD](../prds/habit-tracker-v1-prd.md), including September 2026 amendments. |
 | Architecture baseline | [Habit Tracker V1 architecture](../architecture/habit-tracker-v1-architecture.md), September 23 delta. |
 | Durable tracking contract | [ADR 0002](../adr/0002-global-catch-up-and-occurrence-continuity.md); ADR 0001 remains superseded. |
-| Wiring decision | [ADR 0003](../adr/0003-manual-composition-root-and-android-dependency-wiring.md). |
+| Wiring decision | [ADR 0004](../adr/0004-hilt-dependency-injection.md) (Hilt), superseding [ADR 0003](../adr/0003-manual-composition-root-and-android-dependency-wiring.md) for the mechanism only. |
 | Platform | Kotlin, Jetpack Compose, Material 3; one `:app` module; package `com.codetutor.samplehabittrackerapp`; minimum API 24. |
 | Source provenance | Creator-directed Android design and decision-resolution rounds on 2026-10-05; current decisions are incorporated below. |
 
@@ -63,6 +63,13 @@ The creator authorized these resolutions on 2026-10-05.
   and amendments to source architecture/ADRs are outside this documentation change.
 
 `Unclassified architecture questions: None`.
+
+### Amendments
+
+| Date | Amendment | Creator decision |
+| --- | --- | --- |
+| 2026-10-28 | **Hilt.** ADR 0004 replaces the manual `AppContainer` with Hilt. Where this document names `AppContainer`, the container, or hand-written factories, read the Hilt graph and its modules; lifetimes, restoration, worker-factory, test-graph and verification contracts are unchanged. | “we would be using DI Library … not Manuel Road now that is final” |
+| 2026-10-28 | **Mockk.** Mockk is allowed for external-effect ports (notifier, work scheduler, permission and channel state) and for ViewModel UI-mapping tests. Rule, repository and outbox tests keep real components: never mock `Context`, Room DAOs or the repository there. See the [seam register](#seam-register-test-doubles). | “It will be Mocck” |
 
 ### Requirement coverage
 
@@ -475,6 +482,8 @@ they require no rejection receipt or replayed transient effects.
 
 ### Manual composition root — ADR 0003
 
+> **Superseded mechanism (2026-10-28):** [ADR 0004](../adr/0004-hilt-dependency-injection.md) uses Hilt instead of the manual `AppContainer` below. The ownership, lifetime, database-initialization and test-replacement rules in this section still apply to the Hilt graph.
+
 The creator selects a manual `AppContainer`, created lazily and thread-safely
 by `HabitTrackerApplication`. Keep the readable object graph in one place for
 this single-module app. Hilt is the alternative: it offers generated wiring
@@ -700,8 +709,9 @@ serializer, and tag-aware notifier to foreground and after-commit paths.
 | Repository in ViewModel UI-mapping tests only | Permitted fake | Constructor/test container injection; serves prepared read models/results. It never recalculates periods, points, guards, or command rules. |
 | Context for Room-capable tests | Real harness Context | Robolectric Application Context in host tests; Android test Application Context in instrumented tests. Never a mocked Context. |
 
-Never mock Context, Room DAOs, or the repository in a rule test. No mocking
-library is needed. A rule fixture with a fake repository is not evidence for
+Never mock Context, Room DAOs, or the repository in a rule test. Mockk is
+allowed for the external-effect ports above and for UI-mapping tests
+(amendment 2026-10-28); hand-written recording fakes remain acceptable. A rule fixture with a fake repository is not evidence for
 SQLite gates, triggers, late-save rejection, or exactly-once finalization.
 
 ViewModel tests send public events and assert resulting `UiState`, public

@@ -8,7 +8,7 @@
 | Status | Approved technical architecture |
 | Architecture date | 2026-09-21 baseline; 2026-09-23 delta |
 | Current approved product source | [`docs/prds/habit-tracker-v1-prd.md`](../prds/habit-tracker-v1-prd.md), including the 2026-09-23 amendment |
-| Prior architecture and ADR sources | [ADR 0001](../adr/0001-deterministic-on-device-tracking.md) (superseded); [ADR 0002](../adr/0002-global-catch-up-and-occurrence-continuity.md) (current) |
+| Prior architecture and ADR sources | [ADR 0001](../adr/0001-deterministic-on-device-tracking.md) (superseded); [ADR 0002](../adr/0002-global-catch-up-and-occurrence-continuity.md) (current); [ADR 0003](../adr/0003-manual-composition-root-and-android-dependency-wiring.md) (superseded); [ADR 0004](../adr/0004-hilt-dependency-injection.md) (current; dependency injection) |
 | Work classification | Architecture delta on the 2026-09-21 baseline |
 | Platform | Single-user Android app; minimum API 24; target API 36 |
 | Persistence boundary | On-device only |
@@ -24,6 +24,7 @@ client-server system.
 | --- | --- | --- |
 | 2026-09-21 | Baseline architecture; [ADR 0001](../adr/0001-deterministic-on-device-tracking.md). | Recorded before the architecture-creation skill existed. |
 | 2026-09-23 | Delta for PRD decisions B1–B9 and architecture decisions A1–A8: global catch-up, start boundaries and one open occurrence, retirement freeze, progress-entry ownership, foreground boundary ticker, per-habit notifications with acknowledgement, schema guards, and input validation; [ADR 0002](../adr/0002-global-catch-up-and-occurrence-continuity.md). | Passed on 2026-09-23 with no product blocker and `Unclassified architecture questions: None`; creator authorized the edit. |
+| 2026-10-28 | Closed the dependency-injection deferral. [ADR 0003](../adr/0003-manual-composition-root-and-android-dependency-wiring.md) (2026-10-05) had selected a manual composition root; [ADR 0004](../adr/0004-hilt-dependency-injection.md) supersedes it with Hilt. Added the decision register row and related ADRs, and removed the deferral row. | Creator decisions on 2026-10-28: resolve and close the stale reference; use Hilt, not a manual root. |
 
 ## Scope, constraints, and exclusions
 
@@ -67,6 +68,7 @@ badges, implementation plans, and application code.
 | Preferences | DataStore for the notification-permission-requested flag only | Not a source of truth for habits or points. | A7 |
 | Time | `java.time` local dates and instants with desugaring for API 24–25 | Calendar semantics without hand-written DST arithmetic. | Baseline |
 | Navigation | Navigation Compose with stable habit IDs as arguments | Separates overview, form, progress, and review states without passing domain objects. | Baseline; A5 |
+| Dependency injection | Hilt, with singleton-scoped modules, Hilt ViewModels and `HiltWorkerFactory`, and a Hilt test graph | The standard Android practice that agents and experienced developers expect; framework-created objects share one graph. | ADR 0004 (supersedes ADR 0003) |
 
 ## System shape and ownership
 
@@ -126,8 +128,8 @@ app/
 ```
 
 Small apps do not need separate Gradle modules. The `domain` package remains
-Android-free so it can be unit-tested quickly. A simple application-level
-composition root constructs repositories, rule services, workers, the ticker,
+Android-free so it can be unit-tested quickly. An application-level Hilt graph
+(ADR 0004) constructs repositories, rule services, workers, the ticker,
 and ViewModels.
 
 ## Domain, commands, and invariants
@@ -505,6 +507,10 @@ system font scaling.
 
 ### Related ADRs
 
+- [ADR 0004 — Hilt dependency injection](../adr/0004-hilt-dependency-injection.md)
+  (Accepted; closes the dependency-injection deferral).
+- [ADR 0003 — Manual composition root and Android dependency wiring](../adr/0003-manual-composition-root-and-android-dependency-wiring.md)
+  (Superseded by ADR 0004; retained for its preserved contracts).
 - [ADR 0002 — Global catch-up and occurrence continuity](../adr/0002-global-catch-up-and-occurrence-continuity.md)
   (Accepted; current contract).
 - [ADR 0001 — Deterministic on-device tracking](../adr/0001-deterministic-on-device-tracking.md)
@@ -514,7 +520,6 @@ system font scaling.
 
 | Deferred item | Why deferred | Later owner | Concrete reopening event |
 | --- | --- | --- | --- |
-| Dependency-injection library versus a manual composition root | Either satisfies the architecture; the choice depends on implementation size. | Implementation owner | Implementation planning begins. |
 | Encryption at rest and PIN protection | No creator-approved threat model exists. | Creator | A threat model is approved. |
 | WorkManager periodic cadence and backoff base | An optimization only; correctness does not depend on it. | Implementation owner | The workers are implemented. |
 | Exact visual design, copy, charting, and animations | Interaction-design concern. | Interaction-design owner | UX design begins. |

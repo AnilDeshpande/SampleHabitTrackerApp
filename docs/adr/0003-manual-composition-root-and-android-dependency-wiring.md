@@ -4,7 +4,7 @@
 
 | Field | Value |
 | --- | --- |
-| Status | Accepted |
+| Status | Superseded by [ADR 0004](0004-hilt-dependency-injection.md) on 2026-10-28 (wiring mechanism only) |
 | Date | 2026-10-05 |
 | Decision owner | Habit Tracker V1 creator / architecture owner |
 | Related architecture document | [Habit Tracker V1 architecture](../architecture/habit-tracker-v1-architecture.md) |
