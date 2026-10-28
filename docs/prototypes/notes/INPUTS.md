@@ -12,7 +12,8 @@ All confirmed documents below were read in full.
 | Detailed design | [LLD](../../design/habit-tracker-v1-low-level-design.md) | Accepted 2026-10-05 | Yes, detailed state/navigation | LLD abbreviation below |
 | ADR | [0001](../../adr/0001-deterministic-on-device-tracking.md) | 2026-09-21 | Historical only | Superseded; do not reinstate old rules |
 | ADR | [0002](../../adr/0002-global-catch-up-and-occurrence-continuity.md) | Accepted 2026-09-23 | Yes | Current tracking contract |
-| ADR | [0003](../../adr/0003-manual-composition-root-and-android-dependency-wiring.md) | Accepted 2026-10-05 | Yes | Wiring; later LLD resolutions retained |
+| ADR | [0003](../../adr/0003-manual-composition-root-and-android-dependency-wiring.md) | Superseded by ADR 0004 on 2026-10-28 (wiring mechanism only) | Authoritative: contracts only | Lifetimes, restoration, worker-factory and test-graph contracts retained. |
+| ADR | [0004](../../adr/0004-hilt-dependency-injection.md) | Accepted 2026-10-28 | Yes | Wiring: Hilt. |
 | Other | [ADR index](../../adr/README.md) | Current | Status index | Confirms supersession |
 | Visual design | None supplied | — | — | LLD defines interactions, not an approved visual design |
 | API | None | — | — | Intentional: local-only product |
