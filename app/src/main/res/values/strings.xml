@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SampleHabitTrackerApp</string>
+    <string name="missed_results_channel">Missed habit results</string>
 </resources>

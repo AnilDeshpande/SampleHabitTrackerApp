@@ -1,0 +1,552 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "fa4ecfc9a1af411f0ba18edf2aca7ef8",
+    "entities": [
+      {
+        "tableName": "habits",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`habitId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `nameKey` TEXT NOT NULL, `unit` TEXT NOT NULL, `frequency` TEXT NOT NULL, `selectedWeekdays` INTEGER NOT NULL, `creationLocalDate` TEXT NOT NULL, `currentTarget` TEXT NOT NULL, `status` TEXT NOT NULL, `plannedThroughLocalDate` TEXT, `retirementDeadlineEpochMillis` INTEGER, `retiredAtEpochMillis` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "habitId",
+            "columnName": "habitId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameKey",
+            "columnName": "nameKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "unit",
+            "columnName": "unit",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "frequency",
+            "columnName": "frequency",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "selectedWeekdays",
+            "columnName": "selectedWeekdays",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creationLocalDate",
+            "columnName": "creationLocalDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentTarget",
+            "columnName": "currentTarget",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "plannedThroughLocalDate",
+            "columnName": "plannedThroughLocalDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "retirementDeadlineEpochMillis",
+            "columnName": "retirementDeadlineEpochMillis",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "retiredAtEpochMillis",
+            "columnName": "retiredAtEpochMillis",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "habitId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_habits_status_habitId",
+            "unique": false,
+            "columnNames": [
+              "status",
+              "habitId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_habits_status_habitId` ON `${TABLE_NAME}` (`status`, `habitId`)"
+          },
+          {
+            "name": "index_habits_nameKey_status",
+            "unique": false,
+            "columnNames": [
+              "nameKey",
+              "status"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_habits_nameKey_status` ON `${TABLE_NAME}` (`nameKey`, `status`)"
+          }
+        ]
+      },
+      {
+        "tableName": "occurrences",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`occurrenceId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `habitId` INTEGER NOT NULL, `startLocalDate` TEXT NOT NULL, `endLocalDate` TEXT NOT NULL, `boundaryZoneId` TEXT NOT NULL, `startInclusiveEpochMillis` INTEGER NOT NULL, `endExclusiveEpochMillis` INTEGER NOT NULL, `effectiveTarget` TEXT NOT NULL, `progress` TEXT NOT NULL, `status` TEXT NOT NULL, `pointsEffect` INTEGER NOT NULL, `result` TEXT, `resolvedAtEpochMillis` INTEGER, `missAcknowledgedAtEpochMillis` INTEGER, FOREIGN KEY(`habitId`) REFERENCES `habits`(`habitId`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "occurrenceId",
+            "columnName": "occurrenceId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "habitId",
+            "columnName": "habitId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startLocalDate",
+            "columnName": "startLocalDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endLocalDate",
+            "columnName": "endLocalDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "boundaryZoneId",
+            "columnName": "boundaryZoneId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startInclusiveEpochMillis",
+            "columnName": "startInclusiveEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endExclusiveEpochMillis",
+            "columnName": "endExclusiveEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "effectiveTarget",
+            "columnName": "effectiveTarget",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "progress",
+            "columnName": "progress",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pointsEffect",
+            "columnName": "pointsEffect",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "result",
+            "columnName": "result",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "resolvedAtEpochMillis",
+            "columnName": "resolvedAtEpochMillis",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "missAcknowledgedAtEpochMillis",
+            "columnName": "missAcknowledgedAtEpochMillis",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "occurrenceId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_occurrences_habitId_startLocalDate",
+            "unique": true,
+            "columnNames": [
+              "habitId",
+              "startLocalDate"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_occurrences_habitId_startLocalDate` ON `${TABLE_NAME}` (`habitId`, `startLocalDate`)"
+          },
+          {
+            "name": "index_occurrences_status_endExclusiveEpochMillis_habitId_occurrenceId",
+            "unique": false,
+            "columnNames": [
+              "status",
+              "endExclusiveEpochMillis",
+              "habitId",
+              "occurrenceId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_occurrences_status_endExclusiveEpochMillis_habitId_occurrenceId` ON `${TABLE_NAME}` (`status`, `endExclusiveEpochMillis`, `habitId`, `occurrenceId`)"
+          },
+          {
+            "name": "index_occurrences_habitId_result_missAcknowledgedAtEpochMillis",
+            "unique": false,
+            "columnNames": [
+              "habitId",
+              "result",
+              "missAcknowledgedAtEpochMillis"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_occurrences_habitId_result_missAcknowledgedAtEpochMillis` ON `${TABLE_NAME}` (`habitId`, `result`, `missAcknowledgedAtEpochMillis`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "habits",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "habitId"
+            ],
+            "referencedColumns": [
+              "habitId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "target_changes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`changeId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `habitId` INTEGER NOT NULL, `requestedTarget` TEXT NOT NULL, `effectiveStartLocalDate` TEXT NOT NULL, `changedAtEpochMillis` INTEGER NOT NULL, FOREIGN KEY(`habitId`) REFERENCES `habits`(`habitId`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "changeId",
+            "columnName": "changeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "habitId",
+            "columnName": "habitId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requestedTarget",
+            "columnName": "requestedTarget",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "effectiveStartLocalDate",
+            "columnName": "effectiveStartLocalDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "changedAtEpochMillis",
+            "columnName": "changedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "changeId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_target_changes_habitId_effectiveStartLocalDate_changeId",
+            "unique": false,
+            "columnNames": [
+              "habitId",
+              "effectiveStartLocalDate",
+              "changeId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_target_changes_habitId_effectiveStartLocalDate_changeId` ON `${TABLE_NAME}` (`habitId`, `effectiveStartLocalDate`, `changeId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "habits",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "habitId"
+            ],
+            "referencedColumns": [
+              "habitId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "app_state",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`appStateId` INTEGER NOT NULL, `pointsBalance` INTEGER NOT NULL, PRIMARY KEY(`appStateId`))",
+        "fields": [
+          {
+            "fieldPath": "appStateId",
+            "columnName": "appStateId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pointsBalance",
+            "columnName": "pointsBalance",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "appStateId"
+          ]
+        }
+      },
+      {
+        "tableName": "badges",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`badgeId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `habitId` INTEGER NOT NULL, `type` TEXT NOT NULL, `awardedForLocalDate` TEXT NOT NULL, `awardedAtEpochMillis` INTEGER NOT NULL, FOREIGN KEY(`habitId`) REFERENCES `habits`(`habitId`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "badgeId",
+            "columnName": "badgeId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "habitId",
+            "columnName": "habitId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "awardedForLocalDate",
+            "columnName": "awardedForLocalDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "awardedAtEpochMillis",
+            "columnName": "awardedAtEpochMillis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "badgeId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_badges_habitId_type",
+            "unique": true,
+            "columnNames": [
+              "habitId",
+              "type"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_badges_habitId_type` ON `${TABLE_NAME}` (`habitId`, `type`)"
+          },
+          {
+            "name": "index_badges_habitId_awardedForLocalDate",
+            "unique": false,
+            "columnNames": [
+              "habitId",
+              "awardedForLocalDate"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_badges_habitId_awardedForLocalDate` ON `${TABLE_NAME}` (`habitId`, `awardedForLocalDate`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "habits",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "habitId"
+            ],
+            "referencedColumns": [
+              "habitId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "notification_events",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`eventId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `occurrenceId` INTEGER NOT NULL, `habitId` INTEGER NOT NULL, `deliveryState` TEXT NOT NULL, `attemptCount` INTEGER NOT NULL, `lastAttemptedAtEpochMillis` INTEGER, FOREIGN KEY(`habitId`) REFERENCES `habits`(`habitId`) ON UPDATE NO ACTION ON DELETE RESTRICT , FOREIGN KEY(`occurrenceId`) REFERENCES `occurrences`(`occurrenceId`) ON UPDATE NO ACTION ON DELETE RESTRICT )",
+        "fields": [
+          {
+            "fieldPath": "eventId",
+            "columnName": "eventId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "occurrenceId",
+            "columnName": "occurrenceId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "habitId",
+            "columnName": "habitId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deliveryState",
+            "columnName": "deliveryState",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attemptCount",
+            "columnName": "attemptCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastAttemptedAtEpochMillis",
+            "columnName": "lastAttemptedAtEpochMillis",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "eventId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_notification_events_occurrenceId",
+            "unique": true,
+            "columnNames": [
+              "occurrenceId"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_notification_events_occurrenceId` ON `${TABLE_NAME}` (`occurrenceId`)"
+          },
+          {
+            "name": "index_notification_events_deliveryState_habitId",
+            "unique": false,
+            "columnNames": [
+              "deliveryState",
+              "habitId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_notification_events_deliveryState_habitId` ON `${TABLE_NAME}` (`deliveryState`, `habitId`)"
+          },
+          {
+            "name": "index_notification_events_habitId_deliveryState",
+            "unique": false,
+            "columnNames": [
+              "habitId",
+              "deliveryState"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_notification_events_habitId_deliveryState` ON `${TABLE_NAME}` (`habitId`, `deliveryState`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "habits",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "habitId"
+            ],
+            "referencedColumns": [
+              "habitId"
+            ]
+          },
+          {
+            "table": "occurrences",
+            "onDelete": "RESTRICT",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "occurrenceId"
+            ],
+            "referencedColumns": [
+              "occurrenceId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "reconciliation_lock",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`lockId` INTEGER NOT NULL, `version` INTEGER NOT NULL, PRIMARY KEY(`lockId`))",
+        "fields": [
+          {
+            "fieldPath": "lockId",
+            "columnName": "lockId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "lockId"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fa4ecfc9a1af411f0ba18edf2aca7ef8')"
+    ]
+  }
+}
