@@ -3,7 +3,7 @@
 Shared starting point for Claude and Codex. Select the workflow below and read its
 canonical skill, applicable conversation role, and templates. This index provides
 navigation; the linked instructions own behavior, decision gates, and authorization.
-Use the project-local files linked here. The four `ht-` names distinguish this
+Use the project-local files linked here. The `ht-` names distinguish this
 repository's harness from personal/global skills. Paths in file-based invocation
 examples are relative to the repository root.
 
@@ -24,6 +24,11 @@ use its explicit runtime mode for affected discovery/invocation paths.
 | Architecture | `$ht-architecture-creation` | `/ht-architecture-creation` |
 | Android LLD | `$ht-lld-creation` | `/ht-lld-creation` |
 | Repository knowledge graph | `$ht-graphify` | `/ht-graphify` |
+| Android foundation | `$ht-android-foundation` | `/ht-android-foundation` |
+| Foundation verification | `$ht-foundation-verification` | `/ht-foundation-verification` |
+| Device tiers | `$ht-device-tiers` | `/ht-device-tiers` |
+| Foundation audit | `$ht-foundation-audit` | `/ht-foundation-audit` |
+| Skill vendoring | `$ht-skill-vendoring` | `/ht-skill-vendoring` |
 | Mobile prototype | `$mobile-prototype` | `/mobile-prototype` |
 
 Append your request or source documents, for example:
@@ -176,6 +181,63 @@ resolving concrete state, work lifetime, wiring, and test contracts.
 - **Instructions:** [LLD Creation](skills/ht-lld-creation/SKILL.md) · [LLD-Creator Agent](roles/lld-creator-agent.md) · [Android review guide](skills/ht-lld-creation/references/android-design-review.md).
 - **Templates:** [LLD](templates/lld-template.md) · [ADR](templates/adr-template.md), when applicable.
 - **Invoke:** “Read `.agents/roles/lld-creator-agent.md` and refine my LLD from the approved architecture.”
+
+## Android foundation
+
+Lay the build, dependency-injection, persistence, test, and device foundation of an Android app
+from an empty or minimal template, driven by the approved documents, before feature work.
+
+- **Inputs:** Approved PRD, architecture, LLD and ADRs; the checkout; the host environment; the creator's Android Studio version.
+- **Deliverables:** An approved foundation plan, gated per-phase commits, and a foundation record with verification evidence.
+- **Instructions:** [Android Foundation](skills/ht-android-foundation/SKILL.md) · [Foundation Engineer Agent](roles/foundation-engineer-agent.md) ·
+  [Version resolution](skills/ht-android-foundation/references/version-resolution.md) · [Troubleshooting](skills/ht-android-foundation/references/troubleshooting.md).
+- **Templates:** [Foundation plan](templates/foundation-plan-template.md) · [Environment inventory](templates/environment-inventory-template.md) ·
+  [Version compatibility matrix](templates/version-compatibility-matrix-template.md) · [Foundation record](templates/foundation-record-template.md).
+- **Invoke:** “Read `.agents/roles/foundation-engineer-agent.md` and lay the foundation for my approved documents.”
+
+## Foundation verification
+
+Independently verify a foundation (configuration, commands, app run per device) and report PASS or FAIL with
+evidence, or write a self-contained handoff prompt for another agent. Read-only; findings are reported, not fixed.
+
+- **Inputs:** Foundation record and expected values, commit range, accepted-warning list, devices.
+- **Deliverables:** Verification report, or a filled handoff prompt.
+- **Instructions:** [Foundation Verification](skills/ht-foundation-verification/SKILL.md) · [Foundation Verifier Agent](roles/foundation-verifier-agent.md).
+- **Templates:** [Verification report](templates/foundation-verification-report-template.md) · [Handoff prompt](templates/foundation-verification-prompt-template.md).
+- **Invoke:** “Read `.agents/roles/foundation-verifier-agent.md` and verify the foundation against its record.”
+
+## Device tiers
+
+Set up and run the instrumented device tiers: arm64 system image, AVD without `avdmanager`, headless boot, installs
+with retry, serial-pinned suites, and platform SQLite evidence.
+
+- **Inputs:** The minimum-API requirement from the documents, the host architecture, the module's test setup.
+- **Deliverables:** Passing suites per tier with recorded API level and SQLite version.
+- **Instructions:** [Device Tiers](skills/ht-device-tiers/SKILL.md) · scripts: [create AVD](skills/ht-device-tiers/scripts/create-avd.sh),
+  [boot AVD](skills/ht-device-tiers/scripts/boot-avd.sh), [install with retry](skills/ht-device-tiers/scripts/install-with-retry.sh),
+  [SQL evidence](skills/ht-device-tiers/scripts/sql-evidence.sh).
+- **Invoke:** “Read `.agents/skills/ht-device-tiers/SKILL.md` and set up the API 24 device tier.”
+
+## Foundation audit
+
+Read-only audit before foundation work: environment and IDE inventory, build and tests against documented
+requirements, missing decision records, stale branches, broken references.
+
+- **Inputs:** Approved documents, the checkout and its branches, the host environment.
+- **Deliverables:** Environment inventory, requirement matrix, findings and decisions needed. No project changes.
+- **Instructions:** [Foundation Audit](skills/ht-foundation-audit/SKILL.md).
+- **Templates:** [Environment inventory](templates/environment-inventory-template.md) · [Foundation plan](templates/foundation-plan-template.md) (requirement matrix).
+- **Invoke:** “Read `.agents/skills/ht-foundation-audit/SKILL.md` and audit this repository against its documents.”
+
+## Skill vendoring
+
+Install a third-party skill set into the shared harness with provenance, exact checker exceptions, thin Claude
+entry points, and a completeness check.
+
+- **Inputs:** An external skill repository, the harness authoring standard and checker.
+- **Deliverables:** Unmodified bundles, entry points, exceptions, provenance record, and index registration.
+- **Instructions:** [Skill Vendoring](skills/ht-skill-vendoring/SKILL.md) · [vendoring check](skills/ht-skill-vendoring/scripts/verify-vendored.sh).
+- **Invoke:** “Read `.agents/skills/ht-skill-vendoring/SKILL.md` and vendor this skill repository.”
 
 ## Mobile prototyping
 
