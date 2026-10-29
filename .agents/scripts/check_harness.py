@@ -117,6 +117,8 @@ class Validator:
         self.unprefixed = set()
         self.generated = set()
         self.used_generated = set()
+        self.vendored = set()
+        self.used_vendored = set()
 
     def error(self, path, message):
         try:
@@ -154,9 +156,13 @@ class Validator:
         path = self.root / '.agents/harness-exceptions.json'
         try:
             data = json.loads(path.read_text())
-            if not isinstance(data, dict) or set(data) != {'unprefixed_skills', 'generated_links'}:
-                raise ValueError('only unprefixed_skills and generated_links are supported')
-            for kind, fields in [('unprefixed_skills', {'name', 'reason'}), ('generated_links', {'source', 'target', 'reason'})]:
+            required = {'unprefixed_skills', 'generated_links'}
+            if not isinstance(data, dict) or not required <= set(data) <= required | {'vendored_references'}:
+                raise ValueError('only unprefixed_skills, generated_links, and vendored_references are supported')
+            kinds = [('unprefixed_skills', {'name', 'reason'}), ('generated_links', {'source', 'target', 'reason'})]
+            if 'vendored_references' in data:
+                kinds.append(('vendored_references', {'source', 'reference', 'reason'}))
+            for kind, fields in kinds:
                 if not isinstance(data[kind], list):
                     raise ValueError(f'{kind} must be a list')
                 for entry in data[kind]:
@@ -167,6 +173,15 @@ class Validator:
                         if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', name) or name.startswith('ht-') or name in self.unprefixed:
                             raise ValueError(f'invalid, broad, duplicate, or unnecessary name exception: {name}')
                         self.unprefixed.add(name)
+                    elif kind == 'vendored_references':
+                        source, reference = entry['source'], entry['reference']
+                        parts = PurePosixPath(source)
+                        if parts.is_absolute() or '..' in parts.parts or re.search(r'[*?\[\]{}<>\\]', source) or not re.fullmatch(r'\.agents/skills/[^/]+/.+\.md', source) or not (self.root / source).is_file():
+                            raise ValueError('vendored-reference exceptions must name an exact existing Markdown file inside a skill bundle')
+                        pair = (source, reference)
+                        if pair in self.vendored:
+                            raise ValueError('duplicate vendored-reference exception')
+                        self.vendored.add(pair)
                     else:
                         source, target = entry['source'], entry['target']
                         for value in [source, target]:
@@ -183,6 +198,11 @@ class Validator:
             self.error(path, f'invalid exceptions: {exc}')
 
     def reference(self, source, target):
+        # Exact reference text in an unmodified vendored file that is not a real dependency or is broken upstream.
+        resolved = source.resolve()
+        if resolved.is_relative_to(self.root) and (resolved.relative_to(self.root).as_posix(), target) in self.vendored:
+            self.used_vendored.add((resolved.relative_to(self.root).as_posix(), target))
+            return None
         if target.startswith('undefined-reference:'):
             self.error(source, target)
             return None
@@ -247,6 +267,8 @@ class Validator:
                     self.reference(source, target)
         for pair in self.generated - self.used_generated:
             self.error(self.root / '.agents/harness-exceptions.json', f'unused generated-link exception: {pair}')
+        for pair in self.vendored - self.used_vendored:
+            self.error(self.root / '.agents/harness-exceptions.json', f'unused vendored-reference exception: {pair}')
 
     def inventory(self, folder):
         result = {}

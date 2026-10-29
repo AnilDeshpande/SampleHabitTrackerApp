@@ -1,0 +1,9 @@
+---
+name: litert-runtime
+description: "Configures and implements LiteRT (.tflite) on-device inference on Android in Kotlin using the CompiledModel API on CPU and GPU. Use this skill for any Android LiteRT or .tflite task, including Gradle setup, image classification or vision/audio/embedding helpers, TensorBuffer reuse, CPU memory optimization, Bitmap preprocessing, AndroidViewModel GPU-to-CPU fallback with warm-up on a single-thread dispatcher, LiteRT in Google Play services (play-services-litert), migrating from legacy org.tensorflow.lite.Interpreter, GpuDelegate, or play-services-tflite, and latency benchmarking. Don't use for running generative text LLMs with .litertlm files or for Python model conversion."
+---
+
+Read [the canonical skill](../../../.agents/skills/litert-runtime/SKILL.md) and
+follow it for the user's request and command arguments. Resolve supporting files
+from `.agents/skills/litert-runtime/`, relative to the repository root, rather than
+from this entry-point directory. The canonical method owns behavior and gates.

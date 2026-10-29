@@ -1,0 +1,9 @@
+---
+name: appfunctions
+description: "Analyzes Android apps to find user workflows to expose as AppFunctions, such as creating a note, playing media, or sending a message. AI agents, voice commands, and system shortcuts then run them without opening the app UI. Generates Kotlin code with the androidx.appfunctions library, and refines KDoc and the app description so that agents choose and call functions correctly. Use this skill when discovering, implementing, documenting, testing, or upgrading AppFunctions in an Android app, including @AppFunctionDeclaration, @AppFunctionSerializable, @AppFunctionServiceEntryPoint, AppFunctionService, app_metadata.xml, appfn:instructions, adb shell cmd app_function, and legacy @AppFunction or AppFunctionConfiguration.Provider code. Don't use for building agents that call AppFunctions or for remote MCP servers."
+---
+
+Read [the canonical skill](../../../.agents/skills/appfunctions/SKILL.md) and
+follow it for the user's request and command arguments. Resolve supporting files
+from `.agents/skills/appfunctions/`, relative to the repository root, rather than
+from this entry-point directory. The canonical method owns behavior and gates.

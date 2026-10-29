@@ -232,6 +232,30 @@ class HarnessFixtures(unittest.TestCase):
         self.save_exceptions()
         self.fails('unused generated-link exception')
 
+    def test_exact_vendored_reference_exception(self):
+        source = '.agents/skills/ht-demo/references/vendored.md'
+        self.put(source, '[Upstream](#missing) and [example](path/to/file)\n')
+        self.fails('missing anchor: #missing')
+        self.exceptions['vendored_references'] = [
+            {'source': source, 'reference': '#missing', 'reason': 'Broken in the unmodified upstream file.'},
+            {'source': source, 'reference': 'path/to/file', 'reason': 'Example text, not a dependency.'}]
+        self.save_exceptions()
+        self.assertEqual([], self.check().errors)
+
+    def test_vendored_reference_exception_is_exact_and_must_be_used(self):
+        source = '.agents/skills/ht-demo/references/vendored.md'
+        self.put(source, '[Upstream](#missing) and [other](#also-missing)\n')
+        self.exceptions['vendored_references'] = [{'source': source, 'reference': '#missing', 'reason': 'Broken upstream.'}]
+        self.save_exceptions()
+        self.fails('missing anchor: #also-missing')
+        self.put(source, '# Fixed upstream\n')
+        self.fails('unused vendored-reference exception')
+
+    def test_vendored_reference_wildcard_exception_fails(self):
+        self.exceptions['vendored_references'] = [{'source': '.agents/skills/**/*.md', 'reference': '*', 'reason': 'Ignore all'}]
+        self.save_exceptions()
+        self.fails('exact existing Markdown file')
+
     def test_cli_offline_has_no_artifacts_or_model_calls(self):
         before = self.snapshot()
         result = subprocess.run([sys.executable, '-B', str(SCRIPTS / 'check_harness.py'), '--root', str(self.root)], capture_output=True, text=True)

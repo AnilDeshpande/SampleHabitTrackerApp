@@ -50,6 +50,65 @@ can diverge. Use the canonical file-based invocation below when
 repository-local resolution is required. Personal/global installations are not
 modified by this setup.
 
+## Android platform skills (upstream)
+
+Google's official [android/skills](https://github.com/android/skills), vendored
+unmodified so Codex and Claude Code load the same bundles. They are
+domain references, not conversation workflows: both tools activate them
+automatically when a task matches the description, and each can also be invoked by
+name. They keep their upstream names (no `ht-` prefix) because they reference each
+other by name. Provenance, pinned commit, license, and update steps are in
+[the upstream record](upstream/android-skills.md).
+
+- **Inputs:** An Android task in the skill's domain, plus the current checkout.
+- **Outputs:** Whatever the task produces; each skill owns its own method and gates.
+- **Invoke:** Codex: `$camerax Add a camera preview to the habit detail screen.`
+  Claude Code: `/edge-to-edge Make the app edge-to-edge.`
+- **File fallback:** “Read `.agents/skills/<name>/SKILL.md` and follow it for this
+  Android task.”
+- **Note:** Claude Code may select a personal `~/.claude/skills/android-cli/` ahead of
+  this repository's entry point (they differ). Use the file fallback when
+  repository-local resolution is required.
+
+| Skill | Codex | Claude Code | Use for |
+| --- | --- | --- | --- |
+| [adaptive](skills/adaptive/SKILL.md) | `$adaptive` | `/adaptive` | Instructions to make or update an app's UI so that it adapts to different Android devices including phones, tablets, foldables, laptops, desktop, TV, Auto, and XR. |
+| [agp-9-upgrade](skills/agp-9-upgrade/SKILL.md) | `$agp-9-upgrade` | `/agp-9-upgrade` | Upgrades, or migrates, an Android project to use Android Gradle Plugin (AGP) version 9. |
+| [android-cli](skills/android-cli/SKILL.md) | `$android-cli` | `/android-cli` | Provides instructions for installing and using the `android` CLI. |
+| [android-for-cars-parked-apps](skills/android-for-cars-parked-apps/SKILL.md) | `$android-for-cars-parked-apps` | `/android-for-cars-parked-apps` | Adapt existing Android video streaming apps, games, and web browsers to run as parked apps on Android Auto and Android Automotive OS. |
+| [android-intent-security](skills/android-intent-security/SKILL.md) | `$android-intent-security` | `/android-intent-security` | Best practices for Android Intent security. |
+| [android-permissions-security](skills/android-permissions-security/SKILL.md) | `$android-permissions-security` | `/android-permissions-security` | Audits, detects gaps, and remediates Android permissions and IPC component security vulnerabilities. |
+| [android-profiler](skills/android-profiler/SKILL.md) | `$android-profiler` | `/android-profiler` | Records and analyzes Android performance data and diagnoses performance bottlenecks across user apps, system apps, and system services, even if the user does not explicitly mention profiling or traces. |
+| [anr-audit-and-fix](skills/anr-audit-and-fix/SKILL.md) | `$anr-audit-and-fix` | `/anr-audit-and-fix` | Audits Android codebases for ANR risks and diagnoses ANR stack dumps. |
+| [appfunctions](skills/appfunctions/SKILL.md) | `$appfunctions` | `/appfunctions` | Analyzes Android apps to find user workflows to expose as AppFunctions, such as creating a note, playing media, or sending a message. |
+| [camerax](skills/camerax/SKILL.md) | `$camerax` | `/camerax` | Provide technical guidance for Android camera development with CameraX. |
+| [display-glasses-with-jetpack-compose-glimmer](skills/display-glasses-with-jetpack-compose-glimmer/SKILL.md) | `$display-glasses-with-jetpack-compose-glimmer` | `/display-glasses-with-jetpack-compose-glimmer` | Provides guidelines for developing projected Android XR apps for display glasses using the Jetpack Compose Glimmer UI toolkit. |
+| [edge-to-edge](skills/edge-to-edge/SKILL.md) | `$edge-to-edge` | `/edge-to-edge` | Use this skill to migrate your Jetpack Compose app to add adaptive edge-to-edge support and troubleshoot common issues. |
+| [engage-sdk-integration](skills/engage-sdk-integration/SKILL.md) | `$engage-sdk-integration` | `/engage-sdk-integration` | Helps developers integrate, debug, and resolve Play Engage SDK implementation issues. |
+| [glance-appwidget-updates-and-memory](skills/glance-appwidget-updates-and-memory/SKILL.md) | `$glance-appwidget-updates-and-memory` | `/glance-appwidget-updates-and-memory` | Manages Android AppWidget state updates, background syncs, and RemoteViews bitmap memory limits with Jetpack Glance (androidx.glance:glance-appwidget) and AppWidgetProvider receivers on Android 17 (API 37). |
+| [glance-canonical-layouts](skills/glance-canonical-layouts/SKILL.md) | `$glance-canonical-layouts` | `/glance-canonical-layouts` | Use this skill to create home screen widgets using Jetpack Glance Canonical Layouts from the Android Platform Samples project, or when asked to implement standard widget layout patterns (including Check List, Image Grid, Snap Scrolling, and Standard Toolbar). |
+| [ink-app-builder](skills/ink-app-builder/SKILL.md) | `$ink-app-builder` | `/ink-app-builder` | Adds inking and freehand drawing capabilities to an Android app using Jetpack Ink (androidx.ink) and Compose. |
+| [ink-custom-brush-builder](skills/ink-custom-brush-builder/SKILL.md) | `$ink-custom-brush-builder` | `/ink-custom-brush-builder` | Creates custom BrushFamily definitions for an Android app using Jetpack Ink (androidx.ink 1.1.0-alpha03 and higher). |
+| [jetpack-compose-performance](skills/jetpack-compose-performance/SKILL.md) | `$jetpack-compose-performance` | `/jetpack-compose-performance` | Diagnose and optimize Android Jetpack Compose UI code. |
+| [leanback-to-compose-tv-migration](skills/leanback-to-compose-tv-migration/SKILL.md) | `$leanback-to-compose-tv-migration` | `/leanback-to-compose-tv-migration` | Provides instructions and architectural patterns for migrating Android TV applications from legacy Leanback UI Toolkit, Android Views, or Support Fragments to Jetpack Compose for TV (androidx.tv). |
+| [litert-lm](skills/litert-lm/SKILL.md) | `$litert-lm` | `/litert-lm` | Builds an Android app that runs an open text LLM on the device, on the CPU or the GPU, with the LiteRT-LM Kotlin API (com.google.ai.edge.litertlm:litertlm-android). |
+| [litert-runtime](skills/litert-runtime/SKILL.md) | `$litert-runtime` | `/litert-runtime` | Configures and implements LiteRT (.tflite) on-device inference on Android in Kotlin using the CompiledModel API on CPU and GPU. |
+| [media3-cast-integration](skills/media3-cast-integration/SKILL.md) | `$media3-cast-integration` | `/media3-cast-integration` | Implements Google Cast support in Android apps using Jetpack Media3. |
+| [migrate-xml-views-to-jetpack-compose](skills/migrate-xml-views-to-jetpack-compose/SKILL.md) | `$migrate-xml-views-to-jetpack-compose` | `/migrate-xml-views-to-jetpack-compose` | Provides a structured workflow for migrating an Android XML View to Jetpack Compose. |
+| [ml-kit-genai-prompt-api](skills/ml-kit-genai-prompt-api/SKILL.md) | `$ml-kit-genai-prompt-api` | `/ml-kit-genai-prompt-api` | Analyzes Android codebases to implement ML Kit GenAI Prompt API. |
+| [mlkit-agent-api](skills/mlkit-agent-api/SKILL.md) | `$mlkit-agent-api` | `/mlkit-agent-api` | Builds autonomous on-device agentic workflows in Android apps using the ML Kit GenAI Agent API powered by Gemini Nano and AICore. |
+| [navigation-3](skills/navigation-3/SKILL.md) | `$navigation-3` | `/navigation-3` | Learn how to install and migrate to Jetpack Navigation 3, and how to implement features and patterns such as deep links, multiple backstacks, scenes (dialogs, bottom sheets, list-detail, two-pane, supporting pane), conditional navigation (such as logged-in navigation versus anonymous), returning results from flows, integration with Hilt, ViewModel, Kotlin, and view interoperability. |
+| [navigation-event](skills/navigation-event/SKILL.md) | `$navigation-event` | `/navigation-event` | Intercept back gestures and run Predictive Back animations using the NavigationEvent (androidx.navigationevent) library in Compose Android. |
+| [play-billing-library-version-upgrade](skills/play-billing-library-version-upgrade/SKILL.md) | `$play-billing-library-version-upgrade` | `/play-billing-library-version-upgrade` | Use this skill when upgrading or migrating an Android project from any legacy Google Play Billing Library (PBL) version to the latest stable version of PBL. |
+| [play-policy-insights](skills/play-policy-insights/SKILL.md) | `$play-policy-insights` | `/play-policy-insights` | Automated auditor designed to verify Android applications against Google Play Policy domains. |
+| [projected-hardware](skills/projected-hardware/SKILL.md) | `$projected-hardware` | `/projected-hardware` | Provides instructions and workflows for accessing and managing hardware on Android XR projected devices, such as audio glasses and display glasses. |
+| [r8-analyzer](skills/r8-analyzer/SKILL.md) | `$r8-analyzer` | `/r8-analyzer` | Analyzes Android build files and R8 keep rules to identify redundancies, broad package-wide rules, and rules that subsume library consumer keep rules. |
+| [restore-credentials](skills/restore-credentials/SKILL.md) | `$restore-credentials` | `/restore-credentials` | Provides knowledge and workflows to implement Android's Restore Credentials feature using the androidx.credentials library. |
+| [testing-setup](skills/testing-setup/SKILL.md) | `$testing-setup` | `/testing-setup` | Analyze and create a testing strategy for Android apps - install testing libraries, set up test infrastructure, create harnesses for unit tests, UI tests, screenshot tests, and end-to-end tests. |
+| [verified-email](skills/verified-email/SKILL.md) | `$verified-email` | `/verified-email` | Provides a complete workflow for implementing verified email retrieval on Android Credential Manager API. |
+| [wear-compose-m3](skills/wear-compose-m3/SKILL.md) | `$wear-compose-m3` | `/wear-compose-m3` | Guidance for Wear OS Compose Material3 (Wear Compose Material 3 / Wear Compose Material3) watch and wearable apps. |
+| [wear-widgets](skills/wear-widgets/SKILL.md) | `$wear-widgets` | `/wear-widgets` | Create, migrate, update, and verify Wear OS widgets using Glance Wear and Remote Compose in an Android project. |
+
 ## Repository knowledge graph
 
 Build, refresh, or query the repository knowledge graph for cross-file

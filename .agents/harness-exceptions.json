@@ -3,6 +3,150 @@
     {
       "name": "mobile-prototype",
       "reason": "Creator explicitly retained this existing public invocation name; personal Claude resolution is documented in the shared index."
+    },
+    {
+      "name": "adaptive",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "agp-9-upgrade",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "android-cli",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "android-for-cars-parked-apps",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "android-intent-security",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "android-permissions-security",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "android-profiler",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "anr-audit-and-fix",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "appfunctions",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "camerax",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "display-glasses-with-jetpack-compose-glimmer",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "edge-to-edge",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "engage-sdk-integration",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "glance-appwidget-updates-and-memory",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "glance-canonical-layouts",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "ink-app-builder",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "ink-custom-brush-builder",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "jetpack-compose-performance",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "leanback-to-compose-tv-migration",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "litert-lm",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "litert-runtime",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "media3-cast-integration",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "migrate-xml-views-to-jetpack-compose",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "ml-kit-genai-prompt-api",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "mlkit-agent-api",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "navigation-3",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "navigation-event",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "play-billing-library-version-upgrade",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "play-policy-insights",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "projected-hardware",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "r8-analyzer",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "restore-credentials",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "testing-setup",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "verified-email",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "wear-compose-m3",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
+    },
+    {
+      "name": "wear-widgets",
+      "reason": "Upstream android/skills name retained verbatim so cross-skill references and upstream updates stay aligned; see .agents/upstream/android-skills.md."
     }
   ],
   "generated_links": [
@@ -25,6 +169,68 @@
       "source": ".agents/skills/mobile-prototype/assets/design-kit/index.html",
       "target": "flow-data.js",
       "reason": "screens.mjs writes the approved flow data beside this copied HTML asset in the prototype look directory."
+    }
+  ],
+  "vendored_references": [
+    {
+      "source": ".agents/skills/android-cli/SKILL.md",
+      "reference": "path/to/screenshot",
+      "reason": "Example/CLI-usage text in the unmodified upstream file (JSON bounds, help synopsis, sample report), not a Markdown dependency."
+    },
+    {
+      "source": ".agents/skills/android-cli/SKILL.md",
+      "reference": "undefined-reference:167,38",
+      "reason": "Example/CLI-usage text in the unmodified upstream file (JSON bounds, help synopsis, sample report), not a Markdown dependency."
+    },
+    {
+      "source": ".agents/skills/android-cli/SKILL.md",
+      "reference": "undefined-reference:400,600",
+      "reason": "Example/CLI-usage text in the unmodified upstream file (JSON bounds, help synopsis, sample report), not a Markdown dependency."
+    },
+    {
+      "source": ".agents/skills/android-cli/SKILL.md",
+      "reference": "undefined-reference:path",
+      "reason": "Example/CLI-usage text in the unmodified upstream file (JSON bounds, help synopsis, sample report), not a Markdown dependency."
+    },
+    {
+      "source": ".agents/skills/jetpack-compose-performance/SKILL.md",
+      "reference": "references/*.md",
+      "reason": "Glob in prose describing the skill's own references directory, not a single file reference."
+    },
+    {
+      "source": ".agents/skills/restore-credentials/SKILL.md",
+      "reference": "#create-restore-key",
+      "reason": "Anchor missing in the unmodified upstream file; the target heading ids do not exist upstream."
+    },
+    {
+      "source": ".agents/skills/restore-credentials/SKILL.md",
+      "reference": "#sign-restore",
+      "reason": "Anchor missing in the unmodified upstream file; the target heading ids do not exist upstream."
+    },
+    {
+      "source": ".agents/skills/restore-credentials/SKILL.md",
+      "reference": "#get-credential-retrieval",
+      "reason": "Anchor missing in the unmodified upstream file; the target heading ids do not exist upstream."
+    },
+    {
+      "source": ".agents/skills/restore-credentials/SKILL.md",
+      "reference": "#get-restore",
+      "reason": "Anchor missing in the unmodified upstream file; the target heading ids do not exist upstream."
+    },
+    {
+      "source": ".agents/skills/restore-credentials/SKILL.md",
+      "reference": "#handle-sign-in",
+      "reason": "Anchor missing in the unmodified upstream file; the target heading ids do not exist upstream."
+    },
+    {
+      "source": ".agents/skills/restore-credentials/SKILL.md",
+      "reference": "#delete-restore",
+      "reason": "Anchor missing in the unmodified upstream file; the target heading ids do not exist upstream."
+    },
+    {
+      "source": ".agents/skills/verified-email/SKILL.md",
+      "reference": "#parse-response",
+      "reason": "Anchor missing in the unmodified upstream file; the target heading id does not exist upstream."
     }
   ]
 }
