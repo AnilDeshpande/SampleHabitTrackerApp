@@ -1,0 +1,37 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "f856b8aa3fc7f2c966ff847366ded400",
+    "entities": [
+      {
+        "tableName": "app_state",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`appStateId` INTEGER NOT NULL, `pointsBalance` INTEGER NOT NULL, PRIMARY KEY(`appStateId`))",
+        "fields": [
+          {
+            "fieldPath": "appStateId",
+            "columnName": "appStateId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pointsBalance",
+            "columnName": "pointsBalance",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "appStateId"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f856b8aa3fc7f2c966ff847366ded400')"
+    ]
+  }
+}
