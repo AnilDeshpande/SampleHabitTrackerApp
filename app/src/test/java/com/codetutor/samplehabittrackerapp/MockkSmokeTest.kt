@@ -1,21 +1,27 @@
 package com.codetutor.samplehabittrackerapp
 
-import com.codetutor.samplehabittrackerapp.core.time.Clock
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.time.Instant
-import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-/** Proves Mockk's agent works on the host JVM; real uses are limited to external-effect ports. */
+/**
+ * Proves Mockk's agent works on the host JVM. Per the LLD, Mockk is reserved for external-effect
+ * ports (notifier, work scheduler, permission/channel state) and ViewModel UI-mapping tests, so
+ * this uses a test-local stand-in port rather than any production type; those ports do not exist yet.
+ */
 class MockkSmokeTest {
-    @Test
-    fun mocksAnInterfaceAndVerifiesCalls() {
-        val clock = mockk<Clock>()
-        every { clock.now() } returns Instant.EPOCH
+    private interface EffectPort {
+        fun post(identity: Int): Boolean
+    }
 
-        assertEquals(Instant.EPOCH, clock.now())
-        verify(exactly = 1) { clock.now() }
+    @Test
+    fun mocksAnExternalEffectPortAndVerifiesCalls() {
+        val port = mockk<EffectPort>()
+        every { port.post(7) } returns true
+
+        assertTrue(port.post(7))
+        verify(exactly = 1) { port.post(7) }
     }
 }

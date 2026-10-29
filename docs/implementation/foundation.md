@@ -13,14 +13,14 @@ manual wiring for the mechanism only).
 
 | Area | Result |
 | --- | --- |
-| Toolchain | AGP 9.5.0 on Gradle 9.8.2 (AGP 9.5 needs 9.6.0+), JDK 17 bytecode, compileSdk 37 (Lifecycle 2.11 requires it), minSdk 24, targetSdk 36. AGP's built-in Kotlin resolves to 2.4.10; the Compose compiler plugin is pinned to match. |
+| Toolchain | AGP 9.3.0 on Gradle 9.8.2 (AGP 9.3 needs 9.5.0+), JDK 17 bytecode, compileSdk 37 (Lifecycle 2.11 requires it; AGP 9.3 supports API 37), minSdk 24, targetSdk 36. AGP is held at 9.3.0 because the creator's Android Studio supports AGP up to 9.3.0 and refuses to sync a newer plugin; AGP 9.5.0 built fine from the command line but could not be opened in the IDE. Raise it only after Android Studio is updated. The Kotlin version on the build classpath resolves to 2.4.10; the Compose compiler plugin is pinned to match. |
 | Annotation processing | KSP 2.3.12 only (no kapt) for Room, Hilt and AndroidX Hilt. |
 | Dependency injection | Hilt 2.60.1, AndroidX Hilt 1.4.0. `HabitTrackerApplication` is `@HiltAndroidApp` and installs `HiltWorkerFactory` through WorkManager's on-demand `Configuration.Provider`; only `WorkManagerInitializer` is removed from the merged manifest. Process-wide seams (`Clock`, `AppDispatchers`, application scope) and storage locations are separate modules so the test graph replaces each wholesale. |
 | Persistence | Room 2.8.5 with the Room Gradle plugin; schema v1 exported to `app/schemas` and committed. Only the architecture's `app_state` singleton table exists. One shared production/test builder (seed callback, WAL for file-backed, no destructive-migration fallback). `DatabaseProvider` opens Room lazily and once on the injected io dispatcher, with dedicated query and transaction executors. The remaining tables, converters and SchemaGuards arrive with the repository milestone. |
 | Preferences | DataStore 1.3.0 holds only `notificationPermissionRequested`. |
 | Notifications / privacy | "Missed targets" channel through `NotificationChannelCompat` (no-op below API 26); `POST_NOTIFICATIONS` declared, with no startup prompt. `allowBackup="false"`; data-extraction rules exclude `database`, `sharedpref`, `file`, `external` and `root` from cloud backup and device transfer; the unused `backup_rules.xml` is removed. |
 | Time | `java.time` through core-library desugaring (desugar_jdk_libs 2.1.5) for API 24–25. |
-| Test libraries | Robolectric 4.17, Mockk 1.14.11 (external-effect ports and ViewModel UI-mapping tests only, per the LLD), coroutines-test 1.11.0, `hilt-android-testing`, `room-testing`, `work-testing`, AndroidX test 1.7.0. |
+| Test libraries | Robolectric 4.17, Mockk 1.14.11 (external-effect ports and ViewModel UI-mapping tests only, per the LLD; its one smoke test mocks a test-local stand-in port, not a production type), coroutines-test 1.11.0, `hilt-android-testing`, `room-testing`, `work-testing`, AndroidX test 1.7.0. |
 | Pinned, not yet used | Navigation Compose 2.10.2, `lifecycle-viewmodel-compose` / `lifecycle-process` 2.11.0 and `hilt-navigation-compose` 1.4.0 are in the version catalog; they become `:app` dependencies in the milestone that uses them. |
 
 ## Test tiers
@@ -72,19 +72,28 @@ adb wait-for-device && adb shell getprop ro.build.version.sdk   # must print 24
 ANDROID_SERIAL=emulator-5554 ./gradlew :app:connectedDebugAndroidTest
 ```
 
-## Verification (2026-10-29)
+The first `adb install` after a fresh API 24 boot has hung for many minutes in
+`dex2oat` (asleep on a futex, no CPU) in two of three attempts; the same APK installs in
+about 12 seconds on retry, and Gradle's own install worked. It looks like an emulator quirk,
+not an app defect. Install with `timeout 90 adb -s emulator-5554 install -r app/build/outputs/apk/debug/app-debug.apk`
+and simply retry if it times out. Avoid running a second emulator or a Gradle build at
+the same time as the first install.
+
+## Verification (2026-10-29, re-run on AGP 9.3.0)
 
 | Check | Result |
 | --- | --- |
-| `./gradlew help`, `build --dry-run` | Passed on AGP 9.5.0 / Gradle 9.8.2. |
+| `./gradlew help`, `build --dry-run` | Passed on AGP 9.3.0 / Gradle 9.8.2. |
 | `:app:assembleDebug`, `:app:assembleDebugAndroidTest` | Passed. |
 | `:app:testDebugUnitTest` | Passed: 13 tests (production Application wiring against the merged manifest, Hilt test graph, in-memory seed and Flow, file-backed WAL and reopen, DataStore persistence, FakeClock, Mockk, template placeholder). Host SQLite 3.44.3. |
 | API 36 managed device | Passed: 3 tests, SQLite 3.44.3, `journal_mode=wal`. |
 | API 24 connected AVD | Passed: 3 tests on Android 7.0 arm64, SQLite 3.9.2, `journal_mode=wal`. |
-| `:app:lintDebug` | 0 errors, 11 warnings (below). |
+| App launch, API 24 (Android 7.0 arm64) | Passed: installs, shows "Hello Android!", process survives HOME/relaunch and both rotations, empty crash buffer, backup not allowed, targetSdk 36. |
+| App launch, API 34 (Pixel 9 AVD) | Passed: same checks, plus the `missed_targets` "Missed targets" channel exists and no notification-permission dialog appears at startup. |
+| `:app:lintDebug` | 0 errors, 12 warnings (below). |
 | Mutation check | The merged-manifest test fails when the `WorkManagerInitializer` removal is deleted, so it is not vacuous. |
 
-Lint warnings: `targetSdk 36` is intentionally unchanged; `dataExtractionRules` without
+Lint warnings: `targetSdk 36` is intentionally unchanged; lint notes that AGP 9.5.0 exists (see Toolchain); `dataExtractionRules` without
 `fullBackupContent` follows the architecture's explicit instruction because backup is
 disabled; the redundant activity label and seven unused color resources come from the
 template; the Compose plugin has a newer patch (2.4.21) but is held at the Kotlin
