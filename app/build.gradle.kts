@@ -19,7 +19,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.codetutor.samplehabittrackerapp.HabitTrackerTestRunner"
     }
 
     buildTypes {
@@ -34,6 +34,29 @@ android {
         isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+    }
+    testOptions {
+        // Robolectric host tests read the merged manifest and resources.
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            // Robolectric's FileDescriptor interceptor reflects into JDK 21's jdk.internal.access.
+            it.jvmArgs("--add-opens=java.base/jdk.internal.access=ALL-UNNAMED")
+        }
+        managedDevices {
+            localDevices {
+                // Managed devices start at API 27, so API 24 is a connected AVD (docs/design LLD).
+                create("pixel2Api36") {
+                    device = "Pixel 2"
+                    apiLevel = 36
+                    systemImageSource = "aosp"
+                }
+            }
+        }
+    }
+    sourceSets {
+        // Fixtures shared by the host and instrumented tiers (FakeClock, test Hilt modules, SQL cases).
+        getByName("test").kotlin.directories.add("src/sharedTest/java")
+        getByName("androidTest").kotlin.directories.add("src/sharedTest/java")
     }
     buildFeatures {
         compose = true
