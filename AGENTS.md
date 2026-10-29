@@ -44,10 +44,18 @@ Run commands from the repository root:
 ./gradlew :app:lintDebug
 ```
 
-For device or emulator tests, use:
+For instrumented tests, the API 36 tier runs on a Gradle Managed Device:
 
 ```bash
-./gradlew :app:connectedDebugAndroidTest
+./gradlew :app:pixel2Api36DebugAndroidTest
+```
+
+The API 24 tier (mandatory for SQL guard and migration evidence) needs the
+`habit_api24` AVD booted and pinned to its serial; see
+[the foundation record](docs/implementation/foundation.md#api-24-on-apple-silicon):
+
+```bash
+ANDROID_SERIAL=emulator-5554 ./gradlew :app:connectedDebugAndroidTest
 ```
 
 ## Before handing work back

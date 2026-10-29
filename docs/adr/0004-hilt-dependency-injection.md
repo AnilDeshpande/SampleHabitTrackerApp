@@ -42,3 +42,7 @@ The wiring change does not change persisted data or the retained contracts. Any 
 ## Verification and links
 
 Verify restored state, worker construction and test graph through the framework entry points against [ADR 0003](0003-manual-composition-root-and-android-dependency-wiring.md) and the [LLD](../design/habit-tracker-v1-low-level-design.md). This decision alone executes no tests.
+
+### Foundation verification (2026-10-29)
+
+The compatibility obligation above was checked in the [foundation build](../implementation/foundation.md): Hilt 2.60.1 and AndroidX Hilt 1.4.0 with KSP 2.3.12 build and run on AGP 9.5.0 using its built-in Kotlin. The framework entry points were exercised: the production Application installs `HiltWorkerFactory` through WorkManager's on-demand configuration, and a Hilt test graph replaces the clock, dispatchers, application scope and storage on both the host (Robolectric) and instrumented (API 24 and API 36) tiers. Not yet verified, because the code does not exist: workers built through the factory, and restored ViewModel state.
