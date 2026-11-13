@@ -7,8 +7,8 @@ improvements, and give the implementation phase a method from "a set of approved
 reviewable pull request". The previous retro covered the foundation:
 [android-foundation-upskill-retro-2026-10-29.md](android-foundation-upskill-retro-2026-10-29.md).
 
-Record of the work itself: [increment record](../implementation/increment-1-record.md) and
-[increment plan](../implementation/increment-1-plan.md). Pull request:
+Record of the work itself: [increment record](https://github.com/AnilDeshpande/SampleHabitTrackerApp/blob/feature/increment-1-create-habit/docs/implementation/increment-1-record.md) and
+[increment plan](https://github.com/AnilDeshpande/SampleHabitTrackerApp/blob/feature/increment-1-create-habit/docs/implementation/increment-1-plan.md). Pull request:
 [#3](https://github.com/AnilDeshpande/SampleHabitTrackerApp/pull/3) (six commits, 115 files).
 
 ## Outcome
