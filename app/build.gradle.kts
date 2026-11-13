@@ -71,6 +71,15 @@ room {
 dependencies {
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
+    constraints {
+        // lifecycle-viewmodel-savedstate brings kotlinx-serialization-core 1.7.3, and AGP's consistent
+        // resolution then pins the test classpath to it. Room's migration test reads exported schemas
+        // with a newer serializer and fails with AbstractMethodError against 1.7.3.
+        implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.9.0") {
+            because("Room's MigrationTestHelper needs a serialization runtime newer than 1.7.3")
+        }
+    }
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
