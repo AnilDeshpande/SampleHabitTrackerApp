@@ -55,8 +55,14 @@ The API 24 tier (mandatory for SQL guard and migration evidence) needs the
 [the foundation record](docs/implementation/foundation.md#api-24-on-apple-silicon):
 
 ```bash
-ANDROID_SERIAL=emulator-5554 ./gradlew :app:connectedDebugAndroidTest
+ANDROID_SERIAL=<serial of the habit_api24 AVD> ./gradlew :app:connectedDebugAndroidTest
 ```
+
+## Continuous integration
+
+- `harness-check.yml` validates the harness. `android-tests.yml` runs assemble, host tests and lint on every app change, and the
+  instrumented suite on API 24 and API 34 (x86_64 images on hosted runners).
+- Pull requests are merged only after review and the creator's approval; do not stack them or merge them yourself.
 
 ## Before handing work back
 

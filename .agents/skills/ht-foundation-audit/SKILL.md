@@ -27,7 +27,10 @@ do not resolve. This is a repository-local skill. It has no separate role: the c
 ## Procedure
 
 1. **Inventory** the host, SDK, devices, IDE and repository with the inventory template. Read versions from files and
-   tools; ask the creator only for what cannot be read (the IDE version when no bundle is found).
+   tools; ask the creator only for what cannot be read (the IDE version when no bundle is found). When the creator reports an IDE
+   problem, or Gradle files changed recently, read the IDE's state with
+   [the Studio events script](../ht-emulator-validation/scripts/studio-events.py): last sync, `autoReloadType`, and whether a Gradle
+   file is newer than the last successful sync.
 2. **Check references.** Run the harness checker. For each missing file a document links to, search every branch
    (`git log --all -- <path>`, `git branch -a --contains`) and say where it lives. A decision record that three documents
    call Accepted but that exists only on a side branch is a blocker finding.

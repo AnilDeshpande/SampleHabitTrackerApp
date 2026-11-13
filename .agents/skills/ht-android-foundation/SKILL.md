@@ -103,9 +103,11 @@ Rules for every phase:
 3. Hand off to [independent verification](../ht-foundation-verification/SKILL.md). Fix what it finds,
    then re-verify the fix, not just the original check.
 4. Report to the creator: what passed, what is held back and why, what is unverified, and the next
-   implementation order.
+   implementation order. If Gradle files changed after the creator's last Android Studio sync, say so and ask them to sync;
+   the command line working does not mean the IDE is current (see [emulator validation](../ht-emulator-validation/SKILL.md)).
 
 ## Stopping boundary
 
 Stop when the foundation record is written and verification passes or its remaining findings are
-reported. Feature work starts from the documents' next implementation order, under its own plan.
+reported. Feature work starts from the documents' next implementation order, planned with
+[increment planning](../ht-increment-planning/SKILL.md) and built with [increment implementation](../ht-increment-implementation/SKILL.md).
