@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S1 and S2 — Material 3 baseline mockup</title>
+<style>
+  /* Proposed green Material 3 tonal palette (seed ~ #3A7D44), replacing the template's purple. */
+  :root {
+    --primary:#2C6E3F; --on-primary:#FFFFFF; --primary-container:#B2F1BB; --on-primary-container:#00210C;
+    --surface:#F7FBF3; --on-surface:#191D18; --on-surface-variant:#414941; --outline:#717970; --outline-variant:#C1C9BF;
+    --surface-container:#EBEFE8; --surface-container-high:#E5EAE2; --scrim:#000;
+  }
+  .dark {
+    --primary:#97D5A0; --on-primary:#003919; --primary-container:#1B5330; --on-primary-container:#B2F1BB;
+    --surface:#101410; --on-surface:#E0E4DB; --on-surface-variant:#C1C9BF; --outline:#8B9389; --outline-variant:#414941;
+    --surface-container:#1C201B; --surface-container-high:#262B25;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family: Roboto, "Helvetica Neue", Arial, sans-serif; background:#d9d6de; padding:32px; }
+  .row { display:flex; gap:32px; justify-content:center; margin-bottom:40px; flex-wrap:wrap; }
+  .cap { text-align:center; font:600 14px/1.4 Roboto, Arial, sans-serif; color:#333; margin-bottom:10px; }
+  .phone { width:360px; height:780px; border-radius:36px; overflow:hidden; background:var(--surface); color:var(--on-surface);
+           border:8px solid #1b1b1f; display:flex; flex-direction:column; position:relative; }
+  .status { height:28px; display:flex; justify-content:space-between; align-items:center; padding:0 20px; font-size:12px; font-weight:500; }
+  .status .r { letter-spacing:2px; }
+  .appbar { height:64px; display:flex; align-items:center; padding:0 4px 0 16px; font-size:22px; line-height:28px; }
+  .appbar.nav { padding-left:4px; }
+  .iconbtn { width:48px; height:48px; display:flex; align-items:center; justify-content:center; border-radius:50%; }
+  .iconbtn svg { width:24px; height:24px; fill:var(--on-surface); }
+  .content { flex:1; padding:8px 16px 16px; display:flex; flex-direction:column; }
+  .points { background:var(--surface-container); border-radius:12px; padding:16px; display:flex; align-items:baseline; justify-content:space-between; }
+  .points .l { font-size:14px; line-height:20px; color:var(--on-surface-variant); letter-spacing:.1px; }
+  .points .v { font-size:28px; line-height:36px; font-weight:400; }
+  .empty { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 16px 48px; }
+  .empty .ico { width:72px; height:72px; border-radius:50%; background:var(--primary-container); display:flex; align-items:center; justify-content:center; margin-bottom:24px; }
+  .empty .ico svg { width:36px; height:36px; fill:var(--on-primary-container); }
+  .empty h2 { font-size:24px; line-height:32px; font-weight:400; margin-bottom:8px; }
+  .empty p { font-size:16px; line-height:24px; color:var(--on-surface-variant); margin-bottom:24px; letter-spacing:.5px; }
+  .btn { height:48px; min-width:64px; border-radius:24px; display:inline-flex; align-items:center; justify-content:center; padding:0 24px;
+         font-size:14px; font-weight:500; letter-spacing:.1px; }
+  .btn.filled { background:var(--primary); color:var(--on-primary); }
+  .btn.text { color:var(--primary); padding:0 12px; }
+  .btn.block { width:100%; }
+  .field { position:relative; margin-top:18px; }
+  .field .box { height:56px; border:1px solid var(--outline); border-radius:4px; padding:0 16px; display:flex; align-items:center; font-size:16px; letter-spacing:.5px; }
+  .field .lbl { position:absolute; top:-9px; left:12px; padding:0 4px; background:var(--surface); font-size:12px; line-height:16px; color:var(--on-surface-variant); letter-spacing:.4px; }
+  .field .help { font-size:12px; line-height:16px; color:var(--on-surface-variant); padding:4px 16px 0; letter-spacing:.4px; }
+  .freq { margin-top:20px; background:var(--surface-container); border-radius:12px; padding:16px; }
+  .freq .t { font-size:16px; line-height:24px; font-weight:500; }
+  .freq .s { font-size:14px; line-height:20px; color:var(--on-surface-variant); }
+  .actions { margin-top:auto; display:flex; flex-direction:column; gap:4px; align-items:stretch; padding-top:16px; }
+  .gesture { height:24px; display:flex; align-items:center; justify-content:center; }
+  .gesture i { width:108px; height:4px; border-radius:2px; background:var(--on-surface); opacity:.6; }
+  .spacer { flex:1; }
+</style>
+</head>
+<body>
+
+<div class="row">
+  <div>
+    <div class="cap">S1 · Overview — No active habits (light)</div>
+    <div class="phone" id="s1-light">
+      <div class="status"><span>9:41</span><span class="r">▮▮▮ ◖</span></div>
+      <div class="appbar">Overview</div>
+      <div class="content">
+        <div class="points"><span class="l">Global points</span><span class="v">0</span></div>
+        <div class="empty">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M6.05 8.05c-2.73 2.73-2.73 7.15-.02 9.88 1.47-3.4 4.09-6.24 7.36-7.93-2.77 2.34-4.71 5.61-5.39 9.32 2.6 1.23 5.8.78 7.95-1.37C19.43 14.47 20 4 20 4S9.53 3.43 6.05 8.05z"/></svg></div>
+          <h2>Start your first habit</h2>
+          <p>Create a habit with a measurable target.</p>
+          <span class="btn filled">Create habit</span>
+          <span class="btn text" style="margin-top:8px">Retired habits</span>
+        </div>
+      </div>
+      <div class="gesture"><i></i></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="cap">S2 · Create habit — Daily draft (light)</div>
+    <div class="phone" id="s2-light">
+      <div class="status"><span>9:41</span><span class="r">▮▮▮ ◖</span></div>
+      <div class="appbar nav">
+        <div class="iconbtn"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"/></svg></div>
+        <span style="margin-left:4px">Create habit</span>
+      </div>
+      <div class="content">
+        <div class="field"><span class="lbl">Name</span><div class="box">Meditation</div><div class="help">1–50 characters; unique active name</div></div>
+        <div class="field"><span class="lbl">Unit</span><div class="box">minutes</div><div class="help">1–20 characters; fixed after save</div></div>
+        <div class="field"><span class="lbl">Target</span><div class="box">10</div><div class="help">Positive; up to 9 + 3 digits</div></div>
+        <div class="freq"><div class="t">Frequency: Daily</div><div class="s">Starts today</div></div>
+        <div class="actions">
+          <span class="btn filled block">Save habit</span>
+          <span class="btn text block">Cancel</span>
+        </div>
+      </div>
+      <div class="gesture"><i></i></div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div>
+    <div class="cap">S1 · Overview — No active habits (dark)</div>
+    <div class="phone dark" id="s1-dark">
+      <div class="status"><span>9:41</span><span class="r">▮▮▮ ◖</span></div>
+      <div class="appbar">Overview</div>
+      <div class="content">
+        <div class="points"><span class="l">Global points</span><span class="v">0</span></div>
+        <div class="empty">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M6.05 8.05c-2.73 2.73-2.73 7.15-.02 9.88 1.47-3.4 4.09-6.24 7.36-7.93-2.77 2.34-4.71 5.61-5.39 9.32 2.6 1.23 5.8.78 7.95-1.37C19.43 14.47 20 4 20 4S9.53 3.43 6.05 8.05z"/></svg></div>
+          <h2>Start your first habit</h2>
+          <p>Create a habit with a measurable target.</p>
+          <span class="btn filled">Create habit</span>
+          <span class="btn text" style="margin-top:8px">Retired habits</span>
+        </div>
+      </div>
+      <div class="gesture"><i></i></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="cap">S2 · Create habit — Daily draft (dark)</div>
+    <div class="phone dark" id="s2-dark">
+      <div class="status"><span>9:41</span><span class="r">▮▮▮ ◖</span></div>
+      <div class="appbar nav">
+        <div class="iconbtn"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"/></svg></div>
+        <span style="margin-left:4px">Create habit</span>
+      </div>
+      <div class="content">
+        <div class="field"><span class="lbl">Name</span><div class="box">Meditation</div><div class="help">1–50 characters; unique active name</div></div>
+        <div class="field"><span class="lbl">Unit</span><div class="box">minutes</div><div class="help">1–20 characters; fixed after save</div></div>
+        <div class="field"><span class="lbl">Target</span><div class="box">10</div><div class="help">Positive; up to 9 + 3 digits</div></div>
+        <div class="freq"><div class="t">Frequency: Daily</div><div class="s">Starts today</div></div>
+        <div class="actions">
+          <span class="btn filled block">Save habit</span>
+          <span class="btn text block">Cancel</span>
+        </div>
+      </div>
+      <div class="gesture"><i></i></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

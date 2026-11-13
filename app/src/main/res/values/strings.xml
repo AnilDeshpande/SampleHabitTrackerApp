@@ -1,4 +1,93 @@
 <resources>
     <string name="app_name">SampleHabitTrackerApp</string>
     <string name="channel_missed_targets_name">Missed targets</string>
+
+    <!-- Shared. All copy is draft (docs/prototypes/HANDOFF.md section 8): wording and localization are not approved. -->
+    <string name="action_back">Back</string>
+    <string name="action_try_again">Try again</string>
+    <string name="frequency_daily">Daily</string>
+    <string name="frequency_weekly">Weekly</string>
+    <string name="frequency_fortnightly">Fortnightly</string>
+    <string name="frequency_monthly">Monthly</string>
+    <string name="frequency_custom">Custom weekdays</string>
+    <string name="schedule_custom_days">Custom: %1$s</string>
+    <string name="weekday_separator"> / </string>
+
+    <!-- Overview -->
+    <string name="overview_title">Overview</string>
+    <string name="overview_points_label">Global points</string>
+    <string name="overview_points_description">Global points: %1$d</string>
+    <string name="overview_loading">Loading habits…</string>
+    <string name="overview_read_error">Try again to load your saved habits.</string>
+    <string name="overview_empty_title">Start your first habit</string>
+    <string name="overview_empty_body">Create a habit with a measurable target.</string>
+    <string name="overview_create_habit">Create habit</string>
+    <string name="overview_retired_habits">Retired habits</string>
+    <string name="overview_habit_saved">Habit saved</string>
+    <string name="overview_record_progress">Record progress</string>
+    <string name="overview_review_habit">Review habit</string>
+    <string name="overview_record_progress_for">Record progress for %1$s</string>
+    <string name="overview_review_habit_for">Review %1$s</string>
+
+    <string name="habit_card_title">%1$s · %2$s</string>
+    <string name="habit_target_line">%1$s %2$s target</string>
+    <string name="habit_today_progress">Today: %1$s / %2$s %3$s</string>
+    <string name="habit_period_progress">Progress: %1$s / %2$s %3$s</string>
+    <string name="habit_target_met">Target met · period still open</string>
+    <string name="habit_ends_tonight">Ends tonight at %1$s</string>
+    <string name="habit_ends_at">Ends %1$s</string>
+    <string name="habit_waiting_first_period">Waiting for first period</string>
+    <string name="habit_next_start">Next start: %1$s</string>
+    <string name="habit_no_occurrence_today">No occurrence today</string>
+    <string name="habit_between_periods">No current occurrence</string>
+    <string name="habit_run_streak">Active run %1$d · Streak %2$d</string>
+    <string name="habit_badge_not_earned">Badge: not earned</string>
+    <string name="habit_badge_earned">21-Day Consistency earned</string>
+    <string name="habit_unacknowledged_misses">Unacknowledged misses: %1$d</string>
+    <string name="habit_last_success">Last result: Success · +%1$d</string>
+    <string name="habit_last_miss">Last result: Missed · −%1$d</string>
+    <string name="habit_last_miss_no_points">Last result: Missed</string>
+    <string name="habit_pending_retirement">%1$s · Retirement pending</string>
+
+    <!-- Create habit -->
+    <string name="form_title">Create habit</string>
+    <string name="form_name_label">Name</string>
+    <string name="form_name_helper">1–50 characters; unique active name</string>
+    <string name="form_unit_label">Unit</string>
+    <string name="form_unit_helper">1–20 characters; fixed after save</string>
+    <string name="form_target_label">Target</string>
+    <string name="form_target_helper">Positive; up to 9 + 3 digits</string>
+    <string name="form_frequency_label">Frequency</string>
+    <string name="form_starts_today">Starts today</string>
+    <string name="form_starts_on">Starts %1$s</string>
+    <string name="form_weekdays_label">Days</string>
+    <string name="form_save">Save habit</string>
+    <string name="form_saving">Saving…</string>
+    <string name="form_retry">Retry</string>
+    <string name="form_cancel">Cancel</string>
+    <string name="form_save_failed">Your input is retained. Nothing was saved.</string>
+    <string name="form_discard_title">Discard changes?</string>
+    <string name="form_discard_body">Your unsaved changes will be lost.</string>
+    <string name="form_keep_editing">Keep editing</string>
+    <string name="form_discard">Discard</string>
+
+    <string name="error_name_empty">Enter a name</string>
+    <string name="error_name_too_long">Use 50 characters or fewer</string>
+    <string name="error_name_duplicate">An active %1$s already exists</string>
+    <string name="error_unit_empty">Enter a unit</string>
+    <string name="error_unit_too_long">Use 20 characters or fewer</string>
+    <string name="error_target_empty">Enter a target</string>
+    <string name="error_target_not_a_number">Enter a positive number without a sign</string>
+    <string name="error_target_integer_digits">Use at most 9 digits before the decimal separator</string>
+    <string name="error_target_fraction_digits">Use at most 3 digits after the decimal separator</string>
+    <string name="error_target_positive">Enter a number greater than zero</string>
+    <string name="error_weekdays_none">Select at least one day</string>
+
+    <!-- Destinations that are not built yet -->
+    <string name="placeholder_body">This screen is not built yet.</string>
+    <string name="placeholder_edit_habit">Edit habit</string>
+    <string name="placeholder_record_progress">Record progress</string>
+    <string name="placeholder_habit_review">Habit review</string>
+    <string name="placeholder_retirement">Retire habit</string>
+    <string name="placeholder_retired_habits">Retired habits</string>
 </resources>
