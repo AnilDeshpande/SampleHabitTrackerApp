@@ -51,6 +51,9 @@ class CommandRunner @Inject constructor(
     /** Whether a command with [key] is in flight. Survives screen recreation: it is process-wide state. */
     fun isBusy(key: String): Flow<Boolean> = busyKeys.map { key in it }.distinctUntilChanged()
 
+    /** A point-in-time check for event handlers; observe [isBusy] to render. */
+    fun isBusyNow(key: String): Boolean = key in busyKeys.value
+
     fun <R> submit(
         key: String,
         afterCommit: (suspend (R) -> Unit)? = null,
