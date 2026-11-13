@@ -46,4 +46,5 @@ List behavior the foundation cannot yet prove and the milestone that will.
 
 ## Next implementation order
 
-Numbered, in the order the spec and dependencies require.
+Numbered, in the order the spec and dependencies require. The first feature increment is planned with
+[increment planning](../skills/ht-increment-planning/SKILL.md).

@@ -10,7 +10,9 @@ count only after they pass on the minimum API". The method turns "we need an API
 repeatable procedure on this machine, including Apple-silicon hosts where x86 images do not run.
 
 Use it from [the foundation method](../ht-android-foundation/SKILL.md), from
-[verification](../ht-foundation-verification/SKILL.md), or whenever an instrumented tier must run.
+[verification](../ht-foundation-verification/SKILL.md), from
+[increment implementation](../ht-increment-implementation/SKILL.md), or whenever an instrumented tier must run. To run the app
+and look at it, use [emulator validation](../ht-emulator-validation/SKILL.md).
 This is a repository-local skill. Native sub-agents are used only when the creator asks.
 
 ## Tier model
@@ -22,6 +24,10 @@ This is a repository-local skill. Native sub-agents are used only when the creat
 
 Select the minimum-API device explicitly by serial so a connected higher-API device can never satisfy
 the minimum-API job. The same instrumented suites run on both tiers.
+
+The tiers also differ in **screen size**. UI tests that pass on a tall device can fail on a shorter one that scrolls, so
+name the smallest-screen tier in the plan and run Compose tests there. A creator's own emulator (often a large Pixel)
+is a valid extra tier but never replaces either of these.
 
 ## Procedure
 
@@ -46,11 +52,15 @@ the minimum-API job. The same instrumented suites run on both tiers.
 
 ## Rules
 
-- Never touch, reconfigure or stop a device the creator started. Drive devices only with `adb -s <serial>`.
+- Declare device ownership before the first command: `adb devices` plus the creator's word on which device is theirs. Never touch,
+  reconfigure, clear data on or stop a device the creator started. Drive devices only with `adb -s <serial>`.
+- The boot script is safe beside a creator's running emulator: it reports only the serial it started. A connected-test run installs and
+  then uninstalls the app, so do not run a suite on a device the creator is looking at.
 - Restore every device setting you change (for example auto-rotate).
 - Serialize emulator boots; running several emulators plus Gradle at once starves the host and has coincided with
   install hangs. Parallelism is for file-only work, or for per-device checks when the creator asks for sub-agents.
-- Do not report a device tier as passed from a run on a different API level.
+- Do not report a device tier as passed from a run on a different API level. CI runs the same instrumented suite on API 24 and API 34
+  with x86_64 images ([the workflow](../../../.github/workflows/android-tests.yml)); a local arm64 run and a CI run are separate evidence.
 
 ## Stopping boundary
 

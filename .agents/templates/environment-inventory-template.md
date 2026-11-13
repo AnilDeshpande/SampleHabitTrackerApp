@@ -21,7 +21,8 @@ observed and how; mark anything that could not be read as **ask the creator**.
 | Installed system images (API, tag, ABI) | | |
 | Installable system images for the mandatory minimum API (ABI matches the host) | | `android sdk list --all` |
 | Existing AVDs and which are owned by the creator | | `emulator -list-avds` |
-| Devices currently connected | | `adb devices` |
+| Devices currently connected, and which the creator started (never touch those) | | `adb devices`; ask the creator |
+| Smallest-screen device available for UI tests | | AVD or managed-device definition |
 
 ## IDE
 
@@ -29,6 +30,7 @@ observed and how; mark anything that could not be read as **ask the creator**.
 | --- | --- | --- |
 | Android Studio name, version and build | | **ask the creator** if no bundle is found |
 | Highest AGP that this Studio supports | | Google's Studio-to-AGP table |
+| Last successful Gradle sync, auto-reload setting, any Gradle file newer than the sync | | [Studio events script](../skills/ht-emulator-validation/scripts/studio-events.py) |
 
 ## Repository
 

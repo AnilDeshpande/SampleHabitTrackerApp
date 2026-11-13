@@ -28,6 +28,11 @@ use its explicit runtime mode for affected discovery/invocation paths.
 | Foundation verification | `$ht-foundation-verification` | `/ht-foundation-verification` |
 | Device tiers | `$ht-device-tiers` | `/ht-device-tiers` |
 | Foundation audit | `$ht-foundation-audit` | `/ht-foundation-audit` |
+| Increment planning | `$ht-increment-planning` | `/ht-increment-planning` |
+| Increment implementation | `$ht-increment-implementation` | `/ht-increment-implementation` |
+| Screen implementation | `$ht-screen-implementation` | `/ht-screen-implementation` |
+| Emulator validation | `$ht-emulator-validation` | `/ht-emulator-validation` |
+| Pull request handoff | `$ht-pr-handoff` | `/ht-pr-handoff` |
 | Skill vendoring | `$ht-skill-vendoring` | `/ht-skill-vendoring` |
 | Mobile prototype | `$mobile-prototype` | `/mobile-prototype` |
 
@@ -238,6 +243,39 @@ entry points, and a completeness check.
 - **Deliverables:** Unmodified bundles, entry points, exceptions, provenance record, and index registration.
 - **Instructions:** [Skill Vendoring](skills/ht-skill-vendoring/SKILL.md) · [vendoring check](skills/ht-skill-vendoring/scripts/verify-vendored.sh).
 - **Invoke:** “Read `.agents/skills/ht-skill-vendoring/SKILL.md` and vendor this skill repository.”
+
+## Implementation phase: from approved screens to a pull request
+
+The flow after a foundation exists. Plan an increment from prototype screens, build it bottom-up in gated layers, look at it on
+devices, record it, and hand it to a reviewer. The flow, its gates and the per-layer rules are owned by
+[Increment Implementation](skills/ht-increment-implementation/SKILL.md); the role guides the whole conversation.
+
+- **Roles:** [Implementation Engineer Agent](roles/implementation-engineer-agent.md) (the flow) and
+  [Implementation Verifier Agent](roles/implementation-verifier-agent.md) (read-only independent check; the creator allows it as a
+  native sub-agent).
+- **Templates:** [Increment plan](templates/increment-plan-template.md) · [Screen-state map](templates/screen-state-map-template.md) ·
+  [Increment record](templates/increment-record-template.md) · [Pull request handoff](templates/pr-handoff-template.md) ·
+  [Verification handoff prompt](templates/increment-verification-prompt-template.md) ·
+  [Verification report](templates/increment-verification-report-template.md).
+- **Why these exist:** [implementation upskill retro](../docs/retros/android-implementation-upskill-retro-2026-11-13.md).
+
+| Step | Skill | Use for | Output |
+| --- | --- | --- | --- |
+| 1 | [Increment Planning](skills/ht-increment-planning/SKILL.md) | Approved screens to an approved plan: scope cut by journey, state map, design lock, decisions | Increment plan and screen-state map in `docs/implementation/` |
+| 2 | [Increment Implementation](skills/ht-increment-implementation/SKILL.md) | The layered build and the whole flow, one commit per layer on a feature branch | Commits, tests with mutation checks, increment record |
+| 3 | [Screen Implementation](skills/ht-screen-implementation/SKILL.md) | Layer 4: state types, ViewModels, Compose screens, navigation with placeholders, tests on the smallest screen | UI layer and its tests |
+| 4 | [Emulator Validation](skills/ht-emulator-validation/SKILL.md) | Run it and look at it; process death; Android Studio diagnosis from its log | Read screenshots, curated evidence, events summary |
+| 5 | [Pull Request Handoff](skills/ht-pr-handoff/SKILL.md) | A pull request with before/after tables and verified numbers | Open pull request |
+
+- **Inputs:** The screens (prototype S-numbers), the approved documents, the foundation record, the checkout and its devices.
+- **Invoke:** Codex: `$ht-increment-planning Plan an increment for screens S1 to S3.` Claude Code:
+  `/ht-increment-implementation Build the approved increment plan.`
+- **File fallback:** "Read `.agents/skills/ht-increment-planning/SKILL.md` and plan an increment for these screens." (use the
+  same pattern for each of the five).
+- **Scripts:** [screenshot](skills/ht-emulator-validation/scripts/shot.sh) ·
+  [UI finder and tapper](skills/ht-emulator-validation/scripts/ui-find.sh) ·
+  [Android Studio events](skills/ht-emulator-validation/scripts/studio-events.py) ·
+  [adb gotchas](skills/ht-emulator-validation/references/adb-gotchas.md).
 
 ## Mobile prototyping
 
