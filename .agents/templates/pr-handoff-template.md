@@ -27,7 +27,9 @@ Absolute links to the plan, the record and the design note on the branch.
 
 ## How to review
 
-State the suggested merge method and why. This pull request is not stacked. It is merged only after review and the creator's approval.
+State this PR's scope, any dependencies, and the suggested merge method and why.
+State **Merge-blocking: Yes / No** and identify any unresolved finding, required evidence, or product decision that blocks merge.
+The creator approves each PR before merge.
 
 | # | Commit | Layer or purpose | Files | Read this first | What to check |
 | --- | --- | --- | --- | --- | --- |
@@ -57,11 +59,11 @@ Screenshots are attached to this pull request in a comment, not committed. List 
 | --- | --- |
 | | |
 
-## Decisions I made that need your confirmation
+## Decisions and questions
 
-| # | Choice | Where | Alternative |
-| --- | --- | --- | --- |
-| | | | |
+| # | Kind (product or engineering) | Question or decision | Recommendation | Owner | Blocks merge? | Durable record and documents affected |
+| --- | --- | --- | --- | --- | --- | --- |
+| | | | | | | |
 
 ## Not covered by this PR
 

@@ -90,7 +90,8 @@ The UI layer needs a look. When the handoff has no approved visual direction:
 
 Whenever the documents are silent (number parsing, an extra control, a label, ordering), write the choice, its
 location, the alternative and your recommendation into the plan's decisions table. Ask the creator once, in one answer.
-These choices travel into the pull request's "decisions to confirm" table. Classify any document text the plan finds stale or
+Label each as a product decision or an engineering question, with its owner and whether resolution blocks merge. Record the
+creator's accepted answers and where they change the approved documents. The PR links that record. Classify any text the plan finds stale or
 conflicting as a **sync correction** (made true to what will be built, no change to approved behavior; done inside the increment in
 its own commit) or a **substantive correction** (changes behavior, a contract or an ADR decision; a separate document change through
 the owning workflow, with the creator's approval).

@@ -15,7 +15,9 @@ of `.agents/skills/ht-emulator-validation/SKILL.md`.
 - Expected test counts: host `<n>`, device `<n>` per tier. Expected lint: `<errors> errors, <warnings> warnings`, accepted warnings:
   `<each with its reason>`.
 - Expected scope: `<S-numbers and states>`; the screen-state map is at `<path>`; the plan at `<path>`; the record at `<path>`.
-- Decisions the record lists as interpretations, to be checked against the code: `<list>`.
+- Approved sources: `<PRD, architecture, LLD, current ADRs, creator decisions and design paths>`. Use the PR description
+  and implementation record as claims to compare with the approved sources.
+- Unresolved product decisions and engineering questions: `<list with owner and merge impact>`.
 
 **Devices you may drive** (always `adb -s <serial>`):
 
@@ -35,12 +37,15 @@ Never touch any other device. The creator's device is `<serial or none>`: do not
 
 **Do, in order**
 
-1. Static review: git state; Gradle and catalog versus the record; manifest; the layers' files exist where the record says; nothing
-   contradicts the real-versus-fake and DI rules in the LLD; schema export present; no committed screenshots or build outputs.
+1. Static review: compare the production paths, DI, test seams and schema with approved sources. Inspect merged debug and
+   release manifests, exported components, effective permissions, `allowBackup`, extraction XML and the actual Room and preferences
+   paths. Record which platform backup and transfer checks can be run. Check for committed screenshots or build outputs.
 2. Commands: build, unit tests (counts per class), lint, the instrumented suite per tier on its own device.
-3. Devices: install, launch, and for each row of the screen-state map reach the state and capture it with
+3. Mutations: demonstrate pass–fail–pass with named tests for material rules in an isolated checkout. Record any surviving mutants,
+   already-failing reproductions or missing direct coverage.
+4. Devices: install, launch, and for each row of the screen-state map reach the state and capture it with
    `.agents/skills/ht-emulator-validation/scripts/shot.sh`; read every image. Find controls with `ui-find.sh`. Check process death
    (background, `am kill`, reopen from Recents), dark mode, 200% font scale and the smallest screen. Scan logcat for FATAL and ANR.
-4. Report using `.agents/templates/increment-verification-report-template.md`, verdict first.
+5. Report using `.agents/templates/increment-verification-report-template.md`, verdict and merge impact first.
 
 ---

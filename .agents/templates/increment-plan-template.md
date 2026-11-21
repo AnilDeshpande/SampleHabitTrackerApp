@@ -10,18 +10,16 @@ statement in each that decides a choice here. Note any conflict and who owns it.
 
 ## Branch and commit policy
 
-Branch name and base. The base is an up-to-date `main`; the branch is never `main`, and it is not stacked on an unmerged pull
-request. If this increment depends on one, wait for its review, approval and merge. One commit per layer. The pull request is
-merged only after review and the creator's approval.
+Branch name and base. The base is an up-to-date `main`. Keep one commit per layer. If the increment depends on an open PR,
+wait for that PR's review, approval, and merge. The creator approves each merge.
 
 ## Decisions
 
-| Decision | Choice | Alternative | Recommended by | Decided by |
-| --- | --- | --- | --- | --- |
-| | | | | |
+| Decision | Kind (product or engineering) | Recommendation | Owner | Blocks merge? | Accepted answer and source |
+| --- | --- | --- | --- | --- | --- |
+| | | | | | |
 
-Interpretations the documents do not settle belong here too; they move to the pull request's
-"decisions to confirm" table.
+Save decisions here or link the owning document. The PR links back to this durable record.
 
 ## Scope
 

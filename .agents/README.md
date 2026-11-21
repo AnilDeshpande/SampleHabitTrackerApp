@@ -257,15 +257,16 @@ devices, record it, and hand it to a reviewer. The flow, its gates and the per-l
   [Increment record](templates/increment-record-template.md) · [Pull request handoff](templates/pr-handoff-template.md) ·
   [Verification handoff prompt](templates/increment-verification-prompt-template.md) ·
   [Verification report](templates/increment-verification-report-template.md).
-- **Why these exist:** [implementation upskill retro](../docs/retros/android-implementation-upskill-retro-2026-11-13.md).
+- **Why these exist:** [implementation upskill retro](../docs/retros/android-implementation-upskill-retro-2026-11-13.md) and the
+  Increment 1 review lessons recorded on the increment branch.
 
 | Step | Skill | Use for | Output |
 | --- | --- | --- | --- |
 | 1 | [Increment Planning](skills/ht-increment-planning/SKILL.md) | Approved screens to an approved plan: scope cut by journey, state map, design lock, decisions | Increment plan and screen-state map in `docs/implementation/` |
 | 2 | [Increment Implementation](skills/ht-increment-implementation/SKILL.md) | The layered build and the whole flow, one commit per layer on a feature branch | Commits, tests with mutation checks, increment record |
 | 3 | [Screen Implementation](skills/ht-screen-implementation/SKILL.md) | Layer 4: state types, ViewModels, Compose screens, navigation with placeholders, tests on the smallest screen | UI layer and its tests |
-| 4 | [Emulator Validation](skills/ht-emulator-validation/SKILL.md) | Run it and look at it; process death; Android Studio diagnosis from its log | Read screenshots, curated evidence, events summary |
-| 5 | [Pull Request Handoff](skills/ht-pr-handoff/SKILL.md) | A pull request with before/after tables and verified numbers | Open pull request |
+| 4 | [Emulator Validation](skills/ht-emulator-validation/SKILL.md) | Device checks, Android Studio diagnosis, and [independent PR review](skills/ht-emulator-validation/SKILL.md#independent-pull-request-review) | Device evidence or an approved-source review with mutation results, security/privacy evidence and merge impact |
+| 5 | [Pull Request Handoff](skills/ht-pr-handoff/SKILL.md) | Open a pull request with verified evidence, a commit-by-commit review guide, and links to durable decisions | Open pull request |
 
 - **Inputs:** The screens (prototype S-numbers), the approved documents, the foundation record, the checkout and its devices.
 - **Invoke:** Codex: `$ht-increment-planning Plan an increment for screens S1 to S3.` Claude Code:

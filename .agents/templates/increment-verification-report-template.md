@@ -2,6 +2,8 @@
 
 Verdict: **PASS / FAIL / PASS WITH FINDINGS**, one sentence on why.
 
+Merge-blocking: **Yes / No**, with each blocking finding, unresolved product decision, or missing required check named.
+
 Verified by: <agent or person>. Read-only: yes. Commit verified: `<sha>` on `<branch>`.
 
 ## Checks
@@ -13,6 +15,14 @@ Verified by: <agent or person>. Read-only: yes. Commit verified: `<sha>` on `<br
 | Each device tier: API, platform SQLite version, counts | | | | |
 | Shared scenarios on the file-backed database | | | | |
 | Lint accepted warnings match the record | | | | |
+| Merged debug/release manifest and Android backup/transfer configuration | | | | |
+| Device backup/restore and transfer | | | | |
+
+## Mutation checks
+
+| Approved rule and entry point | Named test | Baseline | Mutation and assertion outcome | Restored run | Coverage gap |
+| --- | --- | --- | --- | --- | --- |
+| | | | | | |
 
 ## Per-device run
 
@@ -30,9 +40,15 @@ One row per row of the screen-state map: seen on a device, not seen (reason), or
 
 ## Findings
 
-| # | Severity (blocker, should-fix, note) | Finding | Reproduction | Evidence | Hypothesis |
+| # | Severity | Blocks merge? | File and line | Approved source | Reproduction and evidence |
 | --- | --- | --- | --- | --- | --- |
 | | | | | | |
+
+## Decisions and questions
+
+| Question or accepted answer | Kind (product or engineering) | Owner | Blocks merge? | Durable record and documents affected |
+| --- | --- | --- | --- | --- |
+| | | | | |
 
 ## Not verified
 
