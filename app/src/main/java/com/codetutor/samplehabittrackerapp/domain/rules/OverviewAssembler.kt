@@ -76,6 +76,8 @@ class OverviewAssembler(
             return CurrentStatus.InProgress(
                 target = open.effectiveTarget,
                 progress = open.progress,
+                startLocalDate = open.startLocalDate,
+                endLocalDate = open.endLocalDate,
                 endsAt = Instant.ofEpochMilli(open.endExclusiveEpochMillis),
             )
         }

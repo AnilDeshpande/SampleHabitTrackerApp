@@ -50,6 +50,9 @@ data class PlanResult(
     val plannedThroughLocalDate: LocalDate?,
 )
 
+/** A period's first and last local dates, both inclusive. It ends at the start of the day after the last date. */
+data class FirstPeriod(val startLocalDate: LocalDate, val endLocalDate: LocalDate)
+
 data class NextOccurrence(val startLocalDate: LocalDate, val startInstant: Instant)
 
 /**
@@ -62,6 +65,10 @@ class OccurrencePlanner {
     /** The local date of a habit's first period, which the create form previews. */
     fun firstStartDate(schedule: HabitSchedule): LocalDate =
         candidates(schedule, after = null).first().start
+
+    /** The first period's local dates, for the create form's preview. [FirstPeriod.endLocalDate] is inclusive. */
+    fun firstPeriod(schedule: HabitSchedule): FirstPeriod =
+        candidates(schedule, after = null).first().let { FirstPeriod(it.start, it.end) }
 
     fun plan(schedule: HabitSchedule, state: PlanningState, snapshot: TimeSnapshot): PlanResult {
         val zone = snapshot.zone

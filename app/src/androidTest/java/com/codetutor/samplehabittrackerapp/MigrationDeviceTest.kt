@@ -22,19 +22,27 @@ class MigrationDeviceTest {
     @get:Rule
     val helper = MigrationTestHelper(instrumentation, HabitTrackerDatabase::class.java)
 
+    private val names = mutableListOf<String>()
+
     @After fun tearDown() {
-        instrumentation.targetContext.deleteDatabase(name)
+        names.forEach { instrumentation.targetContext.deleteDatabase(it) }
     }
 
-    @Test
-    fun version1MigratesToVersion2KeepingTheBalanceAndGainingTablesGateAndGuards() {
-        instrumentation.targetContext.deleteDatabase(name)
-        helper.createDatabase(name, 1).apply {
+    /** A real version-1 database holding a balance, migrated to version 2 by the production migration. */
+    private fun migratedFromVersion1(fileName: String) {
+        names += fileName
+        instrumentation.targetContext.deleteDatabase(fileName)
+        helper.createDatabase(fileName, 1).apply {
             execSQL("INSERT INTO app_state (appStateId, pointsBalance) VALUES (1, 42)")
             close()
         }
         // Room validates the migrated schema against the exported 2.json.
-        helper.runMigrationsAndValidate(name, 2, true, Migrations.MIGRATION_1_2).close()
+        helper.runMigrationsAndValidate(fileName, 2, true, Migrations.MIGRATION_1_2).close()
+    }
+
+    @Test
+    fun version1MigratesToVersion2KeepingTheBalanceAndGainingTablesGateAndGuards() {
+        migratedFromVersion1(name)
 
         // Reopen through the production builder: SchemaGuards are installed by onOpen after a migration.
         val db = HabitTrackerDatabaseFactory.builder(instrumentation.targetContext, name).build()
@@ -54,4 +62,33 @@ class MigrationDeviceTest {
             db.close()
         }
     }
+
+    @Test
+    fun theMigratedDatabaseHoldsTheCanonicalGuardDefinitionsOfAFreshOne() = runBlocking {
+        migratedFromVersion1("migration-definitions.db")
+        val migrated = RepositoryFixture(instrumentation.targetContext, "migration-definitions.db")
+        val fresh = RepositoryFixture(instrumentation.targetContext, "migration-fresh.db").also { names += "migration-fresh.db" }
+        try {
+            val migratedDefinitions = GuardScenarios.everyGuardHasItsCanonicalDefinition(migrated)
+            val freshDefinitions = GuardScenarios.everyGuardHasItsCanonicalDefinition(fresh)
+            assertEquals("a migrated database guards exactly as a fresh one", freshDefinitions, migratedDefinitions)
+        } finally {
+            migrated.close(); fresh.close()
+        }
+    }
+
+    /** Each guard scenario assumes an empty database, so each runs on its own migrated copy. */
+    private fun guardsEnforcedOnAMigratedDatabase(fileName: String, scenario: suspend (RepositoryFixture) -> Unit) = runBlocking {
+        migratedFromVersion1(fileName)
+        val fx = RepositoryFixture(instrumentation.targetContext, fileName)
+        try {
+            scenario(fx)
+        } finally {
+            fx.close()
+        }
+    }
+
+    @Test fun habitGuardsHoldOnAMigratedDatabase() = guardsEnforcedOnAMigratedDatabase("migration-habit-guards.db", GuardScenarios::habitGuards)
+    @Test fun occurrenceGuardsHoldOnAMigratedDatabase() = guardsEnforcedOnAMigratedDatabase("migration-occurrence-guards.db", GuardScenarios::occurrenceGuards)
+    @Test fun balanceAndForeignKeyGuardsHoldOnAMigratedDatabase() = guardsEnforcedOnAMigratedDatabase("migration-balance-guards.db", GuardScenarios::balanceAndForeignKeyGuards)
 }

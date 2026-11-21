@@ -39,6 +39,13 @@ interface HabitRepository {
 
     suspend fun reconcile(): ReconcileSummary
 
+    /**
+     * Emits after a tracking command commits something that can move the next boundary (for example a
+     * created habit with its first period), so the foreground ticker can re-arm. Never emits for a
+     * rolled-back or rejected command.
+     */
+    val boundaryChanges: Flow<Unit>
+
     suspend fun createHabit(raw: RawHabitInput, locale: Locale): CreateHabitResult
 
     /** When the next catch-up matters: a period end, a retirement deadline, or a period start. */

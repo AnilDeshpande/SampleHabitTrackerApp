@@ -46,9 +46,16 @@ class BoundaryTickerTest {
         var onReconcile: (() -> Unit)? = null
         var failNextReconcile = false
 
+        val creates = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+        var nextBoundaryFailures = 0
+        override val boundaryChanges: Flow<Unit> = creates
+
         override fun observeOverview(): Flow<OverviewData> = emptyFlow()
         override suspend fun createHabit(raw: RawHabitInput, locale: Locale): CreateHabitResult = error("not used")
-        override suspend fun nextBoundary(): Instant? = boundary
+        override suspend fun nextBoundary(): Instant? {
+            if (nextBoundaryFailures > 0) { nextBoundaryFailures--; error("database busy") }
+            return boundary
+        }
         override suspend fun reconcile(): ReconcileSummary {
             reconcileCalls++
             if (failNextReconcile) { failNextReconcile = false; error("database busy") }
@@ -126,6 +133,36 @@ class BoundaryTickerTest {
         assertEquals("not yet", 1, h.repository.reconcileCalls)
         advanceTimeBy(2.minutes); runCurrent()
         assertEquals("woke at the new boundary", 2, h.repository.reconcileCalls)
+    }
+
+    @Test fun aCommittedCreateRearmsAnIdleTickerWithoutCatchUp() = runTest {
+        val h = harness(boundaryAfter = null)
+        h.ticker.start()
+        advanceTimeBy(5.minutes); runCurrent()
+        assertEquals(0, h.repository.reconcileCalls)
+
+        h.repository.boundary = h.clock.now().plus(Duration.ofMinutes(30)) // what the created habit's period adds
+        h.repository.creates.emit(Unit) // the repository's commit signal; catch-up is never called
+        runCurrent()
+        h.repository.onReconcile = { h.repository.boundary = null }
+
+        advanceTimeBy(29.minutes); runCurrent()
+        assertEquals("not yet", 0, h.repository.reconcileCalls)
+        advanceTimeBy(2.minutes); runCurrent()
+        assertEquals("woke at the created habit's boundary", 1, h.repository.reconcileCalls)
+    }
+
+    @Test fun aFailedBoundaryLookupIsRetriedNotTreatedAsAnEmptySchedule() = runTest {
+        val h = harness(boundaryAfter = Duration.ofMinutes(10))
+        h.repository.nextBoundaryFailures = 1
+        h.repository.onReconcile = { h.repository.boundary = null }
+        h.ticker.start()
+        advanceTimeBy(BoundaryTicker.FAILURE_BACKOFF_MS - 1_000); runCurrent()
+        assertEquals("still backing off", 0, h.repository.reconcileCalls)
+
+        advanceTimeBy(2_000); runCurrent() // backoff elapsed: the lookup is retried and the boundary is armed
+        advanceTimeBy(11.minutes); runCurrent()
+        assertEquals("the retried lookup armed the boundary", 1, h.repository.reconcileCalls)
     }
 
     @Test fun aBoundaryThatNeverClearsDoesNotSpin() = runTest {

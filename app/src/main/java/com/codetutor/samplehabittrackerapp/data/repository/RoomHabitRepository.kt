@@ -25,7 +25,9 @@ import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
@@ -48,6 +50,9 @@ class RoomHabitRepository @Inject constructor(
     private val assembler: OverviewAssembler,
 ) : HabitRepository {
 
+    private val _boundaryChanges = MutableSharedFlow<Unit>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    override val boundaryChanges: Flow<Unit> = _boundaryChanges
+
     private suspend fun engine() = TrackingEngine(provider.get(), planner, scoring, badges)
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -55,7 +60,9 @@ class RoomHabitRepository @Inject constructor(
         val db = provider.get()
         emitAll(
             db.invalidationTracker
-                .createFlow("app_state", "habits", "occurrences", "badges")
+                // reconciliation_lock is watched on purpose: a clock or timezone change can be absorbed by a
+                // catch-up that writes only the gate, yet the time-derived status must still be re-read.
+                .createFlow("app_state", "habits", "occurrences", "badges", "reconciliation_lock")
                 .mapLatest {
                     val rows = db.overviewDao().read()
                     assembler.assemble(
@@ -82,7 +89,7 @@ class RoomHabitRepository @Inject constructor(
     override suspend fun createHabit(raw: RawHabitInput, locale: Locale): CreateHabitResult {
         val db = provider.get()
         val engine = engine()
-        return db.withTransaction {
+        val result = db.withTransaction {
             db.reconciliationLockDao().acquire()
             val snapshot = clock.snapshot()
             engine.reconcile(snapshot)
@@ -117,6 +124,9 @@ class RoomHabitRepository @Inject constructor(
                 }
             }
         }
+        // Only a committed habit changes the next boundary; a rejection or a rollback never reaches here.
+        if (result is CreateHabitResult.Created) _boundaryChanges.tryEmit(Unit)
+        return result
     }
 
     override suspend fun nextBoundary(): Instant? {

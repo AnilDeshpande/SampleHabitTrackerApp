@@ -70,8 +70,9 @@ import com.codetutor.samplehabittrackerapp.domain.model.Weekdays
 import com.codetutor.samplehabittrackerapp.domain.rules.DecimalError
 import com.codetutor.samplehabittrackerapp.domain.rules.UnitError
 import com.codetutor.samplehabittrackerapp.domain.rules.WeekdaysError
+import com.codetutor.samplehabittrackerapp.ui.time.TimeDisplay
+import com.codetutor.samplehabittrackerapp.ui.time.rememberTimeDisplay
 import java.time.DayOfWeek
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlinx.coroutines.delay
@@ -124,6 +125,7 @@ fun HabitFormScreen(
     onKeepEditing: () -> Unit,
     onDiscard: () -> Unit,
     modifier: Modifier = Modifier,
+    timeDisplay: TimeDisplay = rememberTimeDisplay(),
 ) {
     // Back and Up both ask the ViewModel, which decides between the discard dialog and leaving.
     BackHandler(onBack = onBack)
@@ -174,7 +176,7 @@ fun HabitFormScreen(
                 keyboardActions = KeyboardActions(onDone = { focus.clearFocus() }),
             )
 
-            FrequencySection(state, onFrequencyChange, onWeekdayToggle)
+            FrequencySection(state, onFrequencyChange, onWeekdayToggle, timeDisplay)
 
             if (state.submission == SubmissionState.Failed) {
                 Text(
@@ -240,6 +242,7 @@ private fun FrequencySection(
     state: HabitFormUiState,
     onFrequencyChange: (Frequency) -> Unit,
     onWeekdayToggle: (DayOfWeek) -> Unit,
+    timeDisplay: TimeDisplay,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     Card(
@@ -302,7 +305,7 @@ private fun FrequencySection(
             }
             state.startsOn?.let {
                 Text(
-                    startsOnText(it, locale),
+                    startsOnText(it, locale, timeDisplay),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
@@ -352,9 +355,14 @@ private fun frequencyLabel(frequency: Frequency): String = stringResource(
 )
 
 @Composable
-private fun startsOnText(preview: StartPreview, locale: Locale): String = when (preview) {
-    StartPreview.Today -> stringResource(R.string.form_starts_today)
-    is StartPreview.On -> stringResource(R.string.form_starts_on, preview.date.format(DateTimeFormatter.ofPattern("EEE d MMM", locale)))
+private fun startsOnText(preview: StartPreview, locale: Locale, timeDisplay: TimeDisplay): String {
+    val formats = timeDisplay.formats(locale)
+    val starts = when (preview) {
+        is StartPreview.Today -> stringResource(R.string.form_starts_today)
+        is StartPreview.On -> stringResource(R.string.form_starts_on, formats.date(preview.date))
+    }
+    val endsOn = preview.endsOn ?: return starts
+    return stringResource(R.string.form_starts_and_ends, starts, formats.startOfDay(endsOn))
 }
 
 @Composable

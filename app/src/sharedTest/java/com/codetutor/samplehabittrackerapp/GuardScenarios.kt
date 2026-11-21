@@ -55,6 +55,22 @@ object GuardScenarios {
         assertEquals("missing guards: $missing", emptyList<String>(), missing)
     }
 
+    /**
+     * The stored trigger definitions, not just their names: exactly the guard set (nothing missing, nothing extra)
+     * and each definition equal to the source definition in canonical form. Returns what was read, for comparisons.
+     */
+    suspend fun everyGuardHasItsCanonicalDefinition(fx: RepositoryFixture): Map<String, String> {
+        val stored = fx.provider.get().openHelper.writableDatabase
+            .query("SELECT name, sql FROM sqlite_master WHERE type = 'trigger'").use { c ->
+                buildMap { while (c.moveToNext()) put(c.getString(0), SchemaGuards.canonical(c.getString(1))) }
+            }
+        assertEquals("trigger set", SchemaGuards.expectedDefinitions.keys.sorted(), stored.keys.sorted())
+        for ((name, expected) in SchemaGuards.expectedDefinitions) {
+            assertEquals("definition of $name", expected, stored.getValue(name))
+        }
+        return stored
+    }
+
     suspend fun habitGuards(fx: RepositoryFixture) {
         fx.exec(habitSql(name = "Read"))
         fx.assertAborts(habitSql(name = "Read"), "already has this name")

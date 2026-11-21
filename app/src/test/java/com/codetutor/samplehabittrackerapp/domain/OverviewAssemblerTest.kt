@@ -54,6 +54,8 @@ class OverviewAssemblerTest {
         val data = assemble(listOf(habit(watermark = "2026-10-11")), listOf(today), "2026-10-11T10:00:00Z")
         val status = data.habits.single().status as CurrentStatus.InProgress
         assertEquals(Instant.parse("2026-10-12T00:00:00Z"), status.endsAt)
+        assertEquals("the stored period's dates identify the progress total", LocalDate.parse("2026-10-11"), status.startLocalDate)
+        assertEquals(LocalDate.parse("2026-10-11"), status.endLocalDate)
         assertEquals(1, data.habits.single().activeRun)
     }
 

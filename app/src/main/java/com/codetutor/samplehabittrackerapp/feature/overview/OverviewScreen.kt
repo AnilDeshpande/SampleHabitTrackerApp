@@ -45,8 +45,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +58,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import com.codetutor.samplehabittrackerapp.R
@@ -65,11 +67,9 @@ import com.codetutor.samplehabittrackerapp.domain.model.OccurrenceResult
 import com.codetutor.samplehabittrackerapp.domain.model.Weekdays
 import com.codetutor.samplehabittrackerapp.navigation.OverviewResult
 import com.codetutor.samplehabittrackerapp.ui.icons.LeafIcon
+import com.codetutor.samplehabittrackerapp.ui.time.TimeDisplay
+import com.codetutor.samplehabittrackerapp.ui.time.rememberTimeDisplay
 import java.time.DayOfWeek
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlinx.coroutines.delay
@@ -89,28 +89,21 @@ fun OverviewRoute(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    val results = backStackEntry.savedStateHandle
-    val habitSaved by results.getStateFlow(OverviewResult.KEY_HABIT_SAVED, false).collectAsStateWithLifecycle()
-    val savedMessage = stringResource(R.string.overview_habit_saved)
-    val scope = rememberCoroutineScope()
-    // The permission result is not used: a denied permission never blocks tracking, and misses stay visible
-    // in the app. The snackbar waits for the system dialog to close, because its timer would otherwise run
-    // while the dialog covers it.
-    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
-        scope.launch { snackbarHostState.showSnackbar(savedMessage) }
-    }
 
-    LaunchedEffect(habitSaved) {
-        if (habitSaved) {
-            val askPermission = results.get<Boolean>(OverviewResult.KEY_REQUEST_NOTIFICATION_PERMISSION) == true
-            // Consume both one-shot results: they are shown once and never replayed.
-            results[OverviewResult.KEY_HABIT_SAVED] = false
-            results[OverviewResult.KEY_REQUEST_NOTIFICATION_PERMISSION] = false
-            if (askPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-            } else {
-                snackbarHostState.showSnackbar(savedMessage)
-            }
+    // The permission result is not used: a denied permission never blocks tracking, and misses stay visible
+    // in the app. The confirmation waits for the system dialog to close, because its timer would otherwise
+    // run while the dialog covers it.
+    var dialogClosed by remember { mutableStateOf<(() -> Unit)?>(null) }
+    val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        dialogClosed?.invoke()
+        dialogClosed = null
+    }
+    HabitSavedFeedback(backStackEntry.savedStateHandle, snackbarHostState) { onDialogClosed ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            dialogClosed = onDialogClosed
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            onDialogClosed()
         }
     }
 
@@ -125,6 +118,35 @@ fun OverviewRoute(
     )
 }
 
+/**
+ * Shows "Habit saved" once for each one-shot result handed back by Create habit. The results are consumed
+ * first, so they are never replayed, and the message is shown from the composition's own scope: consuming the
+ * result changes this effect's key, which would cancel a message shown inside the effect itself.
+ *
+ * When the result asks for the notification permission, [requestPermission] opens the system dialog and calls
+ * its argument once the dialog has closed; the message appears then.
+ */
+@Composable
+internal fun HabitSavedFeedback(
+    results: SavedStateHandle,
+    snackbarHostState: SnackbarHostState,
+    requestPermission: (onDialogClosed: () -> Unit) -> Unit,
+) {
+    val habitSaved by results.getStateFlow(OverviewResult.KEY_HABIT_SAVED, false).collectAsStateWithLifecycle()
+    val savedMessage = stringResource(R.string.overview_habit_saved)
+    val scope = rememberCoroutineScope()
+    val currentRequestPermission by rememberUpdatedState(requestPermission)
+
+    LaunchedEffect(habitSaved) {
+        if (!habitSaved) return@LaunchedEffect
+        val askPermission = results.get<Boolean>(OverviewResult.KEY_REQUEST_NOTIFICATION_PERMISSION) == true
+        results[OverviewResult.KEY_HABIT_SAVED] = false
+        results[OverviewResult.KEY_REQUEST_NOTIFICATION_PERMISSION] = false
+        val show = { scope.launch { snackbarHostState.showSnackbar(savedMessage) }; Unit }
+        if (askPermission) currentRequestPermission(show) else show()
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OverviewScreen(
@@ -136,7 +158,9 @@ fun OverviewScreen(
     onRecordProgress: (Long) -> Unit,
     onReviewHabit: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    timeDisplay: TimeDisplay = rememberTimeDisplay(),
 ) {
+    val createLabel = stringResource(R.string.overview_create_habit)
     Scaffold(
         modifier = modifier,
         topBar = { TopAppBar(title = { Text(stringResource(R.string.overview_title)) }) },
@@ -145,8 +169,11 @@ fun OverviewScreen(
             if (state is OverviewUiState.Content && !state.isEmpty) {
                 ExtendedFloatingActionButton(
                     onClick = onCreateHabit,
+                    // The name sits on the clickable node itself: the accessibility service reads that node,
+                    // not the text inside it.
+                    modifier = Modifier.semantics { contentDescription = createLabel },
                     icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                    text = { Text(stringResource(R.string.overview_create_habit)) },
+                    text = { Text(createLabel) },
                 )
             }
         },
@@ -157,7 +184,7 @@ fun OverviewScreen(
                 OverviewUiState.ReadError -> ReadErrorContent(onRetry)
                 is OverviewUiState.Content ->
                     if (state.isEmpty) EmptyContent(state.points, onCreateHabit, onRetiredHabits)
-                    else HabitListContent(state, onRetiredHabits, onRecordProgress, onReviewHabit)
+                    else HabitListContent(state, timeDisplay, onRetiredHabits, onRecordProgress, onReviewHabit)
             }
         }
     }
@@ -266,6 +293,7 @@ private fun EmptyContent(points: Long, onCreateHabit: () -> Unit, onRetiredHabit
 @Composable
 private fun HabitListContent(
     state: OverviewUiState.Content,
+    timeDisplay: TimeDisplay,
     onRetiredHabits: () -> Unit,
     onRecordProgress: (Long) -> Unit,
     onReviewHabit: (Long) -> Unit,
@@ -277,7 +305,7 @@ private fun HabitListContent(
     ) {
         item(key = "points") { PointsCard(state.points) }
         items(state.habits, key = { "habit-${it.habitId}" }) { habit ->
-            HabitCard(habit, onRecordProgress, onReviewHabit)
+            HabitCard(habit, timeDisplay, onRecordProgress, onReviewHabit)
         }
         items(state.pendingRetirements, key = { "pending-${it.habitId}" }) { pending ->
             Card(Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer)) {
@@ -296,6 +324,7 @@ private fun HabitListContent(
 @Composable
 private fun HabitCard(
     habit: HabitCardUi,
+    timeDisplay: TimeDisplay,
     onRecordProgress: (Long) -> Unit,
     onReviewHabit: (Long) -> Unit,
 ) {
@@ -311,7 +340,7 @@ private fun HabitCard(
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(stringResource(R.string.habit_target_line, habit.targetText, habit.unit), style = MaterialTheme.typography.bodyMedium)
-                StatusLines(habit, locale)
+                StatusLines(habit, locale, timeDisplay)
                 Text(stringResource(R.string.habit_run_streak, habit.activeRun, habit.successStreak), style = MaterialTheme.typography.bodyMedium)
                 Text(
                     stringResource(if (habit.badgeEarned) R.string.habit_badge_earned else R.string.habit_badge_not_earned),
@@ -347,36 +376,41 @@ private fun HabitCard(
 }
 
 @Composable
-private fun StatusLines(habit: HabitCardUi, locale: Locale) {
-    val zone = remember { ZoneId.systemDefault() }
-    val dateFormat = remember(locale) { DateTimeFormatter.ofPattern("EEE d MMM", locale) }
-    val timeFormat = remember(locale) { DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale) }
-    fun Instant.date() = atZone(zone).format(dateFormat)
-    fun Instant.time() = atZone(zone).format(timeFormat)
+private fun StatusLines(habit: HabitCardUi, locale: Locale, timeDisplay: TimeDisplay) {
+    // Rebuilt with the display settings, never cached across a timezone or 12/24-hour change.
+    val formats = timeDisplay.formats(locale)
 
     val style = MaterialTheme.typography.bodyMedium
     when (val status = habit.status) {
         is HabitStatusUi.InProgress -> {
-            val progressRes = if (habit.frequency == Frequency.DAILY) R.string.habit_today_progress else R.string.habit_period_progress
+            val daily = habit.frequency == Frequency.DAILY
+            val progressRes = if (daily) R.string.habit_today_progress else R.string.habit_period_progress
+            if (!daily) {
+                // The stored period the progress total belongs to, kept apart from the end instant below.
+                Text(
+                    stringResource(R.string.habit_period_range, formats.date(status.startLocalDate), formats.date(status.endLocalDate)),
+                    style = style,
+                )
+            }
             Text(stringResource(progressRes, status.progressText, status.targetText, habit.unit), style = style)
             if (status.targetMet) Text(stringResource(R.string.habit_target_met), style = style)
             Text(
-                if (habit.frequency == Frequency.DAILY) stringResource(R.string.habit_ends_tonight, status.endsAt.time())
-                else stringResource(R.string.habit_ends_at, "${status.endsAt.date()} ${status.endsAt.time()}"),
+                if (daily) stringResource(R.string.habit_ends_tonight, formats.time(status.endsAt))
+                else stringResource(R.string.habit_ends_at, formats.dateTime(status.endsAt)),
                 style = style,
             )
         }
         is HabitStatusUi.WaitingForFirstPeriod -> {
             Text(stringResource(R.string.habit_waiting_first_period), style = style)
-            Text(stringResource(R.string.habit_next_start, status.startsAt.date()), style = style)
+            Text(stringResource(R.string.habit_next_start, formats.date(status.startsAt)), style = style)
         }
         is HabitStatusUi.NoOccurrenceToday -> {
             Text(stringResource(R.string.habit_no_occurrence_today), style = style)
-            Text(stringResource(R.string.habit_next_start, status.nextStartsAt.date()), style = style)
+            Text(stringResource(R.string.habit_next_start, formats.date(status.nextStartsAt)), style = style)
         }
         is HabitStatusUi.BetweenPeriods -> {
             Text(stringResource(R.string.habit_between_periods), style = style)
-            Text(stringResource(R.string.habit_next_start, "${status.nextStartsAt.date()} ${status.nextStartsAt.time()}"), style = style)
+            Text(stringResource(R.string.habit_next_start, formats.dateTime(status.nextStartsAt)), style = style)
         }
     }
 }

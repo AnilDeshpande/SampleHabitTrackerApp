@@ -1,10 +1,12 @@
 package com.codetutor.samplehabittrackerapp
 
 import android.content.Context
+import androidx.room.RoomDatabase
 import com.codetutor.samplehabittrackerapp.core.coroutines.AppDispatchers
 import com.codetutor.samplehabittrackerapp.core.time.Clock
 import com.codetutor.samplehabittrackerapp.data.local.DatabaseConfig
 import com.codetutor.samplehabittrackerapp.data.local.DatabaseProvider
+import com.codetutor.samplehabittrackerapp.data.local.HabitTrackerDatabase
 import com.codetutor.samplehabittrackerapp.data.repository.RoomHabitRepository
 import com.codetutor.samplehabittrackerapp.domain.rules.BadgeEvaluator
 import com.codetutor.samplehabittrackerapp.domain.rules.ContinuityCalculator
@@ -36,10 +38,13 @@ class RepositoryFixture(
     context: Context,
     val fileName: String? = null,
     val clock: ManualClock = ManualClock(),
+    /** What the repository reads time from; a recording wrapper around [clock] when a test traces clock reads. */
+    repositoryClock: Clock = clock,
+    customizeDatabase: (RoomDatabase.Builder<HabitTrackerDatabase>) -> Unit = {},
 ) {
     private val dispatchers = AppDispatchers(Dispatchers.IO, Dispatchers.Default, Dispatchers.Main)
-    val provider = DatabaseProvider(context, DatabaseConfig(fileName), dispatchers)
-    val repository: RoomHabitRepository = buildRepository(provider, clock)
+    val provider = DatabaseProvider(context, DatabaseConfig(fileName, customizeDatabase), dispatchers)
+    val repository: RoomHabitRepository = buildRepository(provider, repositoryClock)
 
     suspend fun exec(sql: String, vararg args: Any?) {
         provider.get().openHelper.writableDatabase.execSQL(sql, arrayOf(*args))

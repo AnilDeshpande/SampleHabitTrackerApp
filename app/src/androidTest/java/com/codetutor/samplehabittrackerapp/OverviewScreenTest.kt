@@ -3,8 +3,14 @@ package com.codetutor.samplehabittrackerapp
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -19,7 +25,10 @@ import com.codetutor.samplehabittrackerapp.feature.overview.LastResultUi
 import com.codetutor.samplehabittrackerapp.feature.overview.OverviewScreen
 import com.codetutor.samplehabittrackerapp.feature.overview.OverviewUiState
 import com.codetutor.samplehabittrackerapp.ui.theme.SampleHabitTrackerAppTheme
+import com.codetutor.samplehabittrackerapp.ui.time.TimeDisplay
 import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -36,11 +45,14 @@ class OverviewScreenTest {
     private val recorded = mutableListOf<Long>()
     private val reviewed = mutableListOf<Long>()
 
-    private fun show(state: OverviewUiState, fontScale: Float? = null) {
+    private val utc24 = TimeDisplay(ZoneId.of("UTC"), is24Hour = true)
+
+    private fun show(state: OverviewUiState, fontScale: Float? = null, timeDisplay: () -> TimeDisplay = { utc24 }) {
         compose.setContent {
             SampleHabitTrackerAppTheme {
                 val screen = @androidx.compose.runtime.Composable {
                     OverviewScreen(
+                        timeDisplay = timeDisplay(),
                         state = state,
                         snackbarHostState = SnackbarHostState(),
                         onCreateHabit = { created++ },
@@ -68,7 +80,7 @@ class OverviewScreenTest {
         unacknowledgedMisses = 0, lastResult = lastResult,
     )
 
-    private val inProgress = HabitStatusUi.InProgress("0", "10", targetMet = false, endsAt = Instant.parse("2026-10-12T00:00:00Z"))
+    private val inProgress = HabitStatusUi.InProgress("0", "10", targetMet = false, startLocalDate = LocalDate.parse("2026-10-11"), endLocalDate = LocalDate.parse("2026-10-11"), endsAt = Instant.parse("2026-10-12T00:00:00Z"))
 
     @Test fun s1EmptyShowsThePromptAndBothActions() {
         show(OverviewUiState.Content(0, emptyList(), emptyList()))
@@ -115,6 +127,53 @@ class OverviewScreenTest {
         compose.onNodeWithText("Create habit", useUnmergedTree = true).assertExists() // the floating action once habits exist
     }
 
+    @Test fun theRepeatCreateActionIsNamedOnTheClickableNodeInTheMergedTree() {
+        show(OverviewUiState.Content(0, listOf(card(inProgress)), emptyList()))
+        // Merged tree (the default): this is the node the platform accessibility service exposes.
+        val action = compose.onNode(hasClickAction() and hasContentDescription("Create habit"))
+        action.assertIsDisplayed().assertHasClickAction()
+        action.performClick()
+        assertEquals(1, created)
+    }
+
+    @Test fun anEmptyOverviewNamesItsCreateButtonToo() {
+        show(OverviewUiState.Content(0, emptyList(), emptyList()))
+        compose.onNode(hasClickAction() and hasText("Create habit")).assertIsDisplayed()
+    }
+
+    private val weekly = HabitStatusUi.InProgress(
+        "0", "20", targetMet = false,
+        startLocalDate = LocalDate.parse("2026-10-12"), endLocalDate = LocalDate.parse("2026-10-18"),
+        endsAt = Instant.parse("2026-10-19T00:00:00Z"),
+    )
+
+    @Test fun aNonDailyCardShowsThePeriodRangeAndTheExplicitEndDateAndTime() {
+        show(OverviewUiState.Content(0, listOf(card(weekly, Frequency.WEEKLY)), emptyList()))
+        compose.onNodeWithText("Period: Mon 12 Oct – Sun 18 Oct").assertIsDisplayed()
+        compose.onNodeWithText("Progress: 0 / 20 minutes").assertIsDisplayed()
+        compose.onNodeWithText("Ends Mon 19 Oct 00:00").assertIsDisplayed()
+    }
+
+    @Test fun aDailyCardKeepsItsShortFormWithoutARange() {
+        show(OverviewUiState.Content(0, listOf(card(inProgress)), emptyList()))
+        compose.onNodeWithText("Ends tonight at 00:00").assertIsDisplayed()
+        compose.onNode(hasText("Period:", substring = true)).assertDoesNotExist()
+    }
+
+    @Test fun theEndTimeFollowsTheTwelveHourSetting() {
+        show(OverviewUiState.Content(0, listOf(card(weekly, Frequency.WEEKLY)), emptyList()), timeDisplay = { TimeDisplay(ZoneId.of("UTC"), is24Hour = false) })
+        compose.onNode(hasText("Ends Mon 19 Oct 12:00", substring = true) and hasText("AM", substring = true)).assertIsDisplayed()
+    }
+
+    @Test fun aLiveTimezoneChangeReformatsTheBoundaryWithoutRecreatingTheCard() {
+        var display by mutableStateOf(utc24)
+        show(OverviewUiState.Content(0, listOf(card(weekly, Frequency.WEEKLY)), emptyList()), timeDisplay = { display })
+        compose.onNodeWithText("Ends Mon 19 Oct 00:00").assertIsDisplayed()
+        compose.runOnIdle { display = TimeDisplay(ZoneId.of("America/Los_Angeles"), is24Hour = true) }
+        compose.onNodeWithText("Ends Sun 18 Oct 17:00").assertIsDisplayed()
+        compose.onNodeWithText("Period: Mon 12 Oct – Sun 18 Oct").assertIsDisplayed() // the stored range is not re-zoned
+    }
+
     @Test fun aWaitingHabitStatesWhenItStartsAndOffersNoRecordProgress() {
         val waiting = HabitStatusUi.WaitingForFirstPeriod(Instant.parse("2026-10-12T00:00:00Z"))
         show(OverviewUiState.Content(0, listOf(card(waiting, Frequency.WEEKLY, activeRun = 0)), emptyList()))
@@ -124,7 +183,7 @@ class OverviewScreenTest {
     }
 
     @Test fun targetMetIsStatedInWords() {
-        val met = HabitStatusUi.InProgress("12", "10", targetMet = true, endsAt = Instant.parse("2026-10-12T00:00:00Z"))
+        val met = HabitStatusUi.InProgress("12", "10", targetMet = true, startLocalDate = LocalDate.parse("2026-10-11"), endLocalDate = LocalDate.parse("2026-10-11"), endsAt = Instant.parse("2026-10-12T00:00:00Z"))
         show(OverviewUiState.Content(0, listOf(card(met)), emptyList()))
         compose.onNodeWithText("Target met · period still open").assertIsDisplayed()
     }

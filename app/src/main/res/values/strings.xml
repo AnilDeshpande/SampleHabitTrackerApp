@@ -36,6 +36,7 @@
     <string name="habit_target_met">Target met · period still open</string>
     <string name="habit_ends_tonight">Ends tonight at %1$s</string>
     <string name="habit_ends_at">Ends %1$s</string>
+    <string name="habit_period_range">Period: %1$s – %2$s</string>
     <string name="habit_waiting_first_period">Waiting for first period</string>
     <string name="habit_next_start">Next start: %1$s</string>
     <string name="habit_no_occurrence_today">No occurrence today</string>
@@ -60,6 +61,7 @@
     <string name="form_frequency_label">Frequency</string>
     <string name="form_starts_today">Starts today</string>
     <string name="form_starts_on">Starts %1$s</string>
+    <string name="form_starts_and_ends">%1$s · Ends %2$s</string>
     <string name="form_weekdays_label">Days</string>
     <string name="form_save">Save habit</string>
     <string name="form_saving">Saving…</string>

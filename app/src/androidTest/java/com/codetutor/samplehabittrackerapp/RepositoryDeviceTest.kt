@@ -63,6 +63,7 @@ class RepositoryDeviceTest {
     @Test fun overviewReEmitsAfterACommittedChange() = run(RepositoryScenarios::overviewReEmitsAfterACommittedChange)
 
     @Test fun everyGuardTriggerExistsAfterOpen() = run(GuardScenarios::everyGuardTriggerExistsAfterOpen)
+    @Test fun everyGuardHasItsCanonicalDefinition() = run { GuardScenarios.everyGuardHasItsCanonicalDefinition(it) }
     @Test fun habitGuards() = run(GuardScenarios::habitGuards)
     @Test fun occurrenceGuards() = run(GuardScenarios::occurrenceGuards)
     @Test fun balanceAndForeignKeyGuards() = run(GuardScenarios::balanceAndForeignKeyGuards)

@@ -17,6 +17,7 @@ class SchemaGuardsTest {
     @After fun tearDown() { fx.close() }
 
     @Test fun everyGuardTriggerExistsAfterOpen() = runBlocking { GuardScenarios.everyGuardTriggerExistsAfterOpen(fx) }
+    @Test fun everyGuardHasItsCanonicalDefinition() = runBlocking { GuardScenarios.everyGuardHasItsCanonicalDefinition(fx); Unit }
     @Test fun habitGuards() = runBlocking { GuardScenarios.habitGuards(fx) }
     @Test fun occurrenceGuards() = runBlocking { GuardScenarios.occurrenceGuards(fx) }
     @Test fun balanceAndForeignKeyGuards() = runBlocking { GuardScenarios.balanceAndForeignKeyGuards(fx) }

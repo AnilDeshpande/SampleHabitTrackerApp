@@ -27,6 +27,8 @@ private fun HabitOverview.toUi(formatter: DecimalFormatter, locale: Locale) = Ha
             progressText = formatter.format(s.progress, locale),
             targetText = formatter.format(s.target, locale),
             targetMet = s.progress.compareTo(s.target) >= 0,
+            startLocalDate = s.startLocalDate,
+            endLocalDate = s.endLocalDate,
             endsAt = s.endsAt,
         )
         is CurrentStatus.WaitingForFirstPeriod -> HabitStatusUi.WaitingForFirstPeriod(s.startsAt)

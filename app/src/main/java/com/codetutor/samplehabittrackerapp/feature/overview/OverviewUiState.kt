@@ -3,6 +3,7 @@ package com.codetutor.samplehabittrackerapp.feature.overview
 import com.codetutor.samplehabittrackerapp.domain.model.Frequency
 import com.codetutor.samplehabittrackerapp.domain.model.OccurrenceResult
 import java.time.Instant
+import java.time.LocalDate
 
 /**
  * A read projection of durable data, never a second writable store. The overview has no unsaved
@@ -48,6 +49,8 @@ sealed interface HabitStatusUi {
         val progressText: String,
         val targetText: String,
         val targetMet: Boolean,
+        val startLocalDate: LocalDate,
+        val endLocalDate: LocalDate,
         val endsAt: Instant,
     ) : HabitStatusUi
 

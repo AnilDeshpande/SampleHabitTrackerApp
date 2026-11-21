@@ -46,10 +46,18 @@ class BoundaryTicker @Inject constructor(
     private suspend fun loop() = coroutineScope {
         val rearm = Channel<Unit>(Channel.CONFLATED)
         launch { catchUp.committed.collect { rearm.trySend(Unit) } }
+        // A committed Create Habit reconciles inside its own transaction and never passes through catch-up.
+        launch { repository.boundaryChanges.collect { rearm.trySend(Unit) } }
         launch { timeChanges.events.collect { runCatchUp() } }
 
         while (isActive) {
-            val wake = guarded { repository.nextBoundary() }
+            val lookup = attempt { repository.nextBoundary() }
+            if (lookup.isFailure) {
+                // A failed lookup is not an empty schedule: retry after a backoff, or sooner on a signal.
+                withTimeoutOrNull(FAILURE_BACKOFF_MS) { rearm.receive() }
+                continue
+            }
+            val wake = lookup.getOrNull()
             if (wake == null) {
                 rearm.receive() // nothing is scheduled; wait for a commit or a time change
                 continue
@@ -59,22 +67,22 @@ class BoundaryTicker @Inject constructor(
             if (signalled) continue // something committed or the clock moved: recompute the next boundary
             runCatchUp()
             // Never spin: if a boundary is still due after catching up, wait a moment before retrying.
-            val next = guarded { repository.nextBoundary() }
+            val next = attempt { repository.nextBoundary() }.getOrNull()
             if (next != null && next.toEpochMilli() <= clock.now().toEpochMilli()) delay(MIN_REPEAT_MS)
         }
     }
 
     private suspend fun runCatchUp() {
-        guarded { catchUp.run() } ?: delay(FAILURE_BACKOFF_MS)
+        if (attempt { catchUp.run() }.isFailure) delay(FAILURE_BACKOFF_MS)
     }
 
-    private suspend fun <T> guarded(block: suspend () -> T): T? = try {
-        block()
+    private suspend fun <T> attempt(block: suspend () -> T): Result<T> = try {
+        Result.success(block())
     } catch (cancellation: CancellationException) {
         throw cancellation
     } catch (failure: Throwable) {
         Log.w(TAG, "Boundary catch-up step failed; will retry", failure)
-        null
+        Result.failure(failure)
     }
 
     companion object {

@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -21,8 +22,10 @@ import com.codetutor.samplehabittrackerapp.feature.habitform.NameFieldError
 import com.codetutor.samplehabittrackerapp.feature.habitform.StartPreview
 import com.codetutor.samplehabittrackerapp.feature.habitform.SubmissionState
 import com.codetutor.samplehabittrackerapp.ui.theme.SampleHabitTrackerAppTheme
+import com.codetutor.samplehabittrackerapp.ui.time.TimeDisplay
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.TextStyle
 import java.util.Locale
 import org.junit.Assert.assertEquals
@@ -45,10 +48,11 @@ class HabitFormScreenTest {
     private var keeps = 0
     private var discards = 0
 
-    private fun show(state: HabitFormUiState) {
+    private fun show(state: HabitFormUiState, timeDisplay: TimeDisplay = TimeDisplay(ZoneId.of("UTC"), is24Hour = true)) {
         compose.setContent {
             SampleHabitTrackerAppTheme {
                 HabitFormScreen(
+                    timeDisplay = timeDisplay,
                     state = state,
                     onNameChange = { names += it },
                     onUnitChange = { units += it },
@@ -67,7 +71,7 @@ class HabitFormScreenTest {
     private fun day(day: DayOfWeek) = day.getDisplayName(TextStyle.SHORT, Locale.getDefault())
 
     @Test fun s2ShowsEveryFieldHelperAndAction() {
-        show(HabitFormUiState(startsOn = StartPreview.Today))
+        show(HabitFormUiState(startsOn = StartPreview.Today()))
         compose.onNodeWithText("Create habit").assertIsDisplayed()
         compose.onNodeWithText("1–50 characters; unique active name").assertIsDisplayed()
         compose.onNodeWithText("1–20 characters; fixed after save").assertIsDisplayed()
@@ -99,7 +103,7 @@ class HabitFormScreenTest {
                 nameError = NameFieldError.Duplicate("Meditation"),
                 unitError = UnitError.EMPTY,
                 targetError = DecimalError.NOT_A_NUMBER,
-                startsOn = StartPreview.Today,
+                startsOn = StartPreview.Today(),
             ),
         )
         compose.onNodeWithText("An active Meditation already exists").assertIsDisplayed()
@@ -113,6 +117,29 @@ class HabitFormScreenTest {
         show(HabitFormUiState(frequency = Frequency.WEEKLY, startsOn = StartPreview.On(LocalDate.parse("2026-10-12"))))
         compose.onNodeWithText("Weekly").assertIsSelected()
         compose.onNodeWithText("Starts Mon 12 Oct", substring = true).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test fun weeklyPreviewShowsBothEndsOfTheFirstPeriod() {
+        show(HabitFormUiState(frequency = Frequency.WEEKLY, startsOn = StartPreview.On(LocalDate.parse("2026-10-12"), endsOn = LocalDate.parse("2026-10-19"))))
+        compose.onNodeWithText("Starts Mon 12 Oct · Ends Mon 19 Oct 00:00").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test fun fortnightlyPreviewShowsBothEndsOfTheFirstPeriod() {
+        show(HabitFormUiState(frequency = Frequency.FORTNIGHTLY, startsOn = StartPreview.Today(endsOn = LocalDate.parse("2026-10-25"))))
+        compose.onNodeWithText("Starts today · Ends Sun 25 Oct 00:00").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test fun monthlyPreviewShowsBothEndsOfTheFirstPeriod() {
+        show(HabitFormUiState(frequency = Frequency.MONTHLY, startsOn = StartPreview.On(LocalDate.parse("2026-11-01"), endsOn = LocalDate.parse("2026-12-01"))))
+        compose.onNodeWithText("Starts Sun 1 Nov · Ends Tue 1 Dec 00:00").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test fun thePreviewEndFollowsTheTwelveHourSetting() {
+        show(
+            HabitFormUiState(frequency = Frequency.WEEKLY, startsOn = StartPreview.On(LocalDate.parse("2026-10-12"), endsOn = LocalDate.parse("2026-10-19"))),
+            TimeDisplay(ZoneId.of("UTC"), is24Hour = false),
+        )
+        compose.onNode(hasText("Ends Mon 19 Oct 12:00", substring = true) and hasText("AM", substring = true)).performScrollTo().assertIsDisplayed()
     }
 
     @Test fun customShowsSevenWeekdayChipsAndReportsTheToggledDay() {

@@ -80,6 +80,16 @@ object SchemaGuards {
 
     val triggerNames: List<String> = definitions.map { it.first }
 
+    /** Each guard's definition in [canonical] form, keyed by trigger name: what `sqlite_master` must hold. */
+    val expectedDefinitions: Map<String, String> = definitions.associate { (name, sql) -> name to canonical(sql) }
+
+    /**
+     * Strips what SQLite normalizes away when it stores a trigger (the `IF NOT EXISTS` clause) and layout
+     * whitespace, so the text read back from `sqlite_master` can be compared with the source definition.
+     */
+    fun canonical(sql: String): String =
+        sql.replace(Regex("(?i)\\bIF NOT EXISTS\\s+"), "").replace(Regex("\\s+"), " ").trim().removeSuffix(";").trim()
+
     fun install(db: SupportSQLiteDatabase) {
         for ((_, sql) in definitions) db.execSQL(sql)
     }

@@ -24,6 +24,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.DayOfWeek
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -150,8 +151,18 @@ class HabitFormViewModel @Inject constructor(
             when (val result = submission.ticket.await()) {
                 is CommandResult.Failure -> failed.value = true
                 is CommandResult.Success -> when (result.value) {
-                    is CreateHabitResult.Created ->
-                        _effects.send(HabitFormEffect.Saved(permissionPolicy.consumeRequestAfterCreation()))
+                    is CreateHabitResult.Created -> {
+                        // Room has committed. A failed read or write of the permission preference must not
+                        // hide that: fall back to not asking, and still report the save.
+                        val askPermission = try {
+                            permissionPolicy.consumeRequestAfterCreation()
+                        } catch (cancellation: CancellationException) {
+                            throw cancellation
+                        } catch (preferenceFailure: Exception) {
+                            false
+                        }
+                        _effects.send(HabitFormEffect.Saved(askPermission))
+                    }
                     is CreateHabitResult.InvalidInput -> showErrors.value = true
                     CreateHabitResult.DuplicateName -> {
                         duplicateName.value = raw.name.trim()
@@ -229,8 +240,10 @@ class HabitFormViewModel @Inject constructor(
     private fun startPreview(draft: Draft): StartPreview? {
         if (draft.frequency == Frequency.CUSTOM && !Weekdays.isValidCustomMask(draft.weekdays)) return null
         val today = clock.snapshot().localDate
-        val first = planner.firstStartDate(HabitSchedule(draft.frequency, draft.weekdays, today))
-        return if (first == today) StartPreview.Today else StartPreview.On(first)
+        val first = planner.firstPeriod(HabitSchedule(draft.frequency, draft.weekdays, today))
+        // Daily and Custom periods are single days, so only the longer cadences show where they end.
+        val endsOn = if (draft.frequency in LONG_PERIODS) first.endLocalDate.plusDays(1) else null
+        return if (first.startLocalDate == today) StartPreview.Today(endsOn) else StartPreview.On(first.startLocalDate, endsOn)
     }
 
     companion object {
@@ -240,6 +253,7 @@ class HabitFormViewModel @Inject constructor(
         const val KEY_FREQUENCY = "form.frequency"
         const val KEY_WEEKDAYS = "form.weekdays"
         private val DRAFT_KEYS = listOf(KEY_NAME, KEY_UNIT, KEY_TARGET, KEY_FREQUENCY, KEY_WEEKDAYS)
+        private val LONG_PERIODS = setOf(Frequency.WEEKLY, Frequency.FORTNIGHTLY, Frequency.MONTHLY)
         private const val STOP_TIMEOUT_MS = 5_000L
     }
 }
