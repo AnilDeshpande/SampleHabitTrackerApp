@@ -40,29 +40,7 @@ repository-local skill.
 
 ## Independent pull request review
 
-Pin the base and head. Read the approved PRD, architecture, LLD, current ADRs, scope and creator decisions first.
-Use the PR description and implementer's record as claims to verify. For each material finding, give the source
-requirement, exact code location, failing scenario, observed evidence, and whether it blocks merge. Block merge for
-reproduced material behavior or privacy failures and missing evidence required by the approved scope. A product decision
-can block merge if the contract is unsettled. Mark a check outside the PR's scope explicitly.
-
-**Mutation evidence.** Select risk-bearing rules in the changed production paths, including transitions between layers.
-Establish a passing baseline for the named tests in a throwaway checkout at the reviewed SHA. Break one rule at a time,
-run the focused tests, confirm failure at the expected behavior assertion, restore the change, and run the baseline again.
-Record the mutation, entry point, test, and pass/fail/pass evidence. If a meaningful mutant survives, record the missing
-coverage. An already-failing reproduction is evidence of a defect and a coverage gap. It cannot count as a killed mutant until
-the correction and regression test pass. Keep partial attempts, compile failures, and environment blockers explicit.
-Test through the actual wiring. Examples are a real create commit while an empty Overview has an idle ticker, and an existing
-Overview subscription that must refresh after a clock change that modifies no observable business rows. Fakes may control time
-and external ports under the LLD's seam rules.
-
-**Android security and privacy.** For a PR affecting app entry points, runtime permissions, dependencies, or user data,
-inspect the merged debug and release manifests and effective permissions. For each exported component, identify its caller,
-accepted inputs or grants, and permission gate. Verify dynamically registered receiver flags and separate debug-only tooling
-from release behavior. Trace Room and its WAL and SHM files, DataStore and other user files to their storage domains. Check
-`allowBackup` on older APIs, the referenced extraction XML, and each applicable cloud backup and device-transfer section. Compare
-with the PRD and architecture, including direct boot only when the app uses device-protected storage. Run the required platform
-backup/restore and transfer checks on test data when suitable transports are available. Report static and device evidence separately.
+Use [PR review](../ht-pr-review/SKILL.md), which links back to this skill for evidence from running the app.
 
 ## Scripted validation
 
@@ -84,7 +62,8 @@ backup/restore and transfer checks on test data when suitable transports are ava
    - back behavior and that placeholder destinations open and return.
 4. Scan logcat for `FATAL EXCEPTION` and ANR for the app with Python or a pipe you have tested; on this machine `grep` may be
    `ugrep` and its counts and options differ.
-5. Fix what looking finds, and add a test where a test could have caught it. Record defects found only by looking.
+5. Record defects found only by looking. In implementation work, fix in scope and add a test where it could catch the defect.
+   The independent verifier reports the evidence and leaves the fix to the implementer.
 
 ### Evidence
 

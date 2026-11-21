@@ -73,4 +73,5 @@ repository-local skill.
 
 ## Stopping boundary
 
-Stop when the pull request is open, read back, and reported. Review comments and fixes are separate requests.
+Stop when the pull request is open, read back, and reported. Route later review requests to
+[PR review](../ht-pr-review/SKILL.md) and requests to address findings to [PR remediation](../ht-pr-remediation/SKILL.md).

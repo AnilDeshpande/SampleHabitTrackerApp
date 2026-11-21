@@ -22,3 +22,11 @@ one is found.
 | First install on a fresh API 24 boot hangs | Intermittent `dex2oat` hang | `adb logcat` | [Retrying installer](../../ht-device-tiers/scripts/install-with-retry.sh) |
 | Android Studio Run reports nothing in its log but the creator sees a banner | The log is INFO level; sync and deploy events are there | [Studio events script](../scripts/studio-events.py) | Read the events summary; ask the creator for the exact banner text |
 | `Unable to write magic number to pipe` in the Studio log | Studio's on-device installer daemon did not start; it falls back to a normal install | The deploy continues to "Launching" | Benign; not the cause of a failed Run |
+
+## Verifying live time and time zone changes
+
+Use an owned disposable emulator. Record the original time, zone, automatic time settings and 12/24-hour preference, and
+restore them afterwards. `TIME_SET` is a protected broadcast. Verify a real time or zone change through the system alarm
+service (`setTime` with an actual delta, or `setTimeZone`) where the owned image permits it. A no-op time update or a rejected
+shell broadcast cannot exercise the receiver. Keep the screen open and observe the format or state changing on that screen.
+Report the API, changed setting and resulting display, or record the device restriction if the change could not be driven.

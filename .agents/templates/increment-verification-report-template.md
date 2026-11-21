@@ -5,6 +5,8 @@ Verdict: **PASS / FAIL / PASS WITH FINDINGS**, one sentence on why.
 Merge-blocking: **Yes / No**, with each blocking finding, unresolved product decision, or missing required check named.
 
 Verified by: <agent or person>. Read-only: yes. Commit verified: `<sha>` on `<branch>`.
+For PR review: `<PR link>`, base `<sha>`, diff base `<sha>`, reviewed head `<sha>`. Record the GitHub review event and
+link only if published. State CI status and whether the branch was pushed separately from the verdict.
 
 ## Checks
 
@@ -16,7 +18,11 @@ Verified by: <agent or person>. Read-only: yes. Commit verified: `<sha>` on `<br
 | Shared scenarios on the file-backed database | | | | |
 | Lint accepted warnings match the record | | | | |
 | Merged debug/release manifest and Android backup/transfer configuration | | | | |
-| Device backup/restore and transfer | | | | |
+| Per-package backup eligibility (API, transport, result) | | | | |
+| Completed backup/restore or transfer (API, transport, restored data) | | | | |
+
+For each check, label the evidence as independently observed, CI, or supplied by the author. Add the build variant, device or
+SHA when they change what the result establishes.
 
 ## Mutation checks
 
@@ -38,17 +44,10 @@ One row per row of the screen-state map: seen on a device, not seen (reason), or
 | --- | --- | --- |
 | | | |
 
-## Findings
+## PR findings and decisions
 
-| # | Severity | Blocks merge? | File and line | Approved source | Reproduction and evidence |
-| --- | --- | --- | --- | --- | --- |
-| | | | | | |
-
-## Decisions and questions
-
-| Question or accepted answer | Kind (product or engineering) | Owner | Blocks merge? | Durable record and documents affected |
-| --- | --- | --- | --- | --- |
-| | | | | |
+Include the populated [shared finding register](pr-finding-register-template.md) or a link to it. For a standalone
+device check, include any applicable findings and decisions from the same template.
 
 ## Not verified
 

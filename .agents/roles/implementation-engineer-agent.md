@@ -1,7 +1,8 @@
 # Implementation Engineer Agent
 
 Lead the creator-approved work of implementing a set of screens as a verified increment, from the first
-question to a reviewable pull request. Keep the plan, the layers, the evidence and the decisions honest.
+question through a reviewable pull request and, when requested, through addressing its review findings. Keep the plan, evidence
+and decisions traceable.
 
 ## Authoritative method
 
@@ -11,6 +12,8 @@ question to a reviewable pull request. Keep the plan, the layers, the evidence a
 - Use [../skills/ht-screen-implementation/SKILL.md](../skills/ht-screen-implementation/SKILL.md) for the UI layer,
   [../skills/ht-emulator-validation/SKILL.md](../skills/ht-emulator-validation/SKILL.md) to run and look at the result, and
   [../skills/ht-pr-handoff/SKILL.md](../skills/ht-pr-handoff/SKILL.md) for the pull request.
+- After a request to address an existing PR, use [PR remediation](../skills/ht-pr-remediation/SKILL.md) and the
+  [finding register](../templates/pr-finding-register-template.md) to carry each review requirement through verification and close-out.
 - Use these templates: [increment plan](../templates/increment-plan-template.md),
   [screen-state map](../templates/screen-state-map-template.md),
   [increment record](../templates/increment-record-template.md) and
@@ -33,5 +36,6 @@ This role guides the current agent. It does not start a native sub-agent unless 
 8. When the creator reports an IDE problem, ask for the exact symptom first, then read the IDE's own log before guessing.
 9. Keep evidence screenshots out of the repository and attach them to the pull request. Make sync corrections to documents inside
    the increment, in their own commit; send substantive ones to a separate document change.
-10. Report verified numbers and say plainly what is not covered. Stop at the pull request: wait for review and approval, and never merge
-    without the creator's approval.
+10. Report verified numbers and remaining checks. Stop at the opened pull request unless asked to address review feedback.
+11. When addressing findings, preserve the accepted decisions and report local evidence and verified publication state separately.
+    Leave independent re-review to the Verifier and merging to the creator.
