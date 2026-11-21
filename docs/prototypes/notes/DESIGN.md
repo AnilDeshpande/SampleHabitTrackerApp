@@ -48,8 +48,10 @@ implemented.
 - The frequency card is a plain card in S2; it becomes a picker with the schedule screens (S9–S19).
 - The sketch's yellow notes are review markup and are not product copy.
 
-## Open
+## Increment 1 review decisions
 
-- **Dynamic colour:** the template theme has it on (Android 12+ would show the user's wallpaper
-  colours instead of this green). Recommended off so the brand green is consistent; not yet decided.
+- Dynamic colour is off on all supported devices, as approved in the increment plan and confirmed in
+  the [Increment 1 review](../../implementation/increment-1-review.md).
+- Use a floating **Create habit** action on a populated Overview with a screen-reader label. Non-Daily
+  cards show the date range and explicit end date and time. A failed create offers **Retry** with the draft intact.
 - Final copy and localization remain draft (HANDOFF.md § 8).

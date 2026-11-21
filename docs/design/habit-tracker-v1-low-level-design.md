@@ -6,8 +6,8 @@
 | --- | --- |
 | Status | Accepted Android design; OQ-001 through OQ-008 are resolved. |
 | Date | 2026-10-05 |
-| Product source | [Habit Tracker V1 PRD](../prds/habit-tracker-v1-prd.md), including September 2026 amendments. |
-| Architecture baseline | [Habit Tracker V1 architecture](../architecture/habit-tracker-v1-architecture.md), September 23 delta. |
+| Product source | [Habit Tracker V1 PRD](../prds/habit-tracker-v1-prd.md), including the September amendments and November 2026 review decisions. |
+| Architecture baseline | [Habit Tracker V1 architecture](../architecture/habit-tracker-v1-architecture.md), including the Increment 1 create and tracking refresh clarifications. |
 | Durable tracking contract | [ADR 0002](../adr/0002-global-catch-up-and-occurrence-continuity.md); ADR 0001 remains superseded. |
 | Wiring decision | [ADR 0004](../adr/0004-hilt-dependency-injection.md) (Hilt), superseding [ADR 0003](../adr/0003-manual-composition-root-and-android-dependency-wiring.md) for the mechanism only. |
 | Platform | Kotlin, Jetpack Compose, Material 3; one `:app` module; package `com.codetutor.samplehabittrackerapp`; minimum API 24. |
@@ -70,6 +70,23 @@ The creator authorized these resolutions on 2026-10-05.
 | --- | --- | --- |
 | 2026-10-28 | **Hilt.** ADR 0004 replaces the manual `AppContainer` with Hilt. Where this document names `AppContainer`, the container, or hand-written factories, read the Hilt graph and its modules; lifetimes, restoration, worker-factory, test-graph and verification contracts are unchanged. | “we would be using DI Library … not Manuel Road now that is final” |
 | 2026-10-28 | **Mockk.** Mockk is allowed for external-effect ports (notifier, work scheduler, permission and channel state) and for ViewModel UI-mapping tests. Rule, repository and outbox tests keep real components: never mock `Context`, Room DAOs or the repository there. See the [seam register](#seam-register-test-doubles). | “It will be Mocck” |
+
+### Increment 1 review clarification
+
+The [creator's 2026-11-21 review decisions](../implementation/increment-1-review.md) confirm these screen contracts:
+
+- Overview has a labelled Create habit action in both empty and populated states. A current non-Daily card includes
+  the stored period's date range and displays its end instant in the device's current timezone and time format.
+- A failed create retains the raw input in `SavedStateHandle` and offers Retry. Retry submits only after another tap.
+  A failure in reading or recording notification permission cannot prevent success feedback after a Room commit.
+- Continue observing the same Overview across a clock or timezone change even if the reconciliation transaction
+  only changes the gate. A successful Create Habit gated transaction publishes the change needed to rearm the ticker
+  and retains any first applicable period that has started, as specified in the architecture.
+
+Exercise the real create entry point while the ticker is already waiting on an empty database, then cross the first
+boundary and assert Room finalization and the updated Overview. Separately keep one Overview subscription active and
+move the injected clock back past a stored occurrence start without writing any habit or occurrence rows. Verify that
+the same subscriber drops the stale progress state. Reopening Overview cannot stand in for either check.
 
 ### Requirement coverage
 
