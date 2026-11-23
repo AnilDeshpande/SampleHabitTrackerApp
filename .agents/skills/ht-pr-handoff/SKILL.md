@@ -36,7 +36,10 @@ repository-local skill.
 - **Before versus after is a table, per area.** "Before" is what the base branch has, read from it (`git ls-tree`, `git show`), not
   recalled. If you cannot read it, write "not checked".
 - **Say what is not covered**, and what was checked only indirectly. Do not imply a check ran because it is listed.
-- **Interpretations are a table** with the alternative and the location, so a reviewer can disagree with one choice.
+- **Decisions have owners and a durable home.** Label pending product decisions and engineering questions separately. Include
+  the recommendation, owner, merge impact, and source. Save accepted answers in the owning plan, decision record, or approved
+  source document. Link the record from the PR. Apply an authorized contract change in the owning PRD, architecture, LLD,
+  design note, or successor ADR as appropriate.
 - **Links to files are absolute blob URLs on the branch.** Relative paths in a pull request description resolve against the default
   branch and break until merge.
 - **Screenshots are attached to the pull request, not committed.** The GitHub CLI has no command for attaching images, so prepare
@@ -53,7 +56,7 @@ repository-local skill.
 ## Procedure
 
 1. **Preconditions.** Current branch is not `main`; the tree is clean; the record exists; checks that the description will cite
-   have been run from the final state.
+   have been run from the final state. Confirm the PR scope and which unresolved items are merge-blocking.
 2. **Gather facts** with commands: `git log <base>..HEAD`, `git diff --stat <base>...HEAD`, per-area numstat, per-commit
    `--shortstat`, the base's file and test counts, dependency and catalog diffs, test counts from the result XML.
 3. **Write the body to a file** outside the repository from the template: summary; before-and-after tables (by area, what the user
@@ -70,4 +73,5 @@ repository-local skill.
 
 ## Stopping boundary
 
-Stop when the pull request is open, read back, and reported. Review comments and fixes are separate requests.
+Stop when the pull request is open, read back, and reported. Route later review requests to
+[PR review](../ht-pr-review/SKILL.md) and requests to address findings to [PR remediation](../ht-pr-remediation/SKILL.md).

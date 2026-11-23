@@ -1,6 +1,7 @@
 package com.codetutor.samplehabittrackerapp.data.local
 
 import android.content.Context
+import androidx.room.RoomDatabase
 import com.codetutor.samplehabittrackerapp.core.coroutines.AppDispatchers
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.ExecutorService
@@ -11,8 +12,14 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
-/** Where the database lives; null means in memory (tests). */
-data class DatabaseConfig(val fileName: String?)
+/**
+ * Where the database lives; null means in memory (tests). [customize] lets a test adjust the builder, for example
+ * to attach a SQL trace; production passes nothing.
+ */
+data class DatabaseConfig(
+    val fileName: String?,
+    val customize: (RoomDatabase.Builder<HabitTrackerDatabase>) -> Unit = {},
+)
 
 /**
  * Cheap to construct. The first [get] opens and initializes Room once on the
@@ -38,6 +45,7 @@ class DatabaseProvider @Inject constructor(
             HabitTrackerDatabaseFactory.builder(context, config.fileName)
                 .setQueryExecutor(queryExecutor)
                 .setTransactionExecutor(transactionExecutor)
+                .also(config.customize)
                 .build()
                 .also { it.openHelper.writableDatabase } // force create/open off the main thread
         }.also { database = it }

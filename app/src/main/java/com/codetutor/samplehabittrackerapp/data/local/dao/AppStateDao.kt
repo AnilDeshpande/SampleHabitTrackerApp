@@ -11,4 +11,7 @@ interface AppStateDao {
 
     @Query("SELECT pointsBalance FROM app_state WHERE appStateId = 1")
     suspend fun balance(): Long?
+
+    @Query("UPDATE app_state SET pointsBalance = :balance WHERE appStateId = 1")
+    suspend fun setBalance(balance: Long)
 }

@@ -25,6 +25,7 @@ client-server system.
 | 2026-09-21 | Baseline architecture; [ADR 0001](../adr/0001-deterministic-on-device-tracking.md). | Recorded before the architecture-creation skill existed. |
 | 2026-09-23 | Delta for PRD decisions B1–B9 and architecture decisions A1–A8: global catch-up, start boundaries and one open occurrence, retirement freeze, progress-entry ownership, foreground boundary ticker, per-habit notifications with acknowledgement, schema guards, and input validation; [ADR 0002](../adr/0002-global-catch-up-and-occurrence-continuity.md). | Passed on 2026-09-23 with no product blocker and `Unclassified architecture questions: None`; creator authorized the edit. |
 | 2026-10-28 | Closed the dependency-injection deferral. [ADR 0003](../adr/0003-manual-composition-root-and-android-dependency-wiring.md) (2026-10-05) had selected a manual composition root; [ADR 0004](../adr/0004-hilt-dependency-injection.md) supersedes it with Hilt. Added the decision register row and related ADRs, and removed the deferral row. | Creator decisions on 2026-10-28: resolve and close the stale reference; use Hilt, not a manual root. |
+| 2026-11-21 | Specify atomic first-period planning on create and align the input and Overview contracts with the approved product decisions. | [Increment 1 review and creator decisions](../implementation/increment-1-review.md) |
 
 ## Scope, constraints, and exclusions
 
@@ -143,7 +144,8 @@ itself moved back.
 | Command | Owner and transaction order | Failure or boundary behavior |
 | --- | --- | --- |
 | `ReconcileTracking` | Gate → snapshot → finalize expired retirements → plan `ACTIVE` habits → finalize elapsed `OPEN` rows of `ACTIVE` habits in total order → insert outbox events. | Idempotent: repeated or concurrent runs apply nothing twice. |
-| `CreateHabit` / `EditHabit` | Gate → snapshot → `ReconcileTracking` → validate with `HabitInputValidator` → insert or update. `EditHabit` applies a target change through `TargetPolicy` and records a `target_changes` row. | Invalid or duplicate input is not persisted. A target change arriving after an occurrence closed applies by rule at the snapshot and returns its effective period. `PENDING_RETIREMENT` and `RETIRED` habits reject edits. |
+| `CreateHabit` | Gate → snapshot → `ReconcileTracking` → validate with `HabitInputValidator` → insert the habit → plan its first applicable occurrence using the same snapshot. | Invalid or duplicate input creates no habit. If the first period has started, the habit and occurrence commit together. A future period has no occurrence row yet. A successful commit rearms foreground tracking. |
+| `EditHabit` | Gate → snapshot → `ReconcileTracking` → validate with `HabitInputValidator` → update. Apply a target change through `TargetPolicy` and record a `target_changes` row. | Invalid or duplicate input is not persisted. A target change arriving after an occurrence closed applies by rule at the snapshot and returns its effective period. `PENDING_RETIREMENT` and `RETIRED` habits reject edits. |
 | `SaveProgress` | Gate → snapshot → `ReconcileTracking` → locate the habit's current occurrence → validate → replace `progress`. | Rejected when the habit is not `ACTIVE` or the requested occurrence is no longer `OPEN` and current; the result carries the closed occurrence's final result so the UI can show it while retaining the typed value. |
 | `ConfirmRetirement` | Gate → snapshot → `ReconcileTracking` → conditional `ACTIVE → PENDING_RETIREMENT` with `retirementDeadlineEpochMillis = now + 10 000` → mark the habit's `PENDING`/`RETRYABLE` events `SUPPRESSED`. After commit: cancel the habit's notification. | Occurrences that ended before the snapshot are finalized before the freeze; the occurrence open at the snapshot is frozen. |
 | `UndoRetirement` | Gate → snapshot → conditional `PENDING_RETIREMENT → ACTIVE` when `now < deadline`, clearing the deadline → `ReconcileTracking`. | When the condition fails, the same catch-up finalizes the expired retirement and the command reports a late undo. |
@@ -167,7 +169,7 @@ Invariants:
 
 | Service | Inputs | Output / invariant |
 | --- | --- | --- |
-| `HabitInputValidator` | raw name, unit, target, progress text, device locale | Trims name and unit; name 1–50 and unit 1–20 Unicode code points; parses decimals with the locale's decimal separator only (no grouping separators, exponents, or signs); at most 9 integer and 3 fraction digits after removing trailing zeros; target greater than zero, progress zero or greater; returns normalized `BigDecimal` or field-specific errors. Name uniqueness is checked in the command transaction against `nameKey`. |
+| `HabitInputValidator` | raw name, unit, target, progress text, device locale | Trims name and unit and checks 1–50 and 1–20 Unicode code points, respectively. Trims surrounding decimal whitespace and parses the locale separator without grouping, exponents, or signs. Accepts digits on either side of the separator and requires at least one digit. Checks 9 integer digits after dropping leading zeros and 3 fractional digits after dropping trailing zeros. Target is greater than zero and progress is zero or greater. Returns normalized `BigDecimal` or field-specific errors. The command checks name uniqueness against `nameKey`. |
 | `TargetPolicy` | frequency, current occurrence if any, next planned occurrence, requested target | Daily/Custom with a current occurrence: update its `effectiveTarget` and apply from it. Otherwise, or for Weekly/Fortnightly/Monthly: apply from the next occurrence not yet started. Never changes finalized rows. Returns the effective start local date. |
 | `ScoringEngine` | result, points balance before result | Success: `+10`. Miss: when the balance is positive, deduct `(balance + 99) / 100` using integer division; the balance never goes below zero. No floating-point arithmetic. |
 | `ContinuityCalculator` | the habit's occurrence rows | Active run = number of non-cancelled occurrence rows (rows are created only when their period starts). Success streak = consecutive `SUCCESS` results among finalized rows, newest first, stopping at the first `MISS`. Cancelled rows have no continuity effect. |
@@ -361,15 +363,17 @@ after process death or restart.
 ### Foreground boundary ticker
 
 `BoundaryTicker` runs in an application-scoped coroutine only while the
-process lifecycle is at least `STARTED`. After every committed catch-up, and
+process lifecycle is at least `STARTED`. After every committed catch-up or
+tracking command that can change the next boundary, and
 when the system reports a time, date, or timezone change through a
 dynamically registered receiver, it computes the next wake instant as the
 earliest of: the earliest `endExclusiveEpochMillis` of an `ACTIVE` habit's
 `OPEN` row, the earliest pending retirement deadline, and the earliest
 `OccurrencePlanner.nextStart` among `ACTIVE` habits. It then delays until that
 instant and runs `ReconcileTracking`. Room `Flow` queries update the UI after
-the commit. The ticker is a timeliness mechanism; correctness remains with the
-command transactions.
+the commit. A clock or timezone change also refreshes the current status of an
+already-observing Overview when catch-up has no habit or occurrence updates.
+The ticker improves timeliness, while command transactions guarantee correctness.
 
 ## Platform integrations, privacy, and external effects
 
@@ -455,7 +459,7 @@ flowchart LR
 
 | Screen state | Contents and control policy |
 | --- | --- |
-| `OverviewUiState` | Points balance; no-habits state; one pending-retirement row per `PENDING_RETIREMENT` habit with a countdown derived from the persisted deadline and an Undo action; and active habit summaries. Each summary has name, unit, schedule, a `CurrentStatus` (`InProgress(target, progress, endsAt)`, `WaitingForFirstPeriod(startsAt)`, `NoOccurrenceToday(nextStartsAt)`, or `BetweenPeriods(nextStartsAt)`), Active run, Success streak, badge flag, and unacknowledged-miss count. |
+| `OverviewUiState` | Points balance, Create habit action, no-habits state, pending-retirement rows with their persisted-deadline countdowns and Undo actions, and active habit summaries. Each summary has name, unit, schedule, `CurrentStatus`, Active run, Success streak, badge flag, and unacknowledged-miss count. An `InProgress` status supplies target, progress, the stored local date range, and the end instant. The other statuses are `WaitingForFirstPeriod(startsAt)`, `NoOccurrenceToday(nextStartsAt)`, and `BetweenPeriods(nextStartsAt)`. |
 | `HabitFormUiState` | Preserves all field values while showing field-specific validation errors; after a target change, a saved-effect message names the effective period; after the first successful creation on API 33+, requests notification permission if not requested before. |
 | `RecordProgressUiState` | The current occurrence's target, progress, and end; the typed value; field errors; and a late-submission result that shows the closed occurrence's final result while keeping the typed value. |
 | `HabitReviewUiState` | Chronological finalized occurrences, target changes with effective periods (superseded changes marked), and badge state. `canTrack` is true only when the loaded habit is `ACTIVE`, regardless of the entry route. |

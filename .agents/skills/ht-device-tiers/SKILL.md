@@ -24,6 +24,8 @@ This is a repository-local skill. Native sub-agents are used only when the creat
 
 Select the minimum-API device explicitly by serial so a connected higher-API device can never satisfy
 the minimum-API job. The same instrumented suites run on both tiers.
+Run focused SQL, contention and migration checks on the minimum-API device as soon as the scenario is runnable. The
+[Room test guidance](../ht-increment-implementation/SKILL.md#time-and-room-tests) covers shared fixtures and trace selection.
 
 The tiers also differ in **screen size**. UI tests that pass on a tall device can fail on a shorter one that scrolls, so
 name the smallest-screen tier in the plan and run Compose tests there. A creator's own emulator (often a large Pixel)
@@ -61,6 +63,13 @@ is a valid extra tier but never replaces either of these.
   install hangs. Parallelism is for file-only work, or for per-device checks when the creator asks for sub-agents.
 - Do not report a device tier as passed from a run on a different API level. CI runs the same instrumented suite on API 24 and API 34
   with x86_64 images ([the workflow](../../../.github/workflows/android-tests.yml)); a local arm64 run and a CI run are separate evidence.
+
+## Build and result evidence
+
+Run Gradle from the repository root. Capture the command's exit status and fresh result files for its task and device. For a
+long run, monitor the build process or session itself. A launch acknowledgement or an empty keyword filter cannot establish
+completion. Use test result XML timestamps, counts and failing assertions for test evidence. Preserve the underlying log when
+filtering output so an invocation or setup failure stays visible.
 
 ## Stopping boundary
 

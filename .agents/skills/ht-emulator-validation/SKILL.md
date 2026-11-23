@@ -38,6 +38,10 @@ repository-local skill.
 3. Serialize emulator boots and first installs. Restore every setting you change (animation scales, font scale, night mode,
    rotation). Stop only emulators you started and confirm `adb devices` shows what it showed before.
 
+## Independent pull request review
+
+Use [PR review](../ht-pr-review/SKILL.md), which links back to this skill for evidence from running the app.
+
 ## Scripted validation
 
 ### Drive and look
@@ -58,7 +62,8 @@ repository-local skill.
    - back behavior and that placeholder destinations open and return.
 4. Scan logcat for `FATAL EXCEPTION` and ANR for the app with Python or a pipe you have tested; on this machine `grep` may be
    `ugrep` and its counts and options differ.
-5. Fix what looking finds, and add a test where a test could have caught it. Record defects found only by looking.
+5. Record defects found only by looking. In implementation work, fix in scope and add a test where it could catch the defect.
+   The independent verifier reports the evidence and leaves the fix to the implementer.
 
 ### Evidence
 

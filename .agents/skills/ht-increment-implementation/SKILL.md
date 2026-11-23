@@ -69,8 +69,7 @@ For each layer in order, do all of the following before the next layer starts:
    before writing; do not reconstruct them from memory.
 3. **Tests, named from the documents.** Take the cases from the architecture's traceability and verification tables and the
    LLD's verification obligations. Share fixtures between the host and device tiers so both assert the same things.
-4. **Mutation check.** Remove or break the one rule that is easiest to get subtly wrong, confirm the intended tests fail,
-   restore it. A suite that passes first time is not yet evidence.
+4. **Mutation check.** Use [targeted mutation testing](#targeted-mutation-testing) for the rule most likely to regress.
 5. **Device evidence** when the layer is SQL-facing or UI-facing, through [device tiers](../ht-device-tiers/SKILL.md). Evidence for
    the minimum API counts only from that API; record API level and platform SQLite version.
 6. **Commit.** Update the graph first when one exists. Use the attribution lines the session provides.
@@ -91,7 +90,7 @@ For each layer in order, do all of the following before the next layer starts:
   or scheduling-only tests. Never mock `Context`, Room DAOs or the repository in a rule test.
 - **Read the failing artifact first** (test result XML, `dependencyInsight`, logcat) before editing. Separate **test-design
   faults** from **product defects** and report both honestly.
-- **No virtual-time timeouts around real I/O.** Database work runs on real threads; wait for it in real time.
+- For timing and ordering scenarios, use [time and Room test guidance](#time-and-room-tests).
 - **Dependencies.** Add the smallest set the layer needs, with a `because` note on any constraint. After any version or
   catalog change, read the resolved tree for surprises (consistent resolution can pin a transitive library).
 - **IDE gate.** When Gradle files change, the creator's Android Studio needs a sync. Say so in the report, and verify its
@@ -104,6 +103,28 @@ For each layer in order, do all of the following before the next layer starts:
   ("Sync documents with the implementation"), and list it in the pull request. A **substantive correction** changes approved behavior,
   a contract or an ADR decision: do not edit it here; propose a separate document change through the owning workflow, with the
   creator's approval, and link it.
+
+### Targeted mutation testing
+
+Select one consequential rule or production transition. Use a disposable copy pinned to the review or fix SHA, or copy the
+actual work in progress when testing an uncommitted fix. Record the source state and keep build outputs and unrelated local
+files out. Run the named test on the unmodified source, break the rule, rerun, and restore the original source and passing
+test. Count a mutation as caught only when the test fails at the intended behavior assertion. A compile failure, unexpected
+assertion, or already-failing baseline is partial evidence. Record the change, actual production entry point, test, failure
+and restored result. Record a surviving mutation as a coverage gap. Never carry a mutation back to the working checkout.
+
+### Time and Room tests
+
+- For a test that mixes an endlessly rearming coroutine with Room's real threads, drive a `TestScope` explicitly with
+  `runCurrent` and bounded `advanceTimeBy`. Wait for Room on a real-time deadline. Repeat new time and contention tests
+  to detect timing assumptions. Assert the emitted state or persisted outcome at the production entry point.
+- Clear SQL trace state after setup and arm pause hooks for the traced command. Associate events with their command and
+  execution thread before interpreting nested transactions. Room can interleave invalidation work on the same database
+  instance. Identify the command by its context and verify the gate update and clock sample inside that trace, without using
+  their expected order to select it. Use a waiting contender when the approved obligation includes one.
+- Share scenarios that can run identically in host and instrumented tests, such as a plain scenario taking a `Context` with
+  thin wrappers. Run new SQL and migration checks on the [minimum API](../ht-device-tiers/SKILL.md) early, before using
+  passing host results to draw conclusions about the platform.
 
 ## Close-out
 

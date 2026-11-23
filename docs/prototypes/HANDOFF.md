@@ -798,6 +798,10 @@ All strings below are **draft** unless indicated otherwise; approval of the flow
 
 ## 9. Decisions
 
+The [Increment 1 review](../implementation/increment-1-review.md) records later creator decisions for the populated
+Overview Create action, non-Daily period presentation, decimal input, and Retry. The screenshots and copy tables
+describe the original prototype. Apply the approved review decisions when implementing the affected states.
+
 ### Assumptions to confirm before build
 
 | ID | Assumption | Review needed |
