@@ -121,6 +121,19 @@ other by name. Provenance, pinned commit, license, and update steps are in
 | [wear-compose-m3](skills/wear-compose-m3/SKILL.md) | `$wear-compose-m3` | `/wear-compose-m3` | Guidance for Wear OS Compose Material3 (Wear Compose Material 3 / Wear Compose Material3) watch and wearable apps. |
 | [wear-widgets](skills/wear-widgets/SKILL.md) | `$wear-widgets` | `/wear-widgets` | Create, migrate, update, and verify Wear OS widgets using Glance Wear and Remote Compose in an Android project. |
 
+## Navigate and hand off work
+
+Find the current lifecycle stage and prepare a fresh-context prompt while preserving human gates and existing authority.
+
+| Skill | Codex | Claude Code | Use for |
+| --- | --- | --- | --- |
+| [Navigator](skills/ht-next/SKILL.md) | `$ht-next` | `/ht-next` | Read-only stage assessment, evidence, next command and gates |
+| [Handoff](skills/ht-handoff/SKILL.md) | `$ht-handoff` | `/ht-handoff` | One self-contained prompt for review, remediation or continuation |
+
+- **Inputs:** The intended work, checkout, governing sources, relevant PR and review evidence, and existing creator authorization.
+- **Outputs:** A source-backed stage and next command, or a copyable prompt pinned to current evidence and authority.
+- **File fallback:** Read `.agents/skills/ht-next/SKILL.md` to navigate, or `.agents/skills/ht-handoff/SKILL.md` to prepare a handoff.
+
 ## Repository knowledge graph
 
 Build, refresh, or query the repository knowledge graph for cross-file

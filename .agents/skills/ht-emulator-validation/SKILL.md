@@ -109,3 +109,5 @@ device. If they will test manually, leave the device alone afterwards and leave 
 Stop when every mapped state has been seen on a device (or listed as not seen, with the reason), devices are restored, and the
 evidence is curated outside the repository and ready to attach to the pull request; or when the Studio cause and the creator's action
 are stated.
+
+For the next stage and its gates, use [the navigator](../ht-next/SKILL.md).

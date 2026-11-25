@@ -47,3 +47,5 @@ GitHub event, CI state, and branch publication separate in the close-out. Link t
 
 Deliver a pinned report with actionable findings, merge impact, evidence gaps, and any decision the creator owns. When publication
 is authorized, finish with the verified GitHub result or the concrete blocker and the remaining unposted findings.
+
+For the next stage and its gates, use [the navigator](../ht-next/SKILL.md).

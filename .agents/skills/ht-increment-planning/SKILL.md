@@ -115,3 +115,5 @@ the owning workflow, with the creator's approval).
 
 Stop when the creator has approved the saved plan. Building starts under
 [the implementation skill](../ht-increment-implementation/SKILL.md).
+
+For the next stage and its gates, use [the navigator](../ht-next/SKILL.md).
