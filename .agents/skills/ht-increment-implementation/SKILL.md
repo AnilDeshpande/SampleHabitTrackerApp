@@ -139,3 +139,5 @@ and restored result. Record a surviving mutation as a coverage gap. Never carry 
 
 Stop when the layers are committed, the record is written and the creator has the report. Opening the pull request
 is [a separate request](../ht-pr-handoff/SKILL.md).
+
+For the next stage and its gates, use [the navigator](../ht-next/SKILL.md).

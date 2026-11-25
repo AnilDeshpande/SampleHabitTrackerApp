@@ -89,3 +89,5 @@ repository-local skill.
 
 Stop when every map row has a passing test on every tier and the app builds and installs. Looking at it on a device is
 [validation](../ht-emulator-validation/SKILL.md).
+
+For the next stage and its gates, use [the navigator](../ht-next/SKILL.md).

@@ -34,3 +34,5 @@ Use the [Implementation Engineer role](../../roles/implementation-engineer-agent
 For a fresh session, use the [remediation prompt](../../templates/pr-remediation-prompt-template.md) as the portable handoff.
 For a close-out-only request, start with the existing fix, register and remote state. Finish at the authorized boundary with
 the evidence for each finding and any remaining blockers.
+
+For the next stage and its gates, use [the navigator](../ht-next/SKILL.md).

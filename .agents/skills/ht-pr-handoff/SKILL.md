@@ -75,3 +75,5 @@ repository-local skill.
 
 Stop when the pull request is open, read back, and reported. Route later review requests to
 [PR review](../ht-pr-review/SKILL.md) and requests to address findings to [PR remediation](../ht-pr-remediation/SKILL.md).
+
+For the next stage and its gates, use [the navigator](../ht-next/SKILL.md).
